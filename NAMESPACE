@@ -1,3 +1,7 @@
 useDynLib(mpSSL, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
-exportPattern("^[[:alpha:]]+")
+export(mpSSL)
+export(mpSSL_dpe)
+export(mpSSL_dcpe)
+export(unitdiag)
+import(MASS)

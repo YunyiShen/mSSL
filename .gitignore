@@ -5,9 +5,9 @@
 *.so
 src/sandbox.cpp
 R/sandbox.R
-tests/*
 real_data/*
 .vscode
 *.DS_Store
 #docs
 inst/doc
+tempcode

@@ -3,3 +3,5 @@
 tests
 .vscode
 README.md
+tempcode
+R/sandbox.R
