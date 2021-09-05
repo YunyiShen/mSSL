@@ -9,6 +9,10 @@ mpSSL_dcpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params,
     .Call(`_mpSSL_mpSSL_dcpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp)
 }
 
+cgpSSL_dpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep = 1000L, nskp = 5L) {
+    .Call(`_mpSSL_cgpSSL_dpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
+}
+
 unitdiag <- function(Sigma, Omega) {
     invisible(.Call(`_mpSSL_unitdiag`, Sigma, Omega))
 }
