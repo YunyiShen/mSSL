@@ -28,6 +28,65 @@ using namespace Rcpp;
 using namespace arma;
 using namespace std;
 
+double cgobjective(int n, int p, int q,
+                 const arma::mat &S,
+                 const arma::mat &B,
+                 const arma::mat &X,
+                 const arma::mat &Omega,
+                 const arma::mat &Sigma,
+                 double lambda1,
+                 double lambda0,
+                 double xi1,
+                 double xi0, double theta, double eta,
+                 int diag_penalty, arma::vec theta_hyper_params,
+                 arma::vec eta_hyper_params)
+{
+
+  double value;
+  double sign;
+  log_det(value, sign, Omega);
+
+  arma::mat SOmega = S * Omega;
+  arma::mat MSigma = B.t() * X.t() * X * B * Sigma / n;
+  double log_like = value * sign - trace(SOmega) - trace(MSigma);
+  log_like *= n / 2;
+  double log_pi_B = 0.0;
+  double log_pi_Omega = 0.0;
+
+  for (int j = 0; j < p; j++)
+  {
+    for (int k = 0; k < q; k++)
+    {
+      log_pi_B += log(theta * lambda1 * exp(-1.0 * lambda1 * abs(B(j, k))) + (1.0 - theta) * lambda0 * exp(-1.0 * lambda0 * abs(B(j, k))));
+    }
+  }
+  for (int k = 0; k < q; k++)
+  {
+    for (int kk = k + 1; kk < q; kk++)
+    {
+      log_pi_Omega += log(eta * xi1 * exp(-1.0 * xi1 * abs(Omega(k, kk))) + (1.0 - eta) * xi0 * exp(-1.0 * xi0 * abs(Omega(k, kk))));
+    }
+  }
+  if (diag_penalty == 1)
+  {
+    for (int k = 0; k < q; k++)
+    {
+      log_pi_Omega += log(xi1 * exp(-1.0 * xi1 * abs(Omega(k, k))));
+    }
+  }
+
+  double a_theta = theta_hyper_params(0);
+  double b_theta = theta_hyper_params(1);
+  double a_eta = eta_hyper_params(0);
+  double b_eta = eta_hyper_params(1);
+
+  double log_pi_theta = (a_theta - 1.0) * log(theta) + (b_theta - 1.0) * log(1.0 - theta);
+  double log_pi_eta = (a_eta - 1.0) * log(eta) + (b_eta - 1.0) * log(1.0 - eta);
+
+  double obj = log_like + log_pi_B + log_pi_Omega + log_pi_theta + log_pi_eta;
+
+  return obj;
+}
 
 
 // updated July 18: added indicator for diagonal penalty.

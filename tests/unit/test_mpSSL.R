@@ -22,8 +22,9 @@ X <- matrix(rnorm(p * n), nrow = n, ncol = p)
 graph <- g_model1(q)
 Sigma <- graph$Sigma
 Omega <- graph$Omega
+mu <- runif(q,-2,2)
 
-Y <- mprobit(X,B,Sigma,Omega)
+Y <- mprobit(X,B,mu,Sigma,Omega)
 
 mpSSL_dpe_res <- mpSSL_dpe(X,Y,lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
                     xis = list(xi1 = 0.01 * nrow(X), xi0 = seq(0.1 * nrow(X), nrow(X), length = 10)),
