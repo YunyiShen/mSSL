@@ -23,8 +23,8 @@ public:
     EllipticalSliceSampler(int n_iter,
                            LinearConstraints linear_con,
                            int nskip,
-                           arma::vec x_init) : loop_state(x_init),
-                                               SamplingLoop(n_iter, linear_con, nskip)
+                           arma::vec x_init) : SamplingLoop(n_iter, linear_con, nskip), loop_state(x_init)
+                                               
     {
         dim = linear_con.D; // python version it is called N_dim
     };

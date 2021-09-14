@@ -8,6 +8,7 @@ mpSSL(
   Y,
   X,
   condexp = FALSE,
+  cg = FALSE,
   lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
   xis = list(xi1 = 0.01 * nrow(X), xi0 = seq(0.1 * nrow(X), nrow(X), length = 10)),
   theta_hyper_params = c(1, ncol(X) * ncol(Y)),
@@ -26,6 +27,8 @@ mpSSL(
 \item{X}{design matrix}
 
 \item{condexp}{bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)}
+
+\item{cg}{bool, whether use chain graphical parameterization in latent normal, default FALSE, meaning using mean-cov parameterization, be careful about the interpretation of each.}
 
 \item{lambdas}{hyperparameters to be explored by the algorithm, penalty on B}
 
