@@ -1,9 +1,11 @@
 // base class for loop
 
-#ifndef LOOP_H
-#define LOOP_H
+#ifndef LINCONGAUSSR_LOOP_H
+#define LINCONGAUSSR_LOOP_H
 
 #include "linear_constraints.h"
+
+namespace linconGaussR{
 
 class Loop
 {
@@ -30,7 +32,7 @@ public:
     {
         n_iterations = n_iter;
     }
-    arma::mat compute_next_point(arma::mat x0)
+    inline arma::mat compute_next_point(arma::mat x0)
     {
         return x0;
     }
@@ -48,12 +50,14 @@ public:
         samples = x_init.t();
         iteration = 0;
     }
-    void update(arma::vec x_new)
+    inline void update(arma::vec x_new)
     {
         iteration++;
         samples.insert_rows(iteration, x_new.t());
         
     }
 };
+
+}
 
 #endif

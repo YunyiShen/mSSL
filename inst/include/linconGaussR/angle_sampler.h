@@ -1,7 +1,8 @@
-#ifndef ANGLE_SAMPLER_H
-#define ANGLE_SAMPLER_H
+#ifndef LINCONGAUSSR_ANGLE_SAMPLER_H
+#define LINCONGAUSSR_ANGLE_SAMPLER_H
 #include "active_intersections.h"
 
+namespace linconGaussR{
 class AngleSampler
 {
 public:
@@ -19,11 +20,11 @@ public:
         rotated_slices.reshape(slices.n_elem / 2, 2);
     }
 
-    arma::vec _get_slices_cumulative_length();
-    double draw_angle();
+    inline arma::vec _get_slices_cumulative_length();
+    inline double draw_angle();
 };
 
-arma::vec AngleSampler::_get_slices_cumulative_length()
+inline arma::vec AngleSampler::_get_slices_cumulative_length()
 {
     arma::vec cum_len(rotated_slices.n_rows + 1, fill::zeros);
     for (int i = 0; i < rotated_slices.n_rows; i++)
@@ -33,7 +34,7 @@ arma::vec AngleSampler::_get_slices_cumulative_length()
     return (cum_len);
 }
 
-double AngleSampler::draw_angle()
+inline double AngleSampler::draw_angle()
 {
     arma::vec cum_len = this->_get_slices_cumulative_length();
     double l = cum_len(cum_len.n_elem - 1);
@@ -48,6 +49,8 @@ double AngleSampler::draw_angle()
     }
     idx--;
     return (rotated_slices(idx, 0) + sample - cum_len(idx) + rotation_angle);
+}
+
 }
 
 #endif

@@ -1,10 +1,10 @@
-#ifndef ACTIVE_INTERSECTION_H
-#define ACTIVE_INTERSECTION_H
+#ifndef LINCONGAUSSR_ACTIVE_INTERSECTION_H
+#define LINCONGAUSSR_ACTIVE_INTERSECTION_H
 
 #include "ellipse.h"
 #include "linear_constraints.h"
 
-
+namespace linconGaussR{
 class rotationAngle{
     public:
         double rotation_angle;
@@ -30,13 +30,13 @@ class ActiveIntersections{
             N_constraints = lincon.b.n_rows;
             ellipse_in_domain = true;
         }
-        arma::Col<int> _index_active(const arma::vec &t, double dt);
-        arma::vec intersection_angles();
-        arma::vec find_active_intersections();
-        rotationAngle rotated_intersections();
+        inline arma::Col<int> _index_active(const arma::vec &t, double dt);
+        inline arma::vec intersection_angles();
+        inline arma::vec find_active_intersections();
+        inline rotationAngle rotated_intersections();
 };
 
-arma::Col<int> ActiveIntersections::_index_active(const arma::vec &t, double dt){
+inline arma::Col<int> ActiveIntersections::_index_active(const arma::vec &t, double dt){
     arma::Col<int> idx(t.n_elem);
     arma::Mat<int> temp;
     for(int i = 0; i < t.n_elem; i++){
@@ -47,7 +47,7 @@ arma::Col<int> ActiveIntersections::_index_active(const arma::vec &t, double dt)
     return(idx);
 }
 
-arma::vec ActiveIntersections::intersection_angles(){
+inline arma::vec ActiveIntersections::intersection_angles(){
     arma::vec g1 = lincon.A * ellipse.a1;
     arma::vec g2 = lincon.A * ellipse.a2;
     arma::vec r = arma::sqrt(g1 % g1 + g2 % g2);
@@ -65,7 +65,7 @@ arma::vec ActiveIntersections::intersection_angles(){
 }
 
 
-arma::vec ActiveIntersections::find_active_intersections(){
+inline arma::vec ActiveIntersections::find_active_intersections(){
     double delta_theta = 1.e-10 * 2.* datum::pi;
     arma::vec theta = this->intersection_angles();
 
@@ -100,7 +100,7 @@ arma::vec ActiveIntersections::find_active_intersections(){
 
 }
 
-rotationAngle ActiveIntersections::rotated_intersections(){
+inline rotationAngle ActiveIntersections::rotated_intersections(){
     
     arma::vec slices = this->find_active_intersections();
     double rotation_angle = slices(0);
@@ -110,5 +110,6 @@ rotationAngle ActiveIntersections::rotated_intersections(){
     return(res);
 }
 
+}
 
 #endif

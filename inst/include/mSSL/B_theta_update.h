@@ -2,16 +2,8 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 
 
-// Contains several functions: B_coord_desc, the main coordinate descent routine
-// update_theta: uses a Newton algorithm
-// B_theta_update: calls both B_coord_desc and update_theta in a while loop
-
-// JULY 2: GET RID OF THE OBJECTIVE CHECKS ... it seems to have the effect of terminating the 
-// main coordinate ascent loop
-
-
-#ifndef B_THETA_UPDATE_H
-#define B_THETA_UPDATE_H
+#ifndef MSSL_B_THETA_UPDATE_H
+#define MSSL_B_THETA_UPDATE_H
 
 #include <math.h>
 #include <stddef.h>
@@ -28,7 +20,43 @@ using namespace Rcpp;
 using namespace arma;
 using namespace std;
 
-double cgobjective(int n, int p, int q,
+
+namespace mSSL{
+
+inline double gSSL_objective(int n, int q, arma::mat S, arma::mat Omega, double xi1, double xi0, double eta, int diag_penalty, arma::vec eta_hyper_params){
+  
+  double value;
+  double sign;
+  log_det(value, sign, Omega);
+  
+  arma::mat SOmega = S * Omega;
+  double log_like = value*sign - trace(SOmega);
+  log_like *= n/2;  
+  double log_pi_Omega = 0.0;
+
+  for(int k = 0; k < q; k++){
+    for(int kk = k+1; kk < q; kk++){
+      log_pi_Omega += log(eta * xi1 * exp(-1.0 * xi1 * abs(Omega(k,kk))) + (1.0 - eta) * xi0 * exp(-1.0 * xi0 * abs(Omega(k,kk))));
+    }
+  }
+  if(diag_penalty == 1){
+    for(int k = 0; k < q; k++){
+      log_pi_Omega += log(xi1 * exp(-1.0 * xi1 * abs(Omega(k,k))));
+    }
+  }
+  
+  double a_eta = eta_hyper_params(0);
+  double b_eta = eta_hyper_params(1);
+  
+  double log_pi_eta = (a_eta - 1.0) * log(eta) + (b_eta - 1.0) * log(1.0 - eta);
+  
+  double obj = log_like + log_pi_Omega + log_pi_eta;
+  return obj;
+}
+
+
+
+inline double cgobjective(int n, int p, int q,
                  const arma::mat &S,
                  const arma::mat &B,
                  const arma::mat &X,
@@ -90,7 +118,7 @@ double cgobjective(int n, int p, int q,
 
 
 // updated July 18: added indicator for diagonal penalty.
-double objective(int n, int p, int q,arma::mat S, arma::mat B, arma::mat Omega, double lambda1, double lambda0, double xi1, double xi0, double theta, double eta, int diag_penalty, arma::vec theta_hyper_params, arma::vec eta_hyper_params){
+inline double objective(int n, int p, int q,arma::mat S, arma::mat B, arma::mat Omega, double lambda1, double lambda0, double xi1, double xi0, double theta, double eta, int diag_penalty, arma::vec theta_hyper_params, arma::vec eta_hyper_params){
   
   double value;
   double sign;
@@ -134,7 +162,7 @@ double objective(int n, int p, int q,arma::mat S, arma::mat B, arma::mat Omega, 
 
 
 
-void B_coord_desc(const int n, const int p, const int q, arma::mat& B, arma::mat& R, arma::mat& tXR, arma::mat& S, const double theta,
+inline void B_coord_desc(const int n, const int p, const int q, arma::mat& B, arma::mat& R, arma::mat& tXR, arma::mat& S, const double theta,
                   const arma::mat Omega, const double eta,const arma::mat X, const arma::mat tXX,
                   const double lambda1, const double lambda0, const double xi1, const double xi0,
                   arma::vec theta_hyper_params, arma::vec eta_hyper_params, const int max_iter, const double eps, const int verbose){
@@ -325,7 +353,7 @@ void B_coord_desc(const int n, const int p, const int q, arma::mat& B, arma::mat
 }
 
 
-void update_theta(const int n, const int p, const int q, double& theta, const arma::mat B, const double lambda1, const double lambda0, arma::vec theta_hyper_params){
+inline void update_theta(const int n, const int p, const int q, double& theta, const arma::mat B, const double lambda1, const double lambda0, arma::vec theta_hyper_params){
   double pstar = 0.0;
   double a_theta = theta_hyper_params(0);
   double b_theta = theta_hyper_params(1);
@@ -371,7 +399,7 @@ void update_theta(const int n, const int p, const int q, double& theta, const ar
   }
 }
 
-void update_B_theta(const int n, const int p, const int q, arma::mat& B, arma::mat& R, arma::mat& tXR, arma::mat&S, double& theta, const arma::mat Omega, const double eta, 
+inline void update_B_theta(const int n, const int p, const int q, arma::mat& B, arma::mat& R, arma::mat& tXR, arma::mat&S, double& theta, const arma::mat Omega, const double eta, 
                     const arma::mat X, const arma::mat tXX, const double lambda1, const double lambda0, const double xi1, const double xi0, const int diag_penalty,
                     arma::vec theta_hyper_params, arma::vec eta_hyper_params, const int max_iter, const double eps, const int verbose){
   arma::mat B_old = B;
@@ -425,6 +453,8 @@ void update_B_theta(const int n, const int p, const int q, arma::mat& B, arma::m
     //theta = theta_orig;
   }
   
+}
+
 }
 
 #endif

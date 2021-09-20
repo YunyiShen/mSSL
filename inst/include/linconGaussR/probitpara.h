@@ -1,23 +1,14 @@
-#ifndef PROBITPARA_H
-#define PROBITPARA_H
+#ifndef LINCONGAUSSR_PROBITPARA_H
+#define LINCONGAUSSR_PROBITPARA_H
 
 
 // [[Rcpp::depends(RcppArmadillo)]]
-#include "active_intersections.h"
-#include "angle_sampler.h"
-#include "ellipse.h"
-#include "linear_constraints.h"
-#include "loop.h"
-#include "elliptical_slice_sampling.h"
-
-#include <math.h>
-#include <RcppArmadillo.h>
 
 using namespace Rcpp;
 using namespace arma;
 using namespace std;
 
-
+namespace linconGaussR{
 
 class probitWorkingParam{
     public:
@@ -38,7 +29,7 @@ class probitWorkingParam{
             mu = muu;
             s_eval = eig_sym(S);
         }
-        void update(const arma::mat &Y,
+        inline void update(const arma::mat &Y,
                         const arma::mat &X,
                         const arma::vec &mu_t,
                         const arma::mat &B_t,
@@ -47,7 +38,7 @@ class probitWorkingParam{
 };
 
 // this will get us EM result of mu and the useful S matrix given Y and parameter at last iteration 
-void probitWorkingParam::update(const arma::mat &Y,
+inline void probitWorkingParam::update(const arma::mat &Y,
                         const arma::mat &X,
                         const arma::vec &mu_t,
                         const arma::mat &B_t,
@@ -116,7 +107,7 @@ class cgprobitWorkingParam: public probitWorkingParam{
             S_Omega = SS;
             M = SS;
         }
-        void update(const arma::mat &Y,
+        inline void update(const arma::mat &Y,
                         const arma::mat &X,
                         const arma::vec &mu_t,
                         const arma::mat &B_t,
@@ -126,7 +117,7 @@ class cgprobitWorkingParam: public probitWorkingParam{
 
 };
 
-void cgprobitWorkingParam::update(const arma::mat &Y,
+inline void cgprobitWorkingParam::update(const arma::mat &Y,
                         const arma::mat &X,
                         const arma::vec &mu_t,
                         const arma::mat &B_t,
@@ -202,7 +193,7 @@ class starWorkingParam : public probitWorkingParam{
             arma::mat tXR,
             arma::mat tXX,
             arma::vec mu,int n): probitWorkingParam(S, R, tXR, tXX, mu, n){};
-        void update(const arma::mat &lower,
+        inline void update(const arma::mat &lower,
                     const arma::mat &upper,
                         const arma::mat &X,
                         const arma::vec &mu_t,
@@ -211,7 +202,7 @@ class starWorkingParam : public probitWorkingParam{
                         int n_rep, int nskp = 5);
 };
 
-void starWorkingParam::update(const arma::mat &lower,
+inline void starWorkingParam::update(const arma::mat &lower,
                         const arma::mat &upper,
                         const arma::mat &X,
                         const arma::vec &mu_t,
@@ -271,6 +262,18 @@ void starWorkingParam::update(const arma::mat &lower,
 }
 
 
-void unitdiag(arma::mat & Sigma, arma::mat &Omega);
+inline void unitdiag(arma::mat & Sigma, arma::mat &Omega){
+    arma::vec scaling = Sigma.diag();
+    scaling = arma::sqrt(scaling);
+    Omega.each_col() %= scaling;
+    Omega.each_row() %= scaling.t();
+    scaling = 1/scaling;
+    Sigma.each_row() %= scaling.t();
+    Sigma.each_col() %= scaling;
+    return;
+}
 
+
+
+}
 #endif

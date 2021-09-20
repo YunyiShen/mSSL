@@ -1,5 +1,5 @@
-#ifndef ELLIPTICAL_SLICE_SAMPLING_H
-#define ELLIPTICAL_SLICE_SAMPLING_H
+#ifndef LINCONGAUSSR_ELLIPTICAL_SLICE_SAMPLING_H
+#define LINCONGAUSSR_ELLIPTICAL_SLICE_SAMPLING_H
 
 #include "active_intersections.h"
 #include "angle_sampler.h"
@@ -13,6 +13,8 @@
 using namespace Rcpp;
 using namespace arma;
 using namespace std;
+
+namespace linconGaussR{
 
 class EllipticalSliceSampler : public SamplingLoop
 {
@@ -28,17 +30,17 @@ public:
     {
         dim = linear_con.D; // python version it is called N_dim
     };
-    bool is_converged();
-    arma::vec compute_next_point(arma::vec x0);
-    void run();
+    inline bool is_converged();
+    inline arma::vec compute_next_point(arma::vec x0);
+    inline void run();
 };
 
-bool EllipticalSliceSampler::is_converged()
+inline bool EllipticalSliceSampler::is_converged()
 {
     return loop_state.iteration >= n_iterations;
 }
 
-arma::vec EllipticalSliceSampler::compute_next_point(arma::vec x0)
+inline arma::vec EllipticalSliceSampler::compute_next_point(arma::vec x0)
 {
     /* """
         Computes the next sample from the linearly constrained unit Gaussian
@@ -69,7 +71,7 @@ arma::vec EllipticalSliceSampler::compute_next_point(arma::vec x0)
 
             self.loop_state.update(x) */
 
-void EllipticalSliceSampler::run()
+inline void EllipticalSliceSampler::run()
 {
     /* """
         Sample from a linearly constrained unit Gaussian until stopping criterion is reached.
@@ -95,4 +97,5 @@ void EllipticalSliceSampler::run()
     }
 }
 
+}
 #endif

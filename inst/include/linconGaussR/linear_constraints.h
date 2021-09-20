@@ -1,7 +1,7 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 
-#ifndef LINEAR_CONSTRAINTS_H
-#define LINEAR_CONSTRAINTS_H
+#ifndef LINCONGAUSSR_LINEAR_CONSTRAINTS_H
+#define LINCONGAUSSR_LINEAR_CONSTRAINTS_H
 
 #include <math.h>
 #include <RcppArmadillo.h>
@@ -9,6 +9,8 @@
 using namespace Rcpp;
 using namespace arma;
 using namespace std;
+
+namespace linconGaussR{
 
 class LinearConstraints
 {
@@ -44,12 +46,12 @@ public:
         temp.each_col() += b;
         return temp;
     }
-    arma::Mat<int> indicator_intersection(const arma::mat &x);
-    arma::Mat<int> indicator_union(const arma::mat &x);
-    arma::Mat<int> integration_domain(const arma::mat &x);
+    inline arma::Mat<int> indicator_intersection(const arma::mat &x);
+    inline arma::Mat<int> indicator_union(const arma::mat &x);
+    inline arma::Mat<int> integration_domain(const arma::mat &x);
 };
 
-arma::Mat<int>
+inline arma::Mat<int>
 LinearConstraints::indicator_intersection(const arma::mat &x)
 {
 
@@ -73,7 +75,7 @@ LinearConstraints::indicator_intersection(const arma::mat &x)
     return res;
 }
 
-arma::Mat<int> LinearConstraints::indicator_union(const arma::mat &x)
+inline arma::Mat<int> LinearConstraints::indicator_union(const arma::mat &x)
 {
 
     /* Union of indicator functions taken to be 1 when the linear function is >= 0
@@ -96,7 +98,7 @@ arma::Mat<int> LinearConstraints::indicator_union(const arma::mat &x)
     return res;
 }
 
-arma::Mat<int> LinearConstraints::integration_domain(const arma::mat &x)
+inline arma::Mat<int> LinearConstraints::integration_domain(const arma::mat &x)
 {
     /* is 1 if x is in the integration domain, else 0
         :param x: location, shape (D, N)
@@ -112,4 +114,5 @@ arma::Mat<int> LinearConstraints::integration_domain(const arma::mat &x)
     }
 }
 
+}
 #endif
