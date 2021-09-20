@@ -8,7 +8,7 @@ fstarmSSL(
   Y,
   X,
   link = log,
-  condecp = FALSE,
+  condexp = FALSE,
   lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
   xis = list(xi1 = 0.01 * nrow(X), xi0 = seq(0.1 * nrow(X), nrow(X), length = 10)),
   theta_hyper_params = c(1, ncol(X) * ncol(Y)),
@@ -25,6 +25,10 @@ fstarmSSL(
 \item{Y}{response matrix}
 
 \item{X}{design matrix}
+
+\item{link}{the known link function for STAR model}
+
+\item{condexp}{bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)}
 
 \item{lambdas}{hyperparameters to be explored by the algorithm, penalty on B}
 
@@ -45,8 +49,6 @@ fstarmSSL(
 \item{obj_counter_max}{only used in dpe, maximum number of couting the objective function}
 
 \item{verbose}{bool, whether to print intermidate notes}
-
-\item{condexp}{bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)}
 }
 \value{
 A list with dynamic exploration result, point estimates are in `$Omega` and `$B`.

@@ -92,6 +92,7 @@ mpSSL <- function(Y,X, condexp = FALSE,
 #' @description Main posterior exploration algorithm for multivariate STAR spike-and-slab LASSO with fixed link function and floor rouding.
 #' @param Y response matrix
 #' @param X design matrix
+#' @param link the known link function for STAR model
 #' @param condexp bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)
 #' @param lambdas hyperparameters to be explored by the algorithm, penalty on B
 #' @param xis hyperparameters to be explored by the algorithm, penalty on Omega
@@ -105,7 +106,7 @@ mpSSL <- function(Y,X, condexp = FALSE,
 #' @param verbose bool, whether to print intermidate notes
 #' @return A list with dynamic exploration result, point estimates are in `$Omega` and `$B`.
 #' 
-fstarmSSL <- function(Y,X,link = log,condecp = FALSE, 
+fstarmSSL <- function(Y,X,link = log,condexp = FALSE, 
                     lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
                   xis = list(xi1 = 0.01 * nrow(X), xi0 = seq(0.1 * nrow(X), nrow(X), length = 10)),
                   theta_hyper_params = c(1, ncol(X) * ncol(Y)),
