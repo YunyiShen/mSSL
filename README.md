@@ -19,7 +19,7 @@ A working repository collect multivariate Spike-and-Slab model for different typ
 It is not yet on CRAN and likely won't in the near future, to install, use:
 
 ```r
-devtools::install_github("YunyiShen/mpSSL")
+devtools::install_github("YunyiShen/mSSL")
 ```
 
 Note we do not have documentation yet. 

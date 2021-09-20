@@ -1,9 +1,9 @@
-#' Multivariate probit Spike-and-Slab LASSO
-#' @description Main posterior exploration algorithm for multivariate probit spike-and-slab LASSO.
+#' Multivariate STAR Spike-and-Slab LASSO with fixed link function and floor rouding
+#' @description Main posterior exploration algorithm for multivariate STAR spike-and-slab LASSO with fixed link function and floor rouding.
 #' @param Y response matrix
 #' @param X design matrix
+#' @param link the known link function for STAR model
 #' @param condexp bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)
-#' @param cg bool, whether use chain graphical parameterization in latent normal, default FALSE, meaning using mean-cov parameterization, be careful about the interpretation of each. 
 #' @param lambdas hyperparameters to be explored by the algorithm, penalty on B
 #' @param xis hyperparameters to be explored by the algorithm, penalty on Omega
 #' @param theta_hyper_params hyperparameter to be set, prior on spike weight of B
@@ -16,10 +16,8 @@
 #' @param verbose bool, whether to print intermidate notes
 #' @return A list with dynamic exploration result, point estimates are in `$Omega` and `$B`.
 #' 
-
-mpSSL <- function(Y,X, condexp = FALSE, 
-                  cg = FALSE,
-                  lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
+fstarmSSL <- function(Y,X,link = log,condexp = FALSE, 
+                    lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
                   xis = list(xi1 = 0.01 * nrow(X), xi0 = seq(0.1 * nrow(X), nrow(X), length = 10)),
                   theta_hyper_params = c(1, ncol(X) * ncol(Y)),
                   eta_hyper_params = c(1, ncol(Y)),
@@ -33,40 +31,19 @@ mpSSL <- function(Y,X, condexp = FALSE,
     X <- as.matrix(X)
     diag_penalty <- 1 * diag_penalty
 
-    if(length(unique(c(Y)))!=2){
-        stop("Y must only have two unique values")
-    }
-
-    if(!all(sort(unique(c(Y)))!=c(0,1) )){
-        warning("Y is not 0,1 coded, will convert larger value to 1")
-        uniquevalues <- sort(unique(c(Y)))
-        Y[Y==uniquevalues[1]] <- 0
-        Y[Y==uniquevalues[2]] <- 1
-    }
-
 
     if(nrow(X)!=nrow(Y)){
         stop("X and Y should have the number of rows.")
     }
 
-    if(cg){
-        if(verbose){cat("start the dynamic posterior exploration in chain graphical parameterization...this can be slow\n")}
-        verbose <- 1 * verbose
-        res <- cgpSSL_dpe(X,Y, lambdas, 
-                    xis, theta_hyper_params, 
-                    eta_hyper_params, 
-                    diag_penalty, max_iter, 
-                    eps, s_max_condition, 
-                    obj_counter_max,
-                    verbose)
-        if(verbose==1){cat("done\n")}
-        return(res)
-    }
+    lower <- link(Y)
+    upper <- link(Y + 1)
+
     # mean-cov parameterization 
     if(condexp){
         if(verbose){cat("start the dynamic *conditional* posterior exploration...\n")}
         verbose <- 1 * verbose
-        res <- mpSSL_dcpe(X,Y, lambdas, 
+        res <- fstarSSL_dcpe(X,lower, upper, lambdas, 
                     xis, theta_hyper_params, 
                     eta_hyper_params, 
                     diag_penalty, max_iter, 
@@ -75,7 +52,7 @@ mpSSL <- function(Y,X, condexp = FALSE,
     else {
         if(verbose){cat("start the dynamic posterior exploration...\n")}
         verbose <- 1 * verbose
-        res <- mpSSL_dpe(X,Y, lambdas, 
+        res <- fstarSSL_dpe(X,lower,upper, lambdas, 
                     xis, theta_hyper_params, 
                     eta_hyper_params, 
                     diag_penalty, max_iter, 
@@ -85,4 +62,5 @@ mpSSL <- function(Y,X, condexp = FALSE,
     }
     if(verbose==1){cat("done\n")}
     return(res)
+
 }

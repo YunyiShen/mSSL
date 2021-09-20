@@ -2,8 +2,8 @@
 #' @description Main posterior exploration algorithm for multivariate chain graphical spike-and-slab LASSO.
 #' @param Y response matrix
 #' @param X design matrix
-#' @param condexp bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)
 #' @param cg bool, whether use the chain graphical parameterization, default true
+#' @param condexp bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)
 #' @param lambdas hyperparameters to be explored by the algorithm, penalty on B
 #' @param xis hyperparameters to be explored by the algorithm, penalty on Omega
 #' @param theta_hyper_params hyperparameter to be set, prior on spike weight of B
@@ -26,8 +26,8 @@
 #' error_B(cgSSL_dpe_res$B,B)
 #' error_Omega(cgSSL_dpe_res$Omega,Omega)
 
-mSSL <- function(Y,X, condexp = FALSE, 
-                  cg = TRUE,
+mSSL <- function(Y,X, cg = TRUE,
+                  condexp = FALSE, 
                   lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
                   xis = list(xi1 = 0.01 * nrow(X), xi0 = seq(0.1 * nrow(X), nrow(X), length = 10)),
                   theta_hyper_params = c(1, ncol(X) * ncol(Y)),
