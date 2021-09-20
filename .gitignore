@@ -11,3 +11,4 @@ real_data/*
 #docs
 inst/doc
 tempcode
+tests
