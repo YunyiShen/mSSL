@@ -7,8 +7,8 @@
 mSSL(
   Y,
   X,
-  condexp = FALSE,
   cg = TRUE,
+  condexp = FALSE,
   lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
   xis = list(xi1 = 0.01 * nrow(X), xi0 = seq(0.1 * nrow(X), nrow(X), length = 10)),
   theta_hyper_params = c(1, ncol(X) * ncol(Y)),
@@ -26,9 +26,9 @@ mSSL(
 
 \item{X}{design matrix}
 
-\item{condexp}{bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)}
-
 \item{cg}{bool, whether use the chain graphical parameterization, default true}
+
+\item{condexp}{bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)}
 
 \item{lambdas}{hyperparameters to be explored by the algorithm, penalty on B}
 
