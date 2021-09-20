@@ -3,6 +3,26 @@ isclose <- function(a,b, tol = 1e-10){
   abs(a-b)<=tol
 }
 
+#' Calculating several error measurement of Omega matrix
+#' @name error_Omega
+#' @description There are 11 measurement in total to be measured. 
+#' @details \itemize{
+#'  \item{TP}{:true positive rate}
+#'    \item{TN}{:true negative rate}
+#'    \item{FP}{:false positive rate}
+#'    \item{FN}{:false negative rate}
+#'    \item{SEN}{:sensitivity}
+#'    \item{SPE}{:specificity}
+#'    \item{PREC}{:precision}
+#'    \item{ACC}{:accuracy }
+#'    \item{F1}{:2 * TP/(2*TP + FP + FN)}
+#'    \item{MCC}{:Matthew's Correlation Coefficie}
+#'  \item{FROB:} {squared Frobenius error}
+#' } 
+#' @param Omega the estimated Omega
+#' @param Omega_orig ground truth of Omega
+#' @return a named vector of the 11 measurements
+
 error_Omega <- function(Omega, Omega_orig)
 {
   ut_Omega <- Omega[upper.tri(Omega, diag = FALSE)]

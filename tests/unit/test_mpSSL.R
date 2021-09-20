@@ -2,13 +2,14 @@ library(Rcpp)
 library(RcppArmadillo)
 library(MASS)
 library(Matrix)
-library(mpSSL)
+library(mSSL)
 
 
 source("./R/graph_generator.R")
 source("./R/error_B.R")
 source("./R/error_Omega.R")
 source("./R/simu_data.R")
+sourceCpp("./src/mpSSL.cpp")
 
 
 set.seed(12345)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mSSL.R
 \name{mSSL}
 \alias{mSSL}
-\title{Multivariate and Chain Graphical Spike-and-Slab LASSO}
+\title{Multivariate and Chain Graphical Spike-and-Slab LASSO for continuous data}
 \usage{
 mSSL(
   Y,
@@ -54,7 +54,7 @@ mSSL(
 A list with dynamic exploration result, point estimates are in `$Omega` and `$B`.
 }
 \description{
-Main posterior exploration algorithm for chain graphical spike-and-slab LASSO.
+Main posterior exploration algorithm for multivariate chain graphical spike-and-slab LASSO.
 }
 \examples{
 B <- diag(5)

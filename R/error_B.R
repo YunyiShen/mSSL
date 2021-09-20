@@ -2,6 +2,27 @@ isclose <- function(a,b, tol = 1e-15){
   abs(a-b)<=tol
 }
 
+#' @title Calculating several error measurement of B matrix
+#' @name error_B
+#' @description There are 11 measurement in total to be measured.
+#' @param B the estimated B
+#' @param B_orig ground truth of B
+#' @return a named vector of the 11 measurements
+#' @details 
+#' \itemize{
+#'    \item{TP}{:true positive rate}
+#'    \item{TN}{:true negative rate}
+#'    \item{FP}{:false positive rate}
+#'    \item{FN}{:false negative rate}
+#'    \item{SEN}{:sensitivity}
+#'    \item{SPE}{:specificity}
+#'    \item{PREC}{:precision}
+#'    \item{ACC}{:accuracy }
+#'    \item{F1}{:2 * TP/(2*TP + FP + FN)}
+#'    \item{MCC}{:Matthew's Correlation Coefficie}
+#'    \item{MSE}{:mean squared error}
+#' }
+#' 
 error_B <- function(B, B_orig){
   
     perf <- rep(NA, times = 11)

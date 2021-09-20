@@ -1,4 +1,4 @@
-useDynLib(mpSSL, .registration=TRUE)
+useDynLib(mSSL, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
 export(mpSSL)
 export(fstarmSSL)

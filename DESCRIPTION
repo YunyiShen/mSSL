@@ -1,12 +1,15 @@
-Package: mpSSL
+Package: mSSL
 Type: Package
-Title: Multivariate Probit Spike-and-Slab LASSO
+Title: A Collection of Multivariate Spike-and-Slab LASSO
 Version: 0.1.0
-Date: 2021-09-03
-Author: Yunyi Shen
+Date: 2021-08-28
+Authors@R: c(person("Yunyi", "Shen", email = "yshen99@wisc.edu", role = c("aut", "cre"),comment = c(ORCID = "0000-0003-2779-6507")),person("Sameer K.","Deshpande", role = "aut"))
 Maintainer: Yunyi Shen <yshen99@wisc.edu>
-Description: Posterior exploration of multivariate probit Spike-and-Slab LASSO.
+Description: Efficient algorithms for fitting regularization paths for several multivariate models with Spike-and-Slab LASSO penalization. Algorithms are chain graph version of Deshpande et al. (2019) <doi:10.1080/10618600.2019.1593179> and spike-and-slab version of Shen and Solis-Lemus (2020) <arxiv:2012.08397>, with time series VAR(1) model. Also probit model for binary and STAR model for integer valued data.
+Depends:
 License: GPL-3
-Imports: Rcpp (>= 1.0.7), MASS
-LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 7.1.1
+NeedsCompilation: yes
+Imports: 
+    Rcpp (>= 0.12.16),MASS
+LinkingTo: Rcpp, RcppArmadillo

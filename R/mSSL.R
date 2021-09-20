@@ -1,5 +1,5 @@
-#' Multivariate and Chain Graphical Spike-and-Slab LASSO
-#' @description Main posterior exploration algorithm for chain graphical spike-and-slab LASSO.
+#' Multivariate and Chain Graphical Spike-and-Slab LASSO for continuous data
+#' @description Main posterior exploration algorithm for multivariate chain graphical spike-and-slab LASSO.
 #' @param Y response matrix
 #' @param X design matrix
 #' @param condexp bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)

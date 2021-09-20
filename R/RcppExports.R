@@ -2,55 +2,55 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 cgSSL_dcpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose) {
-    .Call(`_mpSSL_cgSSL_dcpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose)
+    .Call(`_mSSL_cgSSL_dcpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose)
 }
 
 cgSSL_dpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose) {
-    .Call(`_mpSSL_cgSSL_dpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose)
+    .Call(`_mSSL_cgSSL_dpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose)
 }
 
 cgVARSSL_dcpe <- function(Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose) {
-    .Call(`_mpSSL_cgVARSSL_dcpe`, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose)
+    .Call(`_mSSL_cgVARSSL_dcpe`, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose)
 }
 
 cgVARSSL_dpe <- function(Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose) {
-    .Call(`_mpSSL_cgVARSSL_dpe`, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose)
+    .Call(`_mSSL_cgVARSSL_dpe`, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose)
 }
 
 cgpSSL_dpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep = 1000L, nskp = 5L) {
-    .Call(`_mpSSL_cgpSSL_dpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
+    .Call(`_mSSL_cgpSSL_dpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
 }
 
 fstarSSL_dpe <- function(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep = 1000L, nskp = 5L) {
-    .Call(`_mpSSL_fstarSSL_dpe`, X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
+    .Call(`_mSSL_fstarSSL_dpe`, X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
 }
 
 fstarSSL_dcpe <- function(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep = 1000L, nskp = 5L) {
-    .Call(`_mpSSL_fstarSSL_dcpe`, X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp)
+    .Call(`_mSSL_fstarSSL_dcpe`, X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp)
 }
 
 gSSLcpp <- function(Y, xis, eta_hyper_params, diag_penalty, max_iter, eps, obj_counter_max, verbose) {
-    .Call(`_mpSSL_gSSLcpp`, Y, xis, eta_hyper_params, diag_penalty, max_iter, eps, obj_counter_max, verbose)
+    .Call(`_mSSL_gSSLcpp`, Y, xis, eta_hyper_params, diag_penalty, max_iter, eps, obj_counter_max, verbose)
 }
 
 mSSL_dpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose) {
-    .Call(`_mpSSL_mSSL_dpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose)
+    .Call(`_mSSL_mSSL_dpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose)
 }
 
 mSSL_dcpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose) {
-    .Call(`_mpSSL_mSSL_dcpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose)
+    .Call(`_mSSL_mSSL_dcpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose)
 }
 
 gSSL <- function(Y, xis, eta_hyper_params, diag_penalty, max_iter, eps, obj_counter_max, verbose) {
-    .Call(`_mpSSL_gSSL`, Y, xis, eta_hyper_params, diag_penalty, max_iter, eps, obj_counter_max, verbose)
+    .Call(`_mSSL_gSSL`, Y, xis, eta_hyper_params, diag_penalty, max_iter, eps, obj_counter_max, verbose)
 }
 
 mpSSL_dpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep = 1000L, nskp = 5L) {
-    .Call(`_mpSSL_mpSSL_dpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
+    .Call(`_mSSL_mpSSL_dpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
 }
 
 mpSSL_dcpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep = 1000L, nskp = 5L) {
-    .Call(`_mpSSL_mpSSL_dcpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp)
+    .Call(`_mSSL_mpSSL_dcpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp)
 }
 
 #' scale covariance and precision in place
@@ -59,6 +59,6 @@ mpSSL_dcpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params,
 #' @param Omega should be the inverse of Sigma
 #' @return no return, scaling will be done in place
 unitdiag <- function(Sigma, Omega) {
-    invisible(.Call(`_mpSSL_unitdiag`, Sigma, Omega))
+    invisible(.Call(`_mSSL_unitdiag`, Sigma, Omega))
 }
 
