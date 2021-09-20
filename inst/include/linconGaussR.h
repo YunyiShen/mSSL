@@ -11,7 +11,7 @@
 #include "linconGaussR/linear_constraints.h"
 #include "linconGaussR/loop.h"
 #include "linconGaussR/linconGaussCpp.h"
-#include "linconGaussR/probitpara.h"
+//#include "linconGaussR/probitpara.h"
 
 
 #endif

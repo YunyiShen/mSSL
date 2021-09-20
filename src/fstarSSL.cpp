@@ -5,6 +5,7 @@
 #include <linconGaussR.h>
 #include <mSSL.h>
 #include <QUIC.h>
+#include <workingparam.h>
 
 using namespace Rcpp;
 using namespace arma;
@@ -12,6 +13,7 @@ using namespace std;
 using namespace linconGaussR;
 using namespace mSSL;
 using namespace quic;
+using namespace workingparam;
 
 
 // star model with fixed transformation, box-cox need large change to the current wheels

@@ -1,4 +1,4 @@
-#include <linconGaussR.h>
+#include <workingparam.h>
 
 //' scale covariance and precision in place
 //' This routine will scale the covariance matrix to have unit diagonal in place and also properly scale the precision.
@@ -7,6 +7,6 @@
 //' @return no return, scaling will be done in place
 // [[Rcpp::export]]
 void unitdiag(arma::mat & Sigma, arma::mat &Omega){
-    linconGaussR::unitdiag(Sigma, Omega);
+    workingparam::unitdiag(Sigma, Omega);
     return;
 }
