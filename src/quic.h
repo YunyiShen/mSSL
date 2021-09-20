@@ -2,7 +2,7 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 
 #ifndef QUIC_H
-# define QUIC_H
+#define QUIC_H
 
 #include <math.h>
 #include <stddef.h>
@@ -265,7 +265,7 @@ const arma::mat &S, const arma::mat &Rho,
 const double &tol, 
 int &max_iter_quic)
 {
-	srand(1);
+	//srand(1);
     
 
 	int maxNewtonIter = max_iter_quic;
@@ -357,13 +357,14 @@ int &max_iter_quic)
 			//Rcout << "Newton iteration" <<  NewtonIter << endl;
 			//Rcout << "Active set size" << numActive << endl;
 			//Rcout << "subgradient = " << subgrad << "l1-norm of Omega = " << l1normX << endl;
-
+            Vector<INTSXP> randtemp;
+            randtemp = sample(RAND_MAX,1) - 1; 
 			for (int cdSweep = 1; cdSweep <= 1 + NewtonIter / 3; cdSweep++)
 			{
 				diffD = 0.0;
 				for (int i = 0; i < numActive; i++)
 				{
-					int j = i + rand() % (numActive - i);
+					int j = i + randtemp[0] % (numActive - i);
 					int k1 = activeSet[i].i;
 					int k2 = activeSet[i].j;
 					activeSet[i].i = activeSet[j].i;
@@ -386,7 +387,7 @@ int &max_iter_quic)
 			//ptrdiff_t info = 0;
 			//ptrdiff_t p0 = q;
 			
-			int p0 = q;
+			//int p0 = q;
 			U = Omega;
 			
 			//dpotrf_((char *)"U", &p0, U, &p0, &info);
@@ -514,7 +515,7 @@ int &max_iter_quic)
 		//ptrdiff_t info;
 		//ptrdiff_t p0 = q;
 		//int info = 0;
-		int p0 = q;
+		//int p0 = q;
 		inv_sympd(Sigma, Omega);
 		
 
@@ -640,7 +641,7 @@ cube cgquic(int &q,
             double &tol,
             int &max_iter_quic)
 {
-    srand(1);
+    //srand(1);
     bool theflag = true;
     int maxNewtonIter = max_iter_quic;
     double cdSweepTol = 0.05;
@@ -738,13 +739,14 @@ cube cgquic(int &q,
         //Rcout << "Newton iteration" << NewtonIter << endl;
         //Rcout << "Active set size" << numActive << endl;
         //Rcout << "subgradient = " << subgrad << "l1-norm of Omega = " << l1normX << endl;
-
+        Vector<INTSXP> randtemp;
+        randtemp = sample(RAND_MAX,1) - 1;
         for (int cdSweep = 1; cdSweep <= 1 + NewtonIter / 3; cdSweep++)
         {
             diffD = 0.0;
             for (int i = 0; i < numActive; i++)
             {
-                int j = i + rand() % (numActive - i);
+                int j = i + randtemp[0] % (numActive - i);
                 int k1 = activeSet[i].i;
                 int k2 = activeSet[i].j;
                 activeSet[i].i = activeSet[j].i;
@@ -768,8 +770,8 @@ cube cgquic(int &q,
         {
             //ptrdiff_t info = 0;
             //ptrdiff_t p0 = q;
-            int info = 0;
-            int p0 = q;
+            //int info = 0;
+            //int p0 = q;
 
             U = Omega;
             theflag = chol(U, U); // cholesky decomposition

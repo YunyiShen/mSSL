@@ -13,6 +13,14 @@ cgpSSL_dpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params,
     .Call(`_mpSSL_cgpSSL_dpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
 }
 
+fstarSSL_dpe <- function(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep = 1000L, nskp = 5L) {
+    .Call(`_mpSSL_fstarSSL_dpe`, X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
+}
+
+fstarSSL_dcpe <- function(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep = 1000L, nskp = 5L) {
+    .Call(`_mpSSL_fstarSSL_dcpe`, X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp)
+}
+
 unitdiag <- function(Sigma, Omega) {
     invisible(.Call(`_mpSSL_unitdiag`, Sigma, Omega))
 }

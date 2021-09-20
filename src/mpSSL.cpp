@@ -1000,7 +1000,7 @@ List cgpSSL_dpe(arma::mat X,
 
   double tmp_mu_x = 0.0;
   double tmp_weight_x = 0.0;
-  double tmp_mu_y = 0.0;
+  //double tmp_mu_y = 0.0;
   arma::vec x_col_weights(p);
   arma::vec mu_x(p);
   for (int j = 0; j < p; j++)

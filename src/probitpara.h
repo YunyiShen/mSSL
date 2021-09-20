@@ -217,7 +217,7 @@ void starWorkingParam::update(const arma::mat &lower,
                         const arma::vec &mu_t,
                         const arma::mat &B_t,
                         const arma::mat &Sigma_t,
-                        int n_rep, int nskp = 5){
+                        int n_rep, int nskp){
 
     int n = lower.n_rows;
     int q = lower.n_cols;
