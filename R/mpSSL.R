@@ -14,6 +14,8 @@
 #' @param s_max_condition only used in dpe, maximum tolerance for the condition number
 #' @param obj_counter_max only used in dpe, maximum number of couting the objective function
 #' @param verbose bool, whether to print intermidate notes
+#' @param nrep number of sample to take during E step of the latent normal
+#' @param nskp one point taken per nskp samples during E step of the latent normal
 #' @return A list with dynamic exploration result, point estimates are in `$Omega` and `$B`.
 #' 
 
@@ -28,7 +30,9 @@ mpSSL <- function(Y,X, condexp = FALSE,
                   eps = 1e-3,
                   s_max_condition = 10*nrow(X),
                   obj_counter_max = 5,
-                  verbose = FALSE){
+                  verbose = FALSE,
+                  nrep = 200,
+                  nskp = 1){
     Y <- as.matrix(Y)
     X <- as.matrix(X)
     diag_penalty <- 1 * diag_penalty
@@ -58,7 +62,7 @@ mpSSL <- function(Y,X, condexp = FALSE,
                     diag_penalty, max_iter, 
                     eps, s_max_condition, 
                     obj_counter_max,
-                    verbose)
+                    verbose,nrep,nskp)
         if(verbose==1){cat("done\n")}
         return(res)
     }
@@ -70,7 +74,7 @@ mpSSL <- function(Y,X, condexp = FALSE,
                     xis, theta_hyper_params, 
                     eta_hyper_params, 
                     diag_penalty, max_iter, 
-                    eps, verbose)
+                    eps, verbose,nrep,nskp)
     }
     else {
         if(verbose){cat("start the dynamic posterior exploration...\n")}
@@ -81,7 +85,7 @@ mpSSL <- function(Y,X, condexp = FALSE,
                     diag_penalty, max_iter, 
                     eps, s_max_condition, 
                     obj_counter_max,
-                    verbose)
+                    verbose,nrep,nskp)
     }
     if(verbose==1){cat("done\n")}
     return(res)
