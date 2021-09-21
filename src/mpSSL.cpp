@@ -200,12 +200,13 @@ List mpSSL_dpe(arma::mat X,
     xi_star = xi1 * q_star + xi0 * (1.0 - q_star);
     if(diag_penalty == 1) xi_star.diag().fill(xi1);
     else if(diag_penalty == 0) xi_star.diag().fill(0);
-    
-    // M Step Update of B and Theta
-    update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps,verbose);
+
     if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
     residualmat.update(Y,X,mu_old,B,Sigma,n_rep,nskp);
     mu_old = residualmat.mu;
+    // M Step Update of B and Theta
+    update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps,verbose);
+    
 
     // M Step Update of eta
     eta = (a_eta - 1 + arma::accu(q_star)/2)/(a_eta + b_eta - 2 + q*(q-1)/2);
@@ -315,12 +316,14 @@ List mpSSL_dpe(arma::mat X,
       if(diag_penalty == 1) xi_star.diag().fill(xi1);
       else if(diag_penalty == 0) xi_star.diag().fill(0);
       
-      // M Step Update of B and Theta
-      
-      update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps,verbose);
+
       if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
       residualmat.update(Y,X,mu_old,B,Sigma,n_rep,nskp);
       mu_old = residualmat.mu;
+      // M Step Update of B and Theta
+      
+      update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps,verbose);
+      
       // M Step Update of eta
       eta = (a_eta - 1 + arma::accu(q_star)/2)/(a_eta + b_eta - 2 + q*(q-1)/2);
       // M Step Update of Omega
@@ -428,11 +431,12 @@ List mpSSL_dpe(arma::mat X,
       if(diag_penalty == 1) xi_star.diag().fill(xi1);
       else if(diag_penalty == 0) xi_star.diag().fill(0);
       
-      // M Step Update of B and Theta
-      update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps,verbose);
       if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
       residualmat.update(Y,X,mu_old,B,Sigma,n_rep,nskp);
       mu_old = residualmat.mu;
+      // M Step Update of B and Theta
+      update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps,verbose);
+      
       // M Step Update of eta
       eta = (a_eta - 1 + arma::accu(q_star)/2)/(a_eta + b_eta - 2 + q*(q-1)/2);
       // M Step Update of Omega
@@ -601,12 +605,13 @@ List mpSSL_dpe(arma::mat X,
         xi_star = xi1 * q_star + xi0 * (1.0 - q_star);
         if(diag_penalty == 1) xi_star.diag().fill(xi1);
         else if(diag_penalty == 0) xi_star.diag().fill(0);
-        
-        // M Step Update of B and Theta
-        update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps,verbose);
+
         if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
         residualmat.update(Y,X,mu_old,B,Sigma,n_rep,nskp);
         mu_old = residualmat.mu;
+        // M Step Update of B and Theta
+        update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps,verbose);
+        
         // M Step Update of eta
         eta = (a_eta - 1 + arma::accu(q_star)/2)/(a_eta + b_eta - 2 + q*(q-1)/2);
         // M Step Update of Omega
@@ -815,9 +820,9 @@ List mpSSL_dcpe(arma::mat X,
   for(int l = 0; l < L; l++){
     lambda0 = lambda_spike(l);
     if(verbose == 1) Rcout << setprecision(6) << "Starting lambda0 = " << lambda0 << " num B non-zero = " << arma::accu(B != 0) << " theta = " << theta << endl;
-    update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps, verbose);
     residualmat.update(Y,X,mu_old,B,Sigma,n_rep,nskp);
     mu_old = residualmat.mu;
+    update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps, verbose);
     tmp_B = B;
     tmp_B.each_col()/x_col_weights;
     B0_path.slice(l) = tmp_B;
@@ -905,9 +910,10 @@ List mpSSL_dcpe(arma::mat X,
     B_old = B;
     Omega_old = Omega;
     
-    update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps, verbose);
     residualmat.update(Y,X,mu_old, B,Sigma,n_rep,nskp);
     mu_old = residualmat.mu;
+    update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps, verbose);
+    
     // now update Omega and eta
     for(int k = 0; k < q; k++){
       for(int kk = k+1; kk < q; kk++){
