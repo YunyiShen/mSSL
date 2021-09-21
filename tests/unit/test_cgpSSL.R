@@ -40,7 +40,7 @@ cgpSSL_dpe_res <- cgpSSL_dpe(X,Y,lambdas = list(lambda1 = 1, lambda0 = seq(10, n
 
 
 
-CARlasso:::stein_loss(Omega, mpSSL_dpe_res$Omega)
+CARlasso:::stein_loss(Omega, cgpSSL_dpe_res$Omega)
 
 
 
