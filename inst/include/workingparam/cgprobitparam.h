@@ -14,19 +14,17 @@ using namespace linconGaussR;
 namespace workingparam{
 
 
-class cgprobitWorkingParam: public WorkingParam{
+class cgprobitWorkingParam: public cgWorkingParam{
     public: 
-        arma::mat S_Omega;
-        arma::mat M;
+        //arma::mat S_Omega;
+        //arma::mat M;
         cgprobitWorkingParam() = default;
         cgprobitWorkingParam(arma::mat SS, 
             arma::mat RR,
             arma::mat tXRR,
             arma::mat tXXx,
-            arma::vec muu,int n): WorkingParam(SS, RR, tXRR, tXXx, muu, n){
-            S_Omega = SS;
-            M = SS;
-        }
+            arma::vec muu,int n): cgWorkingParam(SS, RR, tXRR, tXXx, muu, n){}
+
         inline void update(const arma::mat &Y,
                         const arma::mat &X,
                         const arma::vec &mu_t,
