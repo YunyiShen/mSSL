@@ -65,7 +65,8 @@ inline void starWorkingParam::update(const arma::mat &lower,
         x_init *= 0.5;
         x_init = arma::solve(C.t(), x_init-arma::trans(XB.row(i)));// this serves as the initial point
         LinearConstraints lincon(A,b,true);
-        //Rcout << "      " << i <<"th sample sampling start" << endl;
+        Rcout << "    taking "<< i << "th sample" << endl;
+        //Rcout << "      b:" << b.t() << endl;
         EllipticalSliceSampler sampler(n_rep + 1,lincon,nskp,x_init);
         sampler.run();
         //Rcout << "      end" << endl;

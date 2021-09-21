@@ -96,3 +96,18 @@ g_modelAR1 <- function(q, rho=.7, tol = 1e-10){
     return(list(Sigma = Sigma, Omega = Omega))
 }
 
+rSTARlogfloor <- function(X,B,mu,Sigma){
+    XB <- X %*% B
+    E <- mvrnorm(nrow(X),mu,Sigma)
+    res <- XB+E
+    res <- floor(exp(res))
+    return(res)
+}
+
+rSTARidfloor0 <- function(X,B,mu,Sigma){
+    XB <- X %*% B
+    E <- mvrnorm(nrow(X),mu,Sigma)
+    res <- XB+E
+    res <- floor(res)
+    return(res * (res>=0))
+}
