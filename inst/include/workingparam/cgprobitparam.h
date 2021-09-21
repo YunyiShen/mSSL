@@ -34,6 +34,7 @@ class cgprobitWorkingParam: public WorkingParam{
                         const arma::mat &Sigma_t,
                         const arma::mat &Omega_t,
                         int n_rep, int nskp = 5);
+        inline void update_M(const arma::mat &X, const arma::mat &B_new);
 
 };
 
@@ -102,6 +103,13 @@ inline void cgprobitWorkingParam::update(const arma::mat &Y,
     
     s_eval = eig_sym(S);
 
+}
+
+inline void cgprobitWorkingParam::update_M(const arma::mat &X,const arma::mat &B_new){
+    int n = X.n_rows;
+    arma::mat XB = X * B_new;
+    XB.each_row() += mu.t();
+    M = XB.t() * XB / n;
 }
 
 }

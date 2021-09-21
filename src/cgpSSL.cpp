@@ -213,12 +213,11 @@ List cgpSSL_dpe(arma::mat X,
     else if (diag_penalty == 0)
       xi_star.diag().fill(0);
 
-    // M Step Update of B and Theta
-    update_B_theta(n, p, q, B, residualmat.R, residualmat.tXR, residualmat.S, theta, Sigma, eta, X, residualmat.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
     residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
     mu_old = residualmat.mu;
-    
-
+    // M Step Update of B and Theta
+    update_B_theta(n, p, q, B, residualmat.R, residualmat.tXR, residualmat.S, theta, Sigma, eta, X, residualmat.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
+    residualmat.update_M(X,B);
     // M Step Update of eta
     eta = (a_eta - 1 + arma::accu(q_star) / 2) / (a_eta + b_eta - 2 + q * (q - 1) / 2);
     // M Step Update of Omega
@@ -227,8 +226,8 @@ List cgpSSL_dpe(arma::mat X,
     Omega = res_quic.slice(0);
     Sigma = res_quic.slice(1);
     unitdiag(Omega, Sigma); // fit Omega to have unit variance
-    residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-    mu_old = residualmat.mu;
+    //residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
+    //mu_old = residualmat.mu;
     
 
     // check convergence and whether we need to terminate early
@@ -366,11 +365,12 @@ List cgpSSL_dpe(arma::mat X,
       else if (diag_penalty == 0)
         xi_star.diag().fill(0);
 
+      residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
+      mu_old = residualmat.mu;
       // M Step Update of B and Theta
       update_B_theta(n, p, q, B, residualmat.R, residualmat.tXR, residualmat.S, theta, Sigma, eta, X, residualmat.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
       // update things related with B
-      residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-      mu_old = residualmat.mu;
+      residualmat.update_M(X,B);
 
       // M Step Update of eta
       eta = (a_eta - 1 + arma::accu(q_star) / 2) / (a_eta + b_eta - 2 + q * (q - 1) / 2);
@@ -382,8 +382,8 @@ List cgpSSL_dpe(arma::mat X,
       Sigma = res_quic.slice(1);
       unitdiag(Omega,Sigma);
       // updating things related with Omega
-      residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-      mu_old = residualmat.mu;
+      //residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
+      //mu_old = residualmat.mu;
 
       // check convergence and whether we need to terminate early
       converged = 1;
@@ -521,11 +521,11 @@ List cgpSSL_dpe(arma::mat X,
         xi_star.diag().fill(0);
       // I AM HERE
       // M Step Update of B and Theta
-      update_B_theta(n, p, q, B, residualmat.R, residualmat.tXR, residualmat.S, theta, Sigma, eta, X, residualmat.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
-      // update things related with B
       residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
       mu_old = residualmat.mu;
-
+      update_B_theta(n, p, q, B, residualmat.R, residualmat.tXR, residualmat.S, theta, Sigma, eta, X, residualmat.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
+      // update things related with B
+      residualmat.update_M(X,B);
       // M Step Update of eta
       eta = (a_eta - 1 + arma::accu(q_star) / 2) / (a_eta + b_eta - 2 + q * (q - 1) / 2);
       // M Step Update of Omega
@@ -536,8 +536,8 @@ List cgpSSL_dpe(arma::mat X,
       Sigma = res_quic.slice(1);
       unitdiag(Omega,Sigma);
       // updating things related with Omega
-      residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-      mu_old = residualmat.mu;
+      //residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
+      //mu_old = residualmat.mu;
 
       // check convergence and whether we need to terminate early
       converged = 1;
@@ -758,12 +758,13 @@ List cgpSSL_dpe(arma::mat X,
         else if (diag_penalty == 0)
           xi_star.diag().fill(0);
 
-        // I AM HERE
+        
+        residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
+        mu_old = residualmat.mu;
         // M Step Update of B and Theta
         update_B_theta(n, p, q, B, residualmat.R, residualmat.tXR, residualmat.S, theta, Sigma, eta, X, residualmat.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
         // update stuff related to B
-        residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-        mu_old = residualmat.mu;
+        residualmat.update_M(X,B);
         // M Step Update of eta
         eta = (a_eta - 1 + arma::accu(q_star) / 2) / (a_eta + b_eta - 2 + q * (q - 1) / 2);
         // M Step Update of Omega
@@ -773,8 +774,8 @@ List cgpSSL_dpe(arma::mat X,
         Sigma = res_quic.slice(1);
         unitdiag(Omega,Sigma);
         // updating things related with Omega
-        residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-        mu_old = residualmat.mu;
+        //residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
+        //mu_old = residualmat.mu;
 
 
         // check convergence and whether we need to terminate early
