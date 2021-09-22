@@ -60,7 +60,7 @@ idfloorlink <- function(Y,upper = TRUE){
 
 #' @return A list with dynamic exploration result, point estimates are in `$Omega` and `$B`.
 #' 
-fstarmSSL <- function(Y,X,link = idfloor0link,condexp = FALSE, 
+fstarmSSL <- function(Y,X,link = logfloorlink,condexp = FALSE, 
                     lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
                   xis = list(xi1 = 0.01 * nrow(X), xi0 = seq(0.1 * nrow(X), nrow(X), length = 10)),
                   theta_hyper_params = c(1, ncol(X) * ncol(Y)),

@@ -18,7 +18,9 @@ fstarmSSL(
   eps = 0.001,
   s_max_condition = 10 * nrow(X),
   obj_counter_max = 5,
-  verbose = FALSE
+  verbose = FALSE,
+  nrep = 200,
+  nskp = 1
 )
 }
 \arguments{
@@ -49,6 +51,10 @@ fstarmSSL(
 \item{obj_counter_max}{only used in dpe, maximum number of couting the objective function}
 
 \item{verbose}{bool, whether to print intermidate notes}
+
+\item{nrep}{number of sample to take during E step of the latent normal}
+
+\item{nskp}{one point taken per nskp samples during E step of the latent normal}
 }
 \value{
 A list with dynamic exploration result, point estimates are in `$Omega` and `$B`.
