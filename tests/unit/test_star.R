@@ -14,16 +14,15 @@ source("./R/starSSL.R")
 
 set.seed(12345)
 p <- 2
-q <- 3
+q <- 5
 n <- 50
-B <- as.matrix( rsparsematrix(p, q, 0.3, rand.x = function(n){runif(n,-1,1)}))
+B <- as.matrix( rsparsematrix(p, q, 0.3, rand.x = function(n){runif(n,-2,2)}))
 
 X <- matrix(rnorm(p * n), nrow = n, ncol = p)
 
 graph <- g_model1(q)
 Sigma <- graph$Sigma
 Omega <- graph$Omega
-Sigma <- diag(q)
 mu <- 0*runif(q,-2,2)+2
 mu <- 0 * mu 
 
