@@ -57,6 +57,7 @@ inline arma::vec EllipticalSliceSampler::compute_next_point(arma::vec x0)
     }
     //Rcout << "draw angle" << endl;
     double t_new = slice_sampler.draw_angle();
+    
     //Rcout << "finishing draw angle" << endl;
     return ellipse.x(t_new);
 }
@@ -86,14 +87,19 @@ inline void EllipticalSliceSampler::run()
         {
             //Rcout << "compute next point" << endl;
             x = this->compute_next_point(x);
+            
             while (arma::as_scalar(lincon.integration_domain(x)) != 1)
             {
-                //Rcout << "compute next point in while" << endl;
+                
+                x = trans(loop_state.samples.row(n_sample - 1));
                 x = this->compute_next_point(x);
+                
             }
         }
         //Rcout << "update saved points" << endl;
         loop_state.update(x);
+
+        //Rcout << "X" << loop_state.samples << endl;
     }
 }
 

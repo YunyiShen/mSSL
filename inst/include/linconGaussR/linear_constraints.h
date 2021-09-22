@@ -68,7 +68,7 @@ LinearConstraints::indicator_intersection(const arma::mat &x)
         temp = 1;
         for (int j = 0; j < M; j++)
         {
-            temp *= eval(j, i) >= 0;
+            temp *= (int)((eval(j, i) >= 0));
         }
         res(i) = temp;
     }
@@ -91,7 +91,7 @@ inline arma::Mat<int> LinearConstraints::indicator_union(const arma::mat &x)
         temp = 1;
         for (int j = 0; j < M; j++)
         {
-            temp *= eval(j, i) < 0;
+            temp *= (int)((eval(j, i) < 0));
         }
         res(i) = 1 - temp;
     }

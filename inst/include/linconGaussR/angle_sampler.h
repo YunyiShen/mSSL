@@ -17,7 +17,7 @@ public:
         rotation_angle = temp.rotation_angle;
         arma::vec slices = temp.shifted_angle;
         rotated_slices = slices;
-        rotated_slices.reshape(slices.n_elem / 2, 2);
+        rotated_slices.reshape( 2,slices.n_elem / 2);
     }
 
     inline arma::vec _get_slices_cumulative_length();
@@ -26,11 +26,9 @@ public:
 
 inline arma::vec AngleSampler::_get_slices_cumulative_length()
 {
-    arma::vec cum_len(rotated_slices.n_rows + 1, fill::zeros);
-    for (int i = 0; i < rotated_slices.n_rows; i++)
-    {
-        cum_len(i + 1) = cum_len(i) + rotated_slices(i, 1) - rotated_slices(i, 0);
-    }
+    arma::vec cum_len(rotated_slices.n_cols + 1, fill::zeros);
+    arma::vec lengths =trans( rotated_slices.row(1) - rotated_slices.row(0)); 
+    cum_len.rows(1,rotated_slices.n_cols) = cumsum(lengths);
     return (cum_len);
 }
 
@@ -48,7 +46,7 @@ inline double AngleSampler::draw_angle()
         }
     }
     idx--;
-    return (rotated_slices(idx, 0) + sample - cum_len(idx) + rotation_angle);
+    return (rotated_slices(0,idx) + sample - cum_len(idx) + rotation_angle);
 }
 
 }

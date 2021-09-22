@@ -14,19 +14,17 @@ using namespace linconGaussR;
 namespace workingparam{
 
 
-class cgprobitWorkingParam: public WorkingParam{
+class cgprobitWorkingParam: public cgWorkingParam{
     public: 
-        arma::mat S_Omega;
-        arma::mat M;
+        //arma::mat S_Omega;
+        //arma::mat M;
         cgprobitWorkingParam() = default;
         cgprobitWorkingParam(arma::mat SS, 
             arma::mat RR,
             arma::mat tXRR,
             arma::mat tXXx,
-            arma::vec muu,int n): WorkingParam(SS, RR, tXRR, tXXx, muu, n){
-            S_Omega = SS;
-            M = SS;
-        }
+            arma::vec muu,int n): cgWorkingParam(SS, RR, tXRR, tXXx, muu, n){}
+
         inline void update(const arma::mat &Y,
                         const arma::mat &X,
                         const arma::vec &mu_t,
@@ -34,6 +32,7 @@ class cgprobitWorkingParam: public WorkingParam{
                         const arma::mat &Sigma_t,
                         const arma::mat &Omega_t,
                         int n_rep, int nskp = 5);
+        inline void update_M(const arma::mat &X, const arma::mat &B_new);
 
 };
 
@@ -102,6 +101,13 @@ inline void cgprobitWorkingParam::update(const arma::mat &Y,
     
     s_eval = eig_sym(S);
 
+}
+
+inline void cgprobitWorkingParam::update_M(const arma::mat &X,const arma::mat &B_new){
+    int n = X.n_rows;
+    arma::mat XB = X * B_new;
+    XB.each_row() += mu.t();
+    M = XB.t() * XB / n;
 }
 
 }

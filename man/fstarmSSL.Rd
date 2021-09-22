@@ -2,12 +2,12 @@
 % Please edit documentation in R/starSSL.R
 \name{fstarmSSL}
 \alias{fstarmSSL}
-\title{Multivariate STAR Spike-and-Slab LASSO with fixed link function and floor rouding}
+\title{Multivariate STAR Spike-and-Slab LASSO with fixed link function}
 \usage{
 fstarmSSL(
   Y,
   X,
-  link = log,
+  link = logfloorlink,
   condexp = FALSE,
   lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
   xis = list(xi1 = 0.01 * nrow(X), xi0 = seq(0.1 * nrow(X), nrow(X), length = 10)),
@@ -18,7 +18,9 @@ fstarmSSL(
   eps = 0.001,
   s_max_condition = 10 * nrow(X),
   obj_counter_max = 5,
-  verbose = FALSE
+  verbose = FALSE,
+  nrep = 200,
+  nskp = 1
 )
 }
 \arguments{
@@ -26,7 +28,7 @@ fstarmSSL(
 
 \item{X}{design matrix}
 
-\item{link}{the known link function for STAR model}
+\item{link}{the function calculate the bounds of the latent normal h^-1(g(y*)), default is floor rounding with log link, should be a function with two arguments, the data and a boolean argument, if true we calculate the upper bound and lower bound otherwise.}
 
 \item{condexp}{bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)}
 
@@ -49,6 +51,10 @@ fstarmSSL(
 \item{obj_counter_max}{only used in dpe, maximum number of couting the objective function}
 
 \item{verbose}{bool, whether to print intermidate notes}
+
+\item{nrep}{number of sample to take during E step of the latent normal}
+
+\item{nskp}{one point taken per nskp samples during E step of the latent normal}
 }
 \value{
 A list with dynamic exploration result, point estimates are in `$Omega` and `$B`.
