@@ -82,17 +82,21 @@ List fstarSSL_dpe(arma::mat X,
   YY.elem(find_nonfinite(YY)) = upper.elem(find_nonfinite(YY));
   YY += upper;
   YY *= .5;
+  YY.elem(find_nonfinite(YY)).zeros();
   mu_init = arma::trans(mean(YY));
   YY.each_row() -= mu_init.t(); 
 
 
   arma::vec alpha(q); // will hold the intercept. only computed at the end of all of the loops
   arma::mat B(p,q);
-  B = arma::solve(X.t() * X, X.t() * YY);
+  //B = arma::solve(X.t() * X, X.t() * YY);
+  B.zeros();
   arma::mat XB_init = X * B;
-  arma::mat Sigma = cov(YY-XB_init);
+  arma::mat Sigma(q,q);
+  Sigma.eye();
   //Rcout << Sigma << endl;
-  arma::mat Omega = inv(Sigma);
+  arma::mat Omega(q,q);
+  Omega.eye();
 
   arma::mat B_old = B; // used internally to check convergence
   arma::mat tmp_B = B; // used at the end to re-scale columns
@@ -782,18 +786,24 @@ List fstarSSL_dcpe(arma::mat X,
   YY.elem(find_nonfinite(YY)) = upper.elem(find_nonfinite(YY));
   YY += upper;
   YY *= .5;
+  YY.elem(find_nonfinite(YY)).zeros();
   mu_init = arma::trans(mean(YY));
   YY.each_row() -= mu_init.t(); 
   arma::vec mu_old = mu_init;
 
   arma::mat B(p,q);
-  B = arma::solve((X.t() * X), (X.t() * YY));
+  //B = arma::solve((X.t() * X), (X.t() * YY));
+  B.zeros();
   arma::mat XB_init = X * B;
   arma::mat B_old = B; // used internally
   arma::mat tmp_B = B; // we will re-scale the working B matrix when we save the path
-  arma::mat Sigma = cov(YY-XB_init);
+  //arma::mat Sigma = cov(YY-XB_init);
   //Rcout << Sigma << endl;
-  arma::mat Omega = inv(Sigma);
+  arma::mat Sigma(q,q);
+  Sigma.eye();
+  //arma::mat Omega = inv(Sigma);
+  arma::mat Omega(q,q);
+  Omega.eye();
   arma::mat Omega_old = Omega; // used internally to check convergence in the EM algorithm
 
 
