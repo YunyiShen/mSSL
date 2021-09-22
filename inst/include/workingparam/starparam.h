@@ -77,8 +77,7 @@ inline void starWorkingParam::update(const arma::mat &lower,
         LinearConstraints lincon(A,b,true);
         
         EllipticalSliceSampler sampler(n_rep + 1,lincon,nskp,x_init);
-        
-        Rcout << "      end" << endl;
+        sampler.run();
         arma::mat resi = sampler.loop_state.samples;
         resi.shed_row(0);// we will remove the initial points
         resi = resi * C;
