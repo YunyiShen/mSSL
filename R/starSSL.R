@@ -31,7 +31,7 @@ idfloor0link <- function(Y,upper = TRUE){
 #' @param Y the observed data
 #' @param upper whether to calculate upper bound
 #' @return a matrix of lower or upper bound of the latent normal
-idfloor0link <- function(Y,upper = TRUE){
+idfloorlink <- function(Y,upper = TRUE){
     if(upper){
         return(Y+1)
     }

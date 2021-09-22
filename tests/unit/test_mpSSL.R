@@ -36,7 +36,7 @@ mpSSL_dpe_res <- mpSSL_dpe(X,Y,lambdas = list(lambda1 = 1, lambda0 = seq(10, nro
                     eps = 1e-2,
                     s_max_condition = 10*nrow(X),
                     obj_counter_max = 5,
-                    verbose = 1, n_rep = 200)
+                    verbose = 1, n_rep = 1000)
 
 mpSSL_dcpe_res <- mpSSL_dcpe(X,Y,
                     lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),

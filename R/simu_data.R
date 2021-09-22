@@ -111,3 +111,12 @@ rSTARidfloor0 <- function(X,B,mu,Sigma){
     res <- floor(res)
     return(res * (res>=0))
 }
+
+
+rSTARidfloor <- function(X,B,mu,Sigma){
+    XB <- X %*% B
+    E <- mvrnorm(nrow(X),mu,Sigma)
+    res <- XB+E
+    res <- floor(res)
+    return(res)
+}
