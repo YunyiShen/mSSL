@@ -120,3 +120,48 @@ rSTARidfloor <- function(X,B,mu,Sigma){
     res <- floor(res)
     return(res)
 }
+
+#' simulating a STAR model with latent normal being mean-covariance parameterization
+#' @description Take random samples following STAR and mean-covariance parameterization of latent normal, using link function given 
+#' @param X design matrix
+#' @param B regression coefficients
+#' @param mu mean vector
+#' @param Sigma covariance
+#' @param link a function convert latent normal to integers, default is the log-floor link
+#' @return a matrix of STAR sample
+rSTAR <- function(X,B,mu, Sigma,link = function(x){floor(exp(x))}){
+    if(nrow(B)!=ncol(X)){
+        stop("Dimension mismatch of B and X")
+    }
+    if(ncol(B)!=ncol(Sigma)){
+        stop("Dimension mismatch of B and Sigma")
+    }
+    XB <- X %*% B
+    E <- mvrnorm(nrow(X),mu,Sigma)
+    res <- XB+E
+    return(link(res))
+}
+
+
+#' simulating a STAR model with latent normal being chain graph parameterization
+#' @description Take random samples following STAR and chain graph parameterization of latent normal, using link function given 
+#' @param X design matrix
+#' @param B conditional regression coefficients
+#' @param mu conditional mean vector
+#' @param Sigma covariance
+#' @param link a function convert latent normal to integers, default is the log-floor link
+#' @return a matrix of STAR sample
+rcgSTAR <- function(X,B,mu, Sigma,link = function(x){floor(exp(x))}){
+    if(nrow(B)!=ncol(X)){
+        stop("Dimension mismatch of B and X")
+    }
+    if(ncol(B)!=ncol(Sigma)){
+        stop("Dimension mismatch of B and Sigma")
+    }
+    Omega <- solve(Sigma)
+    XB <- X %*% B
+    E <- mvrnorm(nrow(X),mu,Omega)
+    res <- XB+E
+    res <- res %*% Sigma
+    return(link(res))
+}

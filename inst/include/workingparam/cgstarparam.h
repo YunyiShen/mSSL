@@ -63,8 +63,6 @@ inline void cgstarWorkingParam::update(const arma::mat &lower,
     for(int i = 0 ; i < n ; i++){
         meani = XB.row(i) * Sigma_t;
         Rcpp::checkUserInterrupt();
-
-        Rcpp::checkUserInterrupt();
         arma::vec b(2*q);
         arma::mat A(2*q,q);
         b.rows(0,q-1) = trans(meani-lower.row(i));
@@ -80,9 +78,9 @@ inline void cgstarWorkingParam::update(const arma::mat &lower,
         x_init(find_nonfinite(x_init)) = x_init_temp(find_nonfinite(x_init))+1;
         x_init += x_init_temp;
         x_init *= 0.5;
-        x_init = arma::solve(C.t(), x_init-arma::trans(XB.row(i)));// this serves as the initial point
+        x_init = arma::solve(C.t(), x_init-arma::trans(meani));// this serves as the initial point
         LinearConstraints lincon(A,b,true);
-
+        //Rcout << "sampling " << i << "th sample" << endl;
         EllipticalSliceSampler sampler(n_rep + 1,lincon,nskp,x_init);
         sampler.run();
         //Rcout << "      end" << endl;

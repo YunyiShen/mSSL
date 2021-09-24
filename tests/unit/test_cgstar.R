@@ -9,9 +9,10 @@ source("./R/graph_generator.R")
 source("./R/error_B.R")
 source("./R/error_Omega.R")
 source("./R/simu_data.R")
-sourceCpp("./src/fstarSSL_dpe.cpp",rebuild = TRUE)
-sourceCpp("./src/fstarSSL_dcpe.cpp")
+sourceCpp("./src/cgfstarSSL_dpe.cpp",rebuild = TRUE)
+sourceCpp("./src/cgfstarSSL_dcpe.cpp",rebuild = TRUE)
 source("./R/starSSL.R")
+
 
 set.seed(12345)
 p <- 2
@@ -24,14 +25,14 @@ X <- matrix(rnorm(p * n), nrow = n, ncol = p)
 graph <- g_model1(q)
 Sigma <- graph$Sigma
 Omega <- graph$Omega
-mu <- 0*runif(q,-2,2)+2
-mu <- 0 * mu 
+mu <- 0*runif(q,-2,2)+1
 
-Y <- rSTARlogfloor(X,B,mu,Sigma)
-Y <- rSTARidfloor0(X,B,mu,Sigma)
+
+Y <- rcgSTAR(X,B,mu,Sigma)
 
 lower <- logfloorlink(Y,FALSE)
 upper <- logfloorlink(Y,TRUE)
 
-star_res_dpe <- fstarmSSL(Y,X,link = logfloorlink,verbose = TRUE)
-star_res_dcpe <- fstarmSSL(Y,X,link = logfloorlink, condexp = TRUE,verbose = TRUE, eps = 1e-3)
+cgstar_res_dpe <- fstarmSSL(Y,X,link = logfloorlink,cg = TRUE,verbose = TRUE)
+cgstar_res_dcpe <- fstarmSSL(Y,X,link = logfloorlink, cg = TRUE, condexp = TRUE,verbose = TRUE, eps = 1e-3)
+

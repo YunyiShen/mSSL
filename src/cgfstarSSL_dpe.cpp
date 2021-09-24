@@ -225,7 +225,8 @@ List cgfstarSSL_dpe(arma::mat X,
       xi_star.diag().fill(xi1);
     else if (diag_penalty == 0)
       xi_star.diag().fill(0);
-
+    
+    if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
     residualmat.update(lower, upper,X,mu_old,B,Sigma,Omega,n_rep,nskp);
     mu_old = residualmat.mu;
     // M Step Update of B and Theta
@@ -378,6 +379,8 @@ List cgfstarSSL_dpe(arma::mat X,
       else if (diag_penalty == 0)
         xi_star.diag().fill(0);
 
+      
+      if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
       residualmat.update(lower, upper,X,mu_old,B,Sigma,Omega,n_rep,nskp);
       mu_old = residualmat.mu;
       // M Step Update of B and Theta
@@ -534,6 +537,7 @@ List cgfstarSSL_dpe(arma::mat X,
         xi_star.diag().fill(0);
       // I AM HERE
       // M Step Update of B and Theta
+      if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
       residualmat.update(lower, upper,X,mu_old,B,Sigma,Omega,n_rep,nskp);
       mu_old = residualmat.mu;
       update_B_theta(n, p, q, B, residualmat.R, residualmat.tXR, residualmat.S, theta, Sigma, eta, X, residualmat.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
@@ -771,7 +775,7 @@ List cgfstarSSL_dpe(arma::mat X,
         else if (diag_penalty == 0)
           xi_star.diag().fill(0);
 
-        
+        if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
         residualmat.update(lower, upper,X,mu_old,B,Sigma,Omega,n_rep,nskp);
         mu_old = residualmat.mu;
         // M Step Update of B and Theta

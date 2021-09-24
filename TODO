@@ -3,16 +3,16 @@
     - gSSL.cpp
     - cgSSL_dpe.cpp
     - cgSSL_dcpe.cpp
-    - fstarSSL_dpe.cpp
+    - cgVARSSL_dpe.cpp
+    - cgVARSSL_dcpe.cpp
     - mpSSL_dpe.cpp
     - cgpSSL_dpe.cpp
-    - cgVARSSL_dpe.cpp
-    - unitdiag.cpp
+    - fstarSSL_dpe.cpp
     - fstar_SSL_dcpe.cpp // works when responses are not too small or too many 0s
-    - cgVARSSL_dcpe.cpp
+    - cgfstarSSL_dpe.cpp
+    - cgfstarSSL_dcpe.cpp // seems to work when responses are not too small or too many 0s
+    - unitdiag.cpp
 - Compiled, not unit tested:
     - mpSSL_dcpe.cpp // this seems not working
     - cgpSSL_dcpe.cpp // not optimistic about this one
-    - cgfstarSSL_dpe.cpp
-    - cgfstarSSL_dcpe.cpp 
 - Never compiled:
