@@ -81,16 +81,19 @@ inline void EllipticalSliceSampler::run()
     arma::vec x;
     while (!this->is_converged())
     {
+        Rcpp::checkUserInterrupt();
         int n_sample = loop_state.samples.n_rows;
         x = trans(loop_state.samples.row(n_sample - 1));
         for (int i = 0; i <= n_skip; i++)
         {
-            //Rcout << "compute next point" << endl;
+            //Rcout << "compute next point" << endl;            
             x = this->compute_next_point(x);
             
             while (arma::as_scalar(lincon.integration_domain(x)) != 1)
             {
-                
+                //Rcout << "In linconGauss: out of domain, resample" << endl;
+                //Rcout << this->lincon.A << this->lincon.b << endl;
+                //stop("out of domain");
                 x = trans(loop_state.samples.row(n_sample - 1));
                 x = this->compute_next_point(x);
                 
