@@ -40,7 +40,7 @@ varSSL_dcpe_res <- cgVARSSL_dcpe(Y,
                     eta_hyper_params = c(1, ncol(Y)),
                     diag_penalty = 0,
                     max_iter = 10000,
-                    eps = 1e-3,
+                    eps = 1e-6,
                     #s_max_condition = 10*(nrow(Y)-1),
                     #obj_counter_max = 5,
                     verbose = 1)
