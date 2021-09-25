@@ -19,26 +19,23 @@ class cgprobitWorkingParam: public cgWorkingParam{
         //arma::mat S_Omega;
         //arma::mat M;
         cgprobitWorkingParam() = default;
-        cgprobitWorkingParam(arma::mat SS, 
-            arma::mat RR,
-            arma::mat tXRR,
-            arma::mat tXXx,
-            arma::vec muu,int n): cgWorkingParam(SS, RR, tXRR, tXXx, muu, n){}
+        cgprobitWorkingParam(arma::mat X, arma::mat Y): cgWorkingParam(X,Y){}
 
-        inline void update(const arma::mat &Y,
-                        const arma::mat &X,
-                        const arma::vec &mu_t,
+        inline void update(const arma::vec &mu_t,
                         const arma::mat &B_t,
                         const arma::mat &Sigma_t,
                         const arma::mat &Omega_t,
                         int n_rep, int nskp = 5);
+        inline void postprocessing(arma::vec &mu,
+                        arma::mat &B, 
+                        arma::mat & Sigma, arma::mat &Omega){
+            unitdiag(Omega,Sigma);
+        }
         
 
 };
 
-inline void cgprobitWorkingParam::update(const arma::mat &Y,
-                        const arma::mat &X,
-                        const arma::vec &mu_t,
+inline void cgprobitWorkingParam::update(const arma::vec &mu_t,
                         const arma::mat &B_t,
                         const arma::mat &Sigma_t,
                         const arma::mat &Omega_t,

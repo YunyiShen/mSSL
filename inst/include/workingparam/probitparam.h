@@ -16,18 +16,20 @@ namespace workingparam{
 class probitWorkingParam : public WorkingParam{
     public:
         probitWorkingParam() = default;
-        probitWorkingParam(arma::mat SS, arma::mat RR,arma::mat tXRR,arma::mat tXXx,arma::vec muu,int n): WorkingParam(SS, RR, tXRR, tXXx, muu, n) {}
-        inline void update(const arma::mat &Y,
-                        const arma::mat &X,
-                        const arma::vec &mu_t,
+        probitWorkingParam(arma::mat X, arma::mat Y): WorkingParam(X,Y) {}
+        inline void update(const arma::vec &mu_t,
                         const arma::mat &B_t,
                         const arma::mat &Sigma_t,
                         int n_rep, int nskp = 5);
+        inline void postprocessing(
+                        arma::mat &B, 
+                        arma::mat & Sigma, arma::mat &Omega){
+            unitdiag(Sigma,Omega);
+        }
 };
 
 // this will get us EM result of mu and the useful S matrix given Y and parameter at last iteration 
-inline void probitWorkingParam::update(const arma::mat &Y,
-                        const arma::mat &X,
+inline void probitWorkingParam::update(
                         const arma::vec &mu_t,
                         const arma::mat &B_t,
                         const arma::mat &Sigma_t,

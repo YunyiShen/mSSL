@@ -12,6 +12,8 @@ namespace workingparam{
 
 class WorkingParam{
     public:
+        arma::mat X;
+        arma::mat Y;
         arma::mat S;
         arma::mat R;
         arma::mat tXX;
@@ -22,21 +24,29 @@ class WorkingParam{
         int n_B;
         int n_Omega; 
         WorkingParam() = default;
-        WorkingParam(arma::mat SS, arma::mat RR,arma::mat tXRR,arma::mat tXXx,arma::vec muu,int n){
-            S = SS;
-            tRR = SS*n;
-            R = RR;
-            tXR = tXRR;
-            tXX = tXXx;
-            mu = muu;
-            s_eval = eig_sym(S);
-            n_B = R.n_rows;
+        WorkingParam(arma::mat X, arma::mat Y): X(X),Y(Y){
+            n_B = X.n_rows;
             n_Omega = n_B;
+            tRR = Y.t() * Y;
+            S = tRR/n_B;
+            R = Y;
+            tXR = X.t() * R;
+            tXX = X.t() * X;
+            mu = trans(mean(Y));
+            s_eval = eig_sym(S);
+        }
+        inline void postprocessing(arma::vec &mu,
+                        arma::mat &B,
+                        arma::mat &Sigma,
+                        arma::mat &Omega){
+            return;
         }
 };
 
 class cgWorkingParam{
     public:
+        arma::mat X;
+        arma::mat Y;
         arma::mat S;
         arma::mat R;
         arma::mat tXX;
@@ -49,29 +59,33 @@ class cgWorkingParam{
         int n_B;
         int n_Omega;
         cgWorkingParam() = default;
-        cgWorkingParam(arma::mat SS, arma::mat RR,arma::mat tXRR,arma::mat tXXx,arma::vec muu,int n){
-            S = SS;
-            tRR = SS*n;
-            R = RR;
-            tXR = tXRR;
-            tXX = tXXx;
-            mu = muu;
-            S_Omega = SS;
-            M = SS;
+        cgWorkingParam(arma::mat X, arma::mat Y){
+            n_B = X.n_rows;
+            n_Omega = Y.n_rows;
+            tRR = Y.t() * Y;
+            S = tRR/n_B;
+            R = Y;
+            tXR = X.t() * R;
+            tXX = X.t() * X;
+            mu = trans(mean(Y));
+            S_Omega = S;
+            M = S;
             s_eval = eig_sym(S);
-            n_B = R.n_rows;
-            n_Omega = n_B;
         }
         inline void update_M(const arma::mat &X, const arma::mat &B_new);
+        inline void postprocessing(
+                        arma::mat &B,
+                        arma::mat &Sigma,
+                        arma::mat &Omega){
+            return;
+        }
 };
 
 inline void cgWorkingParam::update_M(const arma::mat &X,const arma::mat &B_new){
-    int n = X.n_rows;
     arma::mat XB = X * B_new;
     XB.each_row() += mu.t();
-    M = XB.t() * XB / n;
+    M = XB.t() * XB / n_B;
 }
-
 
 inline void unitdiag(arma::mat & Sigma, arma::mat &Omega){
     arma::vec scaling = Sigma.diag();
