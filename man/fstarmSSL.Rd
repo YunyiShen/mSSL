@@ -8,6 +8,7 @@ fstarmSSL(
   Y,
   X,
   link = logfloorlink,
+  cg = FALSE,
   condexp = FALSE,
   lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
   xis = list(xi1 = 0.01 * nrow(X), xi0 = seq(0.1 * nrow(X), nrow(X), length = 10)),
@@ -30,7 +31,9 @@ fstarmSSL(
 
 \item{link}{the function calculate the bounds of the latent normal h^-1(g(y*)), default is floor rounding with log link, should be a function with two arguments, the data and a boolean argument, if true we calculate the upper bound and lower bound otherwise.}
 
-\item{condexp}{bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)}
+\item{cg}{bool whether to use chain graph parameterization, default FALSE}
+
+\item{condexp}{bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe), not very stable when cg=TRUE}
 
 \item{lambdas}{hyperparameters to be explored by the algorithm, penalty on B}
 
