@@ -17,16 +17,28 @@ cgVARSSL_dpe <- function(Y, lambdas, xis, theta_hyper_params, eta_hyper_params, 
     .Call(`_mSSL_cgVARSSL_dpe`, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose)
 }
 
+cgfstarSSL_dcpe <- function(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep = 1000L, nskp = 5L) {
+    .Call(`_mSSL_cgfstarSSL_dcpe`, X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp)
+}
+
+cgfstarSSL_dpe <- function(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep = 1000L, nskp = 5L) {
+    .Call(`_mSSL_cgfstarSSL_dpe`, X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
+}
+
+cgpSSL_dcpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep = 1000L, nskp = 5L) {
+    .Call(`_mSSL_cgpSSL_dcpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp)
+}
+
 cgpSSL_dpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep = 1000L, nskp = 5L) {
     .Call(`_mSSL_cgpSSL_dpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
 }
 
-fstarSSL_dpe <- function(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep = 1000L, nskp = 5L) {
-    .Call(`_mSSL_fstarSSL_dpe`, X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
-}
-
 fstarSSL_dcpe <- function(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep = 1000L, nskp = 5L) {
     .Call(`_mSSL_fstarSSL_dcpe`, X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp)
+}
+
+fstarSSL_dpe <- function(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep = 1000L, nskp = 5L) {
+    .Call(`_mSSL_fstarSSL_dpe`, X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
 }
 
 gSSLcpp <- function(Y, xis, eta_hyper_params, diag_penalty, max_iter, eps, obj_counter_max, verbose) {
@@ -41,16 +53,12 @@ mSSL_dcpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, 
     .Call(`_mSSL_mSSL_dcpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose)
 }
 
-gSSL <- function(Y, xis, eta_hyper_params, diag_penalty, max_iter, eps, obj_counter_max, verbose) {
-    .Call(`_mSSL_gSSL`, Y, xis, eta_hyper_params, diag_penalty, max_iter, eps, obj_counter_max, verbose)
+mpSSL_dcpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep = 1000L, nskp = 5L) {
+    .Call(`_mSSL_mpSSL_dcpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp)
 }
 
 mpSSL_dpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep = 1000L, nskp = 5L) {
     .Call(`_mSSL_mpSSL_dpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp)
-}
-
-mpSSL_dcpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep = 1000L, nskp = 5L) {
-    .Call(`_mSSL_mpSSL_dcpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp)
 }
 
 #' scale covariance and precision in place
