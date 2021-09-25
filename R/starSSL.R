@@ -44,7 +44,8 @@ idfloorlink <- function(Y,upper = TRUE){
 #' @param Y response matrix
 #' @param X design matrix
 #' @param link the function calculate the bounds of the latent normal h^-1(g(y*)), default is floor rounding with log link, should be a function with two arguments, the data and a boolean argument, if true we calculate the upper bound and lower bound otherwise.
-#' @param condexp bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)
+#' @param cg bool whether to use chain graph parameterization, default FALSE
+#' @param condexp bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe), not very stable when cg=TRUE
 #' @param lambdas hyperparameters to be explored by the algorithm, penalty on B
 #' @param xis hyperparameters to be explored by the algorithm, penalty on Omega
 #' @param theta_hyper_params hyperparameter to be set, prior on spike weight of B
@@ -60,8 +61,10 @@ idfloorlink <- function(Y,upper = TRUE){
 
 #' @return A list with dynamic exploration result, point estimates are in `$Omega` and `$B`.
 #' 
-fstarmSSL <- function(Y,X,link = logfloorlink,condexp = FALSE, 
-                    lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
+fstarmSSL <- function(Y,X,link = logfloorlink,
+                  cg = FALSE, 
+                  condexp = FALSE, 
+                  lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
                   xis = list(xi1 = 0.01 * nrow(X), xi0 = seq(0.1 * nrow(X), nrow(X), length = 10)),
                   theta_hyper_params = c(1, ncol(X) * ncol(Y)),
                   eta_hyper_params = c(1, ncol(Y)),
@@ -90,22 +93,43 @@ fstarmSSL <- function(Y,X,link = logfloorlink,condexp = FALSE,
     if(condexp){
         if(verbose){cat("start the dynamic *conditional* posterior exploration...\n")}
         verbose <- 1 * verbose
-        res <- fstarSSL_dcpe(X,lower, upper,lambdas, 
+        if(cg){
+            res <- cgfstarSSL_dcpe(X,lower, upper,lambdas, 
                     xis, theta_hyper_params, 
                     eta_hyper_params, 
                     diag_penalty, max_iter, 
                     eps, verbose,nrep,nskp)
+        }
+        else{
+            res <- fstarSSL_dcpe(X,lower, upper,lambdas, 
+                    xis, theta_hyper_params, 
+                    eta_hyper_params, 
+                    diag_penalty, max_iter, 
+                    eps, verbose,nrep,nskp)
+        }
     }
     else {
         if(verbose){cat("start the dynamic posterior exploration...\n")}
         verbose <- 1 * verbose
-        res <- fstarSSL_dpe(X,lower,upper,lambdas, 
+        if(cg){
+            res <- cgfstarSSL_dpe(X,lower,upper,lambdas, 
                     xis, theta_hyper_params, 
                     eta_hyper_params, 
                     diag_penalty, max_iter, 
                     eps, s_max_condition, 
                     obj_counter_max,
                     verbose,nrep,nskp)
+        }
+        else{
+            res <- fstarSSL_dpe(X,lower,upper,lambdas, 
+                    xis, theta_hyper_params, 
+                    eta_hyper_params, 
+                    diag_penalty, max_iter, 
+                    eps, s_max_condition, 
+                    obj_counter_max,
+                    verbose,nrep,nskp)
+        }
+        
     }
     if(verbose==1){cat("done\n")}
     return(res)

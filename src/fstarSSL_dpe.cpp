@@ -15,9 +15,12 @@ using namespace mSSL;
 using namespace quic;
 using namespace workingparam;
 
+
+// star model with fixed transformation, box-cox need large change to the current wheels
 // [[Rcpp::export]]
-List mpSSL_dpe(arma::mat X,
-              arma::mat Y,// will be binary
+List fstarSSL_dpe(arma::mat X,
+              arma::mat lower,// the lower bound of latent normal, need to be caculated in R based on data
+              arma::mat upper,// the upper bound of latent normal, need to be caculated in R
               List lambdas,
               List xis,
               arma::vec theta_hyper_params,
@@ -31,8 +34,8 @@ List mpSSL_dpe(arma::mat X,
               int n_rep = 1000,
               int nskp = 5)
 {
-  int n = Y.n_rows;
-  int q = Y.n_cols;
+  int n = upper.n_rows;
+  int q = upper.n_cols;
   int p = X.n_cols;
   
   // Center columns of X
@@ -73,30 +76,46 @@ List mpSSL_dpe(arma::mat X,
   double a_eta = eta_hyper_params(0);
   double b_eta = eta_hyper_params(1);
   
-  // Initialize the working parameters
+  // Initialize the working parameters, we want some sort of warm start
+  arma::vec mu_init;
+  arma::mat YY = lower;
+  YY.elem(find_nonfinite(YY)) = upper.elem(find_nonfinite(YY));
+  YY += upper;
+  YY *= .5;
+  YY.elem(find_nonfinite(YY)).zeros();
+  mu_init = arma::trans(mean(YY));
+  YY.each_row() -= mu_init.t(); 
+
+
   arma::vec alpha(q); // will hold the intercept. only computed at the end of all of the loops
   arma::mat B(p,q);
+  //B = arma::solve(X.t() * X, X.t() * YY);
   B.zeros();
-  arma::mat B_old = B; // used internally to check convergence
-  arma::mat tmp_B = B; // used at the end to re-scale columns
-  arma::mat Omega(q,q);
-  Omega.eye();
-  arma::mat Omega_old = Omega;
+  arma::mat XB_init = X * B;
   arma::mat Sigma(q,q);
   Sigma.eye();
+  //Rcout << Sigma << endl;
+  arma::mat Omega(q,q);
+  Omega.eye();
+
+  arma::mat B_old = B; // used internally to check convergence
+  arma::mat tmp_B = B; // used at the end to re-scale columns
+  
+  
+  arma::mat Omega_old = Omega;
   double theta = 0.5;
   double eta = 0.5;
   double obj = 0.0; // value of objective function
   double old_obj = 0.0; // used to check convergence
-  arma::vec mu_old(q,fill::zeros);
+  arma::vec mu_old = mu_init;
   
   // Initialize the residual matrices and S
-  probitWorkingParam residualmat(Sigma,Y, (X.t())*Y, (X.t())*X, mu_old, n );
+  starWorkingParam residualmat(Sigma,(YY-XB_init), (X.t())*(YY-XB_init), (X.t())*X, mu_old, n );
   
   // Initialize a copy for the re-starts
   arma::mat B_restart = B;
   arma::mat Omega_restart = Omega;
-  probitWorkingParam residualmat_restart(Sigma,Y, X.t()*Y, X.t()*X,mu_old,n );
+  starWorkingParam residualmat_restart(Sigma,(YY-XB_init), X.t()*(YY-XB_init), X.t()*X,mu_old,n );
   double theta_restart = theta;
   double eta_restart = eta;
   
@@ -118,7 +137,7 @@ List mpSSL_dpe(arma::mat X,
   arma::mat B_left = B;
   arma::mat Omega_left = Omega;
   arma::mat Sigma_left = Sigma;
-  probitWorkingParam residualmat_left(Sigma,Y,X.t()*Y, X.t()*X,mu_old,n );
+  starWorkingParam residualmat_left(Sigma,(YY-XB_init),X.t()*(YY-XB_init), X.t()*X,mu_old,n );
   double theta_left = theta;
   double eta_left = eta;
   int left_index = 0;
@@ -127,7 +146,7 @@ List mpSSL_dpe(arma::mat X,
   arma::mat B_down = B;
   arma::mat Omega_down = Omega;
   arma::mat Sigma_down = Sigma;
-  probitWorkingParam residualmat_down(Sigma,Y,X.t()*Y, X.t()*X,mu_old,n );
+  starWorkingParam residualmat_down(Sigma,(YY-XB_init),X.t()*(YY-XB_init), X.t()*X,mu_old,n );
   double theta_down = theta;
   double eta_down = eta;
   int down_index = 0;
@@ -136,7 +155,7 @@ List mpSSL_dpe(arma::mat X,
   arma::mat B_diag = B;
   arma::mat Omega_diag = Omega;
   arma::mat Sigma_diag = Sigma;
-  probitWorkingParam residualmat_diag(Sigma,Y,X.t()*Y, X.t()*X,mu_old,n );
+  starWorkingParam residualmat_diag(Sigma,(YY-XB_init),X.t()*(YY-XB_init), X.t()*X,mu_old,n );
   double theta_diag = theta;
   double eta_diag = eta;
   int diag_index = 0;
@@ -200,9 +219,10 @@ List mpSSL_dpe(arma::mat X,
     xi_star = xi1 * q_star + xi0 * (1.0 - q_star);
     if(diag_penalty == 1) xi_star.diag().fill(xi1);
     else if(diag_penalty == 0) xi_star.diag().fill(0);
+    
 
     if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
-    residualmat.update(Y,X,mu_old,B,Sigma,n_rep,nskp);
+    residualmat.update(lower,upper,X,mu_old,B,Sigma, n_rep,nskp);
     mu_old = residualmat.mu;
     // M Step Update of B and Theta
     update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps,verbose);
@@ -215,8 +235,7 @@ List mpSSL_dpe(arma::mat X,
     res_quic = my_quic(q, residualmat.S, xi_star, eps, quic_max_iter);
     Omega = res_quic.slice(0);
     Sigma = res_quic.slice(1);
-    unitdiag(Sigma,Omega);
-    //residualmat.update(Y,X,mu_old,B,Sigma,n_rep,nskp);
+    
     
 
     
@@ -316,10 +335,10 @@ List mpSSL_dpe(arma::mat X,
       if(diag_penalty == 1) xi_star.diag().fill(xi1);
       else if(diag_penalty == 0) xi_star.diag().fill(0);
       
-
       if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
-      residualmat.update(Y,X,mu_old,B,Sigma,n_rep,nskp);
+      residualmat.update(lower, upper, X,mu_old,B,Sigma,n_rep,nskp);
       mu_old = residualmat.mu;
+
       // M Step Update of B and Theta
       
       update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps,verbose);
@@ -331,7 +350,6 @@ List mpSSL_dpe(arma::mat X,
       res_quic = my_quic(q, residualmat.S, xi_star, eps, quic_max_iter);
       Omega = res_quic.slice(0);
       Sigma = res_quic.slice(1);
-      unitdiag(Sigma,Omega);
 
       // check convergence and whether we need to terminate early
       converged = 1;
@@ -430,9 +448,9 @@ List mpSSL_dpe(arma::mat X,
       xi_star = xi1 * q_star + xi0 * (1.0 - q_star);
       if(diag_penalty == 1) xi_star.diag().fill(xi1);
       else if(diag_penalty == 0) xi_star.diag().fill(0);
-      
+
       if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
-      residualmat.update(Y,X,mu_old,B,Sigma,n_rep,nskp);
+      residualmat.update(lower, upper ,X,mu_old,B,Sigma,n_rep,nskp);
       mu_old = residualmat.mu;
       // M Step Update of B and Theta
       update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps,verbose);
@@ -444,7 +462,6 @@ List mpSSL_dpe(arma::mat X,
       res_quic = my_quic(q, residualmat.S, xi_star, eps, quic_max_iter);
       Omega = res_quic.slice(0);
       Sigma = res_quic.slice(1);
-      unitdiag(Sigma,Omega);
       
       // check convergence and whether we need to terminate early
       converged = 1;
@@ -605,9 +622,9 @@ List mpSSL_dpe(arma::mat X,
         xi_star = xi1 * q_star + xi0 * (1.0 - q_star);
         if(diag_penalty == 1) xi_star.diag().fill(xi1);
         else if(diag_penalty == 0) xi_star.diag().fill(0);
-
+        
         if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
-        residualmat.update(Y,X,mu_old,B,Sigma,n_rep,nskp);
+        residualmat.update(lower, upper,X,mu_old,B,Sigma,n_rep,nskp);
         mu_old = residualmat.mu;
         // M Step Update of B and Theta
         update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps,verbose);
@@ -619,7 +636,7 @@ List mpSSL_dpe(arma::mat X,
         res_quic = my_quic(q, residualmat.S, xi_star, eps, quic_max_iter);
         Omega = res_quic.slice(0);
         Sigma = res_quic.slice(1);
-        unitdiag(Sigma,Omega);
+        
         
         // check convergence and whether we need to terminate early
         converged = 1;
@@ -708,11 +725,10 @@ List mpSSL_dpe(arma::mat X,
   return(results);
 }
 
-
-
 // [[Rcpp::export]]
-List mpSSL_dcpe(arma::mat X,
-               arma::mat Y,
+List fstarSSL_dcpe(arma::mat X,
+               arma::mat lower,
+               arma::mat upper,
                List lambdas,
                List xis,
                arma::vec theta_hyper_params,
@@ -725,8 +741,8 @@ List mpSSL_dcpe(arma::mat X,
               int nskp = 5)
 {
 
-  int n = Y.n_rows;
-  int q = Y.n_cols;
+  int n = lower.n_rows;
+  int q = lower.n_cols;
   int p = X.n_cols;
   
   // Center columns of X and Y
@@ -744,7 +760,7 @@ List mpSSL_dcpe(arma::mat X,
     mu_x(j) = tmp_mu_x;
     x_col_weights(j) = tmp_weight_x;
   }
-  arma::vec mu_old(q,fill::zeros);
+  
   int quic_max_iter = 5*max_iter;
 
   /*
@@ -765,16 +781,32 @@ List mpSSL_dcpe(arma::mat X,
   
   // initialize our parameters
   arma::vec alpha(q); // will hold the intercept. only computed at the end of all of the loops
-  
+  arma::vec mu_init;
+  arma::mat YY = lower;
+  YY.elem(find_nonfinite(YY)) = upper.elem(find_nonfinite(YY));
+  YY += upper;
+  YY *= .5;
+  YY.elem(find_nonfinite(YY)).zeros();
+  mu_init = arma::trans(mean(YY));
+  YY.each_row() -= mu_init.t(); 
+  arma::vec mu_old = mu_init;
+
   arma::mat B(p,q);
+  //B = arma::solve((X.t() * X), (X.t() * YY));
   B.zeros();
+  arma::mat XB_init = X * B;
   arma::mat B_old = B; // used internally
   arma::mat tmp_B = B; // we will re-scale the working B matrix when we save the path
+  //arma::mat Sigma = cov(YY-XB_init);
+  //Rcout << Sigma << endl;
+  arma::mat Sigma(q,q);
+  Sigma.eye();
+  //arma::mat Omega = inv(Sigma);
   arma::mat Omega(q,q);
   Omega.eye();
   arma::mat Omega_old = Omega; // used internally to check convergence in the EM algorithm
-  arma::mat Sigma(q,q);
-  Sigma.eye();
+
+
   arma::mat q_star(q,q);
   q_star.fill(0.5);
   arma::mat xi_star(q,q);
@@ -786,7 +818,7 @@ List mpSSL_dcpe(arma::mat X,
   double tmp; //holds value of q_star
   int omega_non_zero = 0; // counter for the number of non-zero off-diagonal elements of Omega's
   
-  probitWorkingParam residualmat(Sigma,Y, (X.t())*Y, (X.t())*X, mu_old, n );
+  starWorkingParam residualmat(Sigma,lower, (X.t())*lower, (X.t())*X, mu_old, n );
   if(verbose == 1) Rcout << "Initialized R, tXR, S" << endl;
   
   
@@ -794,7 +826,7 @@ List mpSSL_dcpe(arma::mat X,
   arma::mat B_reset = B;
   arma::mat Omega_reset = Omega;
   arma::mat Sigma_reset = Sigma;
-  probitWorkingParam residualmat_reset(Sigma,Y, (X.t())*Y, (X.t())*X, mu_old, n );
+  starWorkingParam residualmat_reset=residualmat;
   double theta_reset = theta;
   double eta_reset = eta;
   
@@ -820,9 +852,10 @@ List mpSSL_dcpe(arma::mat X,
   for(int l = 0; l < L; l++){
     lambda0 = lambda_spike(l);
     if(verbose == 1) Rcout << setprecision(6) << "Starting lambda0 = " << lambda0 << " num B non-zero = " << arma::accu(B != 0) << " theta = " << theta << endl;
-    residualmat.update(Y,X,mu_old,B,Sigma,n_rep,nskp);
+    residualmat.update(lower, upper, X,mu_old,B,Sigma,n_rep,nskp);
     mu_old = residualmat.mu;
     update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps, verbose);
+    
     tmp_B = B;
     tmp_B.each_col()/x_col_weights;
     B0_path.slice(l) = tmp_B;
@@ -865,7 +898,7 @@ List mpSSL_dcpe(arma::mat X,
       res_quic = my_quic(q, residualmat.S, xi_star, eps, quic_max_iter);
       Omega = res_quic.slice(0);
       Sigma = res_quic.slice(1);
-      unitdiag(Sigma,Omega);
+      
 
       // check convergence
       converged = 1;
@@ -910,7 +943,7 @@ List mpSSL_dcpe(arma::mat X,
     B_old = B;
     Omega_old = Omega;
     
-    residualmat.update(Y,X,mu_old, B,Sigma,n_rep,nskp);
+    residualmat.update(lower, upper, X,mu_old, B,Sigma,n_rep,nskp);
     mu_old = residualmat.mu;
     update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Omega,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps, verbose);
     
@@ -933,7 +966,6 @@ List mpSSL_dcpe(arma::mat X,
     res_quic = my_quic(q, residualmat.S, xi_star, eps, quic_max_iter);
     Omega = res_quic.slice(0);
     Sigma = res_quic.slice(1);
-    unitdiag(Sigma,Omega);
     
     converged = 1;
     for(int j = 0; j < p; j++){

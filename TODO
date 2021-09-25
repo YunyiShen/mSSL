@@ -1,3 +1,18 @@
-- Continue test STAR model
-- Box-Cox of STAR
-- more tests on cgpSSL
+- Unit Tested:
+    - mSSL.cpp
+    - gSSL.cpp
+    - cgSSL_dpe.cpp
+    - cgSSL_dcpe.cpp
+    - cgVARSSL_dpe.cpp
+    - cgVARSSL_dcpe.cpp
+    - mpSSL_dpe.cpp
+    - cgpSSL_dpe.cpp
+    - fstarSSL_dpe.cpp
+    - fstar_SSL_dcpe.cpp // works when responses are not too small or too many 0s
+    - cgfstarSSL_dpe.cpp
+    - cgfstarSSL_dcpe.cpp // seems to work when responses are not too small or too many 0s
+    - unitdiag.cpp
+- Compiled, not unit tested:
+    - mpSSL_dcpe.cpp // this seems not working
+    - cgpSSL_dcpe.cpp // not optimistic about this one
+- Never compiled:

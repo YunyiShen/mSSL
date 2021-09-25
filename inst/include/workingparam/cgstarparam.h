@@ -1,5 +1,5 @@
-#ifndef WORKINGPARAM_CGPROBITPARAM_H
-#define WORKINGPARAM_CGPROBITPARAM_H
+#ifndef WORKINGPARAM_CGSTARPARAM_H
+#define WORKINGPARAM_CGSTARPARAM_H
 
 
 // [[Rcpp::depends(RcppArmadillo)]]
@@ -13,66 +13,75 @@ using namespace linconGaussR;
 
 namespace workingparam{
 
-
-class cgprobitWorkingParam: public cgWorkingParam{
+class cgstarWorkingParam: public cgWorkingParam {
+    
     public: 
-        //arma::mat S_Omega;
-        //arma::mat M;
-        cgprobitWorkingParam() = default;
-        cgprobitWorkingParam(arma::mat SS, 
+        cgstarWorkingParam() = default;
+        cgstarWorkingParam(arma::mat SS, 
             arma::mat RR,
             arma::mat tXRR,
             arma::mat tXXx,
             arma::vec muu,int n): cgWorkingParam(SS, RR, tXRR, tXXx, muu, n){}
 
-        inline void update(const arma::mat &Y,
+        inline void update(const arma::mat &lower,
+                        const arma::mat &upper,
                         const arma::mat &X,
                         const arma::vec &mu_t,
                         const arma::mat &B_t,
                         const arma::mat &Sigma_t,
                         const arma::mat &Omega_t,
                         int n_rep, int nskp = 5);
-        
-
 };
 
-inline void cgprobitWorkingParam::update(const arma::mat &Y,
+inline void cgstarWorkingParam::update(const arma::mat &lower,
+                        const arma::mat &upper,
                         const arma::mat &X,
                         const arma::vec &mu_t,
                         const arma::mat &B_t,
                         const arma::mat &Sigma_t,
                         const arma::mat &Omega_t,
                         int n_rep, int nskp){
-    int n = Y.n_rows;
-    int q = Y.n_cols;
+    int n = lower.n_rows;
+    int q = upper.n_cols;
     arma::mat XB = X * B_t;
     XB.each_row() += mu_t.t();
     M = XB.t() * XB / n;
+    arma::vec x_init(q);
     arma::mat C = arma::chol(Sigma_t);
-    arma::vec Adiag(q);
-    arma::vec b(q);
-    arma::mat A(q,q);
     S.zeros(q,q);
     S_Omega.zeros(q,q);
     mu.zeros(q);
     R.zeros(n,q);
     tXR.zeros(q,q);
     s_eval.zeros(q);
-    //arma::mat S(q,q,fill::zeros);
-    //arma::vec mu(q,fill:zeros);
+
+    // several helpers
     arma::rowvec meani;
+    arma::uvec finites;
+    arma::vec x_init_temp;
 
     for(int i = 0 ; i < n ; i++){
         meani = XB.row(i) * Sigma_t;
         Rcpp::checkUserInterrupt();
-        Adiag = 2*arma::trans( Y.row(i) )-1;
-        b = meani.t() % Adiag;
-        A = C.t();
-        A.each_col() %= Adiag;
-        Adiag = arma::solve(C.t(), Adiag-meani.t());// this serves as the initial point
+        arma::vec b(2*q);
+        arma::mat A(2*q,q);
+        b.rows(0,q-1) = trans(meani-lower.row(i));
+        b.rows(q,2*q-1) = trans(upper.row(i)-meani);
+        finites = find_finite(b);
+        A.rows(0,q-1) = C.t();
+        A.rows(q,2*q-1) = -C.t();
+        b = b.rows(finites);
+        A = A.rows(finites);
+        x_init_temp = trans( lower.row(i) );
+        x_init = trans(upper.row(i));
+        x_init_temp(find_nonfinite(x_init_temp)) = x_init(find_nonfinite(x_init_temp))-1;
+        x_init(find_nonfinite(x_init)) = x_init_temp(find_nonfinite(x_init))+1;
+        x_init += x_init_temp;
+        x_init *= 0.5;
+        x_init = arma::solve(C.t(), x_init-arma::trans(meani));// this serves as the initial point
         LinearConstraints lincon(A,b,true);
-        //Rcout << "      " << i <<"th sample sampling start" << endl;
-        EllipticalSliceSampler sampler(n_rep + 1,lincon,nskp,Adiag);
+        //Rcout << "sampling " << i << "th sample" << endl;
+        EllipticalSliceSampler sampler(n_rep + 1,lincon,nskp,x_init);
         sampler.run();
         //Rcout << "      end" << endl;
         arma::mat resi = sampler.loop_state.samples;
@@ -102,6 +111,7 @@ inline void cgprobitWorkingParam::update(const arma::mat &Y,
     s_eval = eig_sym(S);
 
 }
+
 
 }
 

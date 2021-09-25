@@ -19,6 +19,8 @@ class WorkingParam{
         arma::mat tRR;
         arma::vec mu;
         arma::vec s_eval;
+        int n_B;
+        int n_Omega; 
         WorkingParam() = default;
         WorkingParam(arma::mat SS, arma::mat RR,arma::mat tXRR,arma::mat tXXx,arma::vec muu,int n){
             S = SS;
@@ -28,6 +30,8 @@ class WorkingParam{
             tXX = tXXx;
             mu = muu;
             s_eval = eig_sym(S);
+            n_B = R.n_rows;
+            n_Omega = n_B;
         }
 };
 
@@ -42,6 +46,8 @@ class cgWorkingParam{
         arma::mat M;
         arma::vec mu;
         arma::vec s_eval;
+        int n_B;
+        int n_Omega;
         cgWorkingParam() = default;
         cgWorkingParam(arma::mat SS, arma::mat RR,arma::mat tXRR,arma::mat tXXx,arma::vec muu,int n){
             S = SS;
@@ -53,9 +59,19 @@ class cgWorkingParam{
             S_Omega = SS;
             M = SS;
             s_eval = eig_sym(S);
-
+            n_B = R.n_rows;
+            n_Omega = n_B;
         }
+        inline void update_M(const arma::mat &X, const arma::mat &B_new);
 };
+
+inline void cgWorkingParam::update_M(const arma::mat &X,const arma::mat &B_new){
+    int n = X.n_rows;
+    arma::mat XB = X * B_new;
+    XB.each_row() += mu.t();
+    M = XB.t() * XB / n;
+}
+
 
 inline void unitdiag(arma::mat & Sigma, arma::mat &Omega){
     arma::vec scaling = Sigma.diag();

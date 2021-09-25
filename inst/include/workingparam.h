@@ -8,5 +8,6 @@
 #include "workingparam/probitparam.h"
 #include "workingparam/cgprobitparam.h"
 #include "workingparam/starparam.h"
+#include "workingparam/cgstarparam.h"
 
 #endif
