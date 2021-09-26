@@ -1,5 +1,5 @@
 #ifndef MSSL_CGDCPE_H
-#define MSSL_MDPE_H
+#define MSSL_CGDCPE_H
 
 #include <RcppArmadillo.h>
 #include <linconGaussR.h>
