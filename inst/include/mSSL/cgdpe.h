@@ -52,7 +52,7 @@ List cgSSL_dpe(workpara instance,
     mu_x(j) = tmp_mu_x;
     x_col_weights(j) = tmp_weight_x;
   }
-  
+  instance.tXX = instance.X.t() * instance.X;
   int quic_max_iter = 5 * max_iter; // allow QUIC to run for more iterations
 
   /*

@@ -56,7 +56,7 @@ inline void cgVARWorkingParam::update(const arma::vec &mu_t,
     S = tRR/n_B;
     tXR = X.t() * R;
     mu = trans(mean(Y)*Omega_t);
-    tXX = X.t() * X;
+    //tXX = X.t() * X;
     //Rcout << "flag3" << endl;
     /* Rcout << "n_B:" << n_B << endl;
     Rcout << "n_Omega" << n_Omega << endl;

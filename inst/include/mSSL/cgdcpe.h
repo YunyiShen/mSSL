@@ -48,6 +48,9 @@ List cgSSL_dcpe(workpara instance,
     mu_x(j) = tmp_mu_x;
     x_col_weights(j) = tmp_weight_x;
   }
+
+  instance.tXX = instance.X.t() * instance.X;
+
   arma::vec mu_old(q,fill::zeros);
   int quic_max_iter = 5*max_iter;
 
