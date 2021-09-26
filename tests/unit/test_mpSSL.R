@@ -2,7 +2,7 @@ library(Rcpp)
 library(RcppArmadillo)
 library(MASS)
 library(Matrix)
-library(mSSL)
+
 
 
 source("./R/graph_generator.R")
@@ -11,6 +11,8 @@ source("./R/error_Omega.R")
 source("./R/simu_data.R")
 sourceCpp("./src/mpSSL_dpe.cpp")
 sourceCpp("./src/mpSSL_dcpe.cpp")
+sourceCpp("./src/unitdiag.cpp")
+sourceCpp("./src/mSSL.cpp",rebuild = T)
 
 
 
@@ -38,7 +40,7 @@ mpSSL_dpe_res <- mpSSL_dpe(X,Y,lambdas = list(lambda1 = 1, lambda0 = seq(10, nro
                     eps = 1e-2,
                     s_max_condition = 10*nrow(X),
                     obj_counter_max = 5,
-                    verbose = 1, n_rep = 1000)
+                    verbose = 1, nrep = 200, nskp = 1)
 
 mpSSL_dcpe_res <- mpSSL_dcpe(X,Y,
                     lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),

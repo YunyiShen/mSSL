@@ -31,9 +31,9 @@ List mSSL_dcpe(workpara instance,
               int nskp = 5)
 {
 
-  int n = instance.Y.n_rows;
+  int n = instance.n_Omega;
   int q = instance.Y.n_cols;
-  int p = instance.instance.X.n_cols;
+  int p = instance.X.n_cols;
   
   // Center columns of instance.X and Y
   // re-scale the re-centered columns of instance.X to have norm sqrt(n)
@@ -45,7 +45,7 @@ List mSSL_dcpe(workpara instance,
   for(int j = 0; j < p ; j++){
     tmp_mu_x = mean(instance.X.col(j));
     instance.X.col(j) -= tmp_mu_x;
-    tmp_weight_x = norm(instance.X.col(j))/sqrt(n);
+    tmp_weight_x = norm(instance.X.col(j))/sqrt(instance.n_B);
     instance.X.col(j) /= tmp_weight_x;
     mu_x(j) = tmp_mu_x;
     x_col_weights(j) = tmp_weight_x;
@@ -279,6 +279,7 @@ List mSSL_dcpe(workpara instance,
   results["theta"] = theta;
   results["eta"] = eta;
   results["time"] = time_end - time_start;
+  Rcout << "done" << endl;
   return results;
 }
 

@@ -9,5 +9,7 @@
 #include "workingparam/cgprobitparam.h"
 #include "workingparam/starparam.h"
 #include "workingparam/cgstarparam.h"
+#include "workingparam/mparam.h"
+#include "workingparam/gcgparam.h"
 
 #endif

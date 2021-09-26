@@ -12,7 +12,7 @@ using namespace std;
 using namespace arma;
 using namespace workingparam;
 using namespace linconGaussR;
-using namespace workingparam;
+using namespace quic;
 
 namespace mSSL{
 
@@ -31,7 +31,7 @@ List mSSL_dpe(workpara instance,
               int n_rep = 1000,
               int nskp = 5)
 {
-  int n = instance.Y.n_rows;
+  int n = instance.n_Omega;
   int q = instance.Y.n_cols;
   int p = instance.X.n_cols;
     
@@ -42,7 +42,7 @@ List mSSL_dpe(workpara instance,
   for(int j = 0; j < p ; j++){
     tmp_mu_x = mean(instance.X.col(j));
     instance.X.col(j) -= tmp_mu_x;
-    tmp_weight_x = norm(X.col(j))/sqrt(n);
+    tmp_weight_x = norm(instance.X.col(j))/sqrt(instance.n_B);
     instance.X.col(j) /= tmp_weight_x;
     mu_x(j) = tmp_mu_x;
     x_col_weights(j) = tmp_weight_x;
@@ -699,6 +699,7 @@ List mSSL_dpe(workpara instance,
   results["xi0"] = xi_spike;
   results["early_term"] = early_term;
   //results["obj_term"] = obj_term;
+  Rcout << "done" << endl;
   return(results);
 }
 

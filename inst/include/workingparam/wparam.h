@@ -26,7 +26,7 @@ class WorkingParam{
         WorkingParam() = default;
         WorkingParam(arma::mat X, arma::mat Y): X(X),Y(Y){
             n_B = X.n_rows;
-            n_Omega = n_B;
+            n_Omega = Y.n_rows;
             tRR = Y.t() * Y;
             S = tRR/n_B;
             R = Y;
@@ -35,7 +35,13 @@ class WorkingParam{
             mu = trans(mean(Y));
             s_eval = eig_sym(S);
         }
-        inline void postprocessing(arma::vec &mu,
+        inline void update(const arma::vec &mu_t,
+                        const arma::mat &B_t,
+                        const arma::mat &Sigma_t,
+                        int n_rep, int nskp){
+            Rcpp::stop("Update method not implemented! Implement the residual matrix updating method");
+        }
+        inline void postprocessing(
                         arma::mat &B,
                         arma::mat &Sigma,
                         arma::mat &Omega){
@@ -72,7 +78,13 @@ class cgWorkingParam{
             M = S;
             s_eval = eig_sym(S);
         }
-        inline void update_M(const arma::mat &X, const arma::mat &B_new);
+        inline void update(const arma::vec &mu_t,
+                        const arma::mat &B_t,
+                        const arma::mat &Sigma_t,
+                        int n_rep, int nskp){
+            Rcpp::stop("Update method not implemented! Implement the residual matrix updating method");
+        }
+        inline void update_M(const arma::mat &B_new);
         inline void postprocessing(
                         arma::mat &B,
                         arma::mat &Sigma,
@@ -81,7 +93,7 @@ class cgWorkingParam{
         }
 };
 
-inline void cgWorkingParam::update_M(const arma::mat &X,const arma::mat &B_new){
+inline void cgWorkingParam::update_M(const arma::mat &B_new){
     arma::mat XB = X * B_new;
     XB.each_row() += mu.t();
     M = XB.t() * XB / n_B;

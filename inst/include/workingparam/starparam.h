@@ -18,7 +18,7 @@ class starWorkingParam : public WorkingParam{
         arma::mat lower;
         arma::mat upper;
         starWorkingParam() = default;
-        starWorkingParam(arma::mat X, arma::mat lower, arma::mat upper): WorkingParam(X, lower), lower(lower), upper(upper){};
+        starWorkingParam(arma::mat X, arma::mat lower, arma::mat upper): WorkingParam(X, upper), lower(lower), upper(upper){};
         inline void update(const arma::vec &mu_t,
                         const arma::mat &B_t,
                         const arma::mat &Sigma_t,
