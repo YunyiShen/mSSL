@@ -5,10 +5,12 @@ library(Matrix)
 source("./R/graph_generator.R")
 source("./R/error_B.R")
 source("./R/error_Omega.R")
-source("./R/data_generator.R")
+source("./R/simu_data.R")
+#source("./R/data_generator.R")
 
-sourceCpp("./src/cgVARSSL_dpe.cpp")
-sourceCpp("./src/cgVARSSL_dcpe.cpp")
+#sourceCpp("./src/cgVARSSL_dpe.cpp")
+#sourceCpp("./src/cgVARSSL_dcpe.cpp")
+sourceCpp("./src/cgSSL.cpp", rebuild = T)
 
 q <- 10
 
@@ -28,10 +30,10 @@ varSSL_dpe_res <- cgVARSSL_dpe(Y,lambdas = list(lambda1 = 1, lambda0 = seq(10, (
                     eta_hyper_params = c(1, ncol(Y)),
                     diag_penalty = 0,
                     max_iter = 10000,
-                    eps = 1e-3,
+                    eps = 1e-6,
                     s_max_condition = 10*(nrow(Y)-1),
                     obj_counter_max = 5,
-                    verbose = 1)
+                    verbose = 0)
 
 varSSL_dcpe_res <- cgVARSSL_dcpe(Y,
                     lambdas = list(lambda1 = 1, lambda0 = seq(10, (nrow(Y)-1), length = 10)),

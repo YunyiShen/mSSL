@@ -96,7 +96,7 @@ class cgWorkingParam{
 inline void cgWorkingParam::update_M(const arma::mat &B_new){
     arma::mat XB = X * B_new;
     XB.each_row() += mu.t();
-    M = XB.t() * XB / n_B;
+    M = XB.t() * XB / n_Omega;
 }
 
 inline void unitdiag(arma::mat & Sigma, arma::mat &Omega){

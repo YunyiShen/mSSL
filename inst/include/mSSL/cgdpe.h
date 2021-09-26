@@ -156,7 +156,7 @@ List cgSSL_dpe(workpara instance,
   arma::cube B_path(p, q, L * L);
   arma::cube Omega_path(q, q, L * L);
   arma::cube Sigma_path(q, q, L * L);
-  arma::cube R_path(n, q, L * L);
+  arma::cube R_path(instance.R.n_rows, q, L * L);
   arma::cube tXR_path(p, q, L * L);
   arma::cube S_Omega_path(q, q, L * L);
   arma::cube S_B_path(q, q, L * L);

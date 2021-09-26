@@ -140,5 +140,46 @@ List cgpSSL_dcpe(arma::mat X,
   return results;
 }
 
+// [[Rcpp::export]]
+List cgVARSSL_dpe(arma::mat Y,
+              List lambdas,
+              List xis,
+              arma::vec theta_hyper_params,
+              arma::vec eta_hyper_params,
+              int diag_penalty,
+              int max_iter,
+              double eps,
+              int s_max_condition,
+              int obj_counter_max,
+              int verbose)
+{
+  cgVARWorkingParam Worker(Y);
+  List results = mSSL::cgSSL_dpe<cgVARWorkingParam>(Worker, lambdas, 
+                xis,theta_hyper_params,eta_hyper_params,
+                diag_penalty,max_iter,eps,
+                s_max_condition,obj_counter_max,verbose);
+  return results;
+}
+
+
+// [[Rcpp::export]]
+List cgVARSSL_dcpe(
+              arma::mat Y,
+              List lambdas,
+              List xis,
+              arma::vec theta_hyper_params,
+              arma::vec eta_hyper_params,
+              int diag_penalty,
+              int max_iter,
+              double eps,
+              int verbose)
+{
+  cgVARWorkingParam Worker(Y);
+  List results = mSSL::cgSSL_dcpe<cgVARWorkingParam>(Worker, lambdas, 
+                xis,theta_hyper_params,eta_hyper_params,
+                diag_penalty,max_iter,eps,
+                verbose);
+  return results;
+}
 
 

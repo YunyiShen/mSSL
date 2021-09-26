@@ -11,5 +11,6 @@
 #include "workingparam/cgstarparam.h"
 #include "workingparam/mparam.h"
 #include "workingparam/gcgparam.h"
+#include "workingparam/cgVARparam.h"
 
 #endif
