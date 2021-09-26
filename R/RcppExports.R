@@ -25,12 +25,12 @@ cgpSSL_dcpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params
     .Call(`_mSSL_cgpSSL_dcpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, nrep, nskp)
 }
 
-cgVARSSL_dcpe <- function(Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose) {
-    .Call(`_mSSL_cgVARSSL_dcpe`, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose)
-}
-
 cgVARSSL_dpe <- function(Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose) {
     .Call(`_mSSL_cgVARSSL_dpe`, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose)
+}
+
+cgVARSSL_dcpe <- function(Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose) {
+    .Call(`_mSSL_cgVARSSL_dcpe`, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose)
 }
 
 gSSLcpp <- function(Y, xis, eta_hyper_params, diag_penalty, max_iter, eps, obj_counter_max, verbose) {

@@ -148,25 +148,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// cgVARSSL_dcpe
-List cgVARSSL_dcpe(arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int verbose);
-RcppExport SEXP _mSSL_cgVARSSL_dcpe(SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
-    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
-    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(cgVARSSL_dcpe(Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose));
-    return rcpp_result_gen;
-END_RCPP
-}
 // cgVARSSL_dpe
 List cgVARSSL_dpe(arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose);
 RcppExport SEXP _mSSL_cgVARSSL_dpe(SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP) {
@@ -185,6 +166,25 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type obj_counter_max(obj_counter_maxSEXP);
     Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
     rcpp_result_gen = Rcpp::wrap(cgVARSSL_dpe(Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cgVARSSL_dcpe
+List cgVARSSL_dcpe(arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int verbose);
+RcppExport SEXP _mSSL_cgVARSSL_dcpe(SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
+    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(cgVARSSL_dcpe(Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -361,8 +361,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mSSL_cgfstarSSL_dcpe", (DL_FUNC) &_mSSL_cgfstarSSL_dcpe, 13},
     {"_mSSL_cgpSSL_dpe", (DL_FUNC) &_mSSL_cgpSSL_dpe, 14},
     {"_mSSL_cgpSSL_dcpe", (DL_FUNC) &_mSSL_cgpSSL_dcpe, 12},
-    {"_mSSL_cgVARSSL_dcpe", (DL_FUNC) &_mSSL_cgVARSSL_dcpe, 9},
     {"_mSSL_cgVARSSL_dpe", (DL_FUNC) &_mSSL_cgVARSSL_dpe, 11},
+    {"_mSSL_cgVARSSL_dcpe", (DL_FUNC) &_mSSL_cgVARSSL_dcpe, 9},
     {"_mSSL_gSSLcpp", (DL_FUNC) &_mSSL_gSSLcpp, 8},
     {"_mSSL_mSSL_dpe", (DL_FUNC) &_mSSL_mSSL_dpe, 12},
     {"_mSSL_mSSL_dcpe", (DL_FUNC) &_mSSL_mSSL_dcpe, 10},
