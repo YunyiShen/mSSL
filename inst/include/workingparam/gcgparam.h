@@ -26,7 +26,7 @@ inline void gcgWorkingParam::update(const arma::vec &mu_t,
                         const arma::mat &B_t,
                         const arma::mat &Sigma_t,
                         const arma::mat &Omega_t,
-                        int n_rep, int nskp = 5){
+                        int n_rep, int nskp){
 
     arma::mat YOmega = Y * Omega_t;
     arma::mat XB = X * B_t;

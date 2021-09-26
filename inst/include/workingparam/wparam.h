@@ -65,7 +65,7 @@ class cgWorkingParam{
         int n_B;
         int n_Omega;
         cgWorkingParam() = default;
-        cgWorkingParam(arma::mat X, arma::mat Y){
+        cgWorkingParam(arma::mat X, arma::mat Y):X(X),Y(Y){
             n_B = X.n_rows;
             n_Omega = Y.n_rows;
             tRR = Y.t() * Y;

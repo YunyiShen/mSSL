@@ -26,8 +26,7 @@ class cgprobitWorkingParam: public cgWorkingParam{
                         const arma::mat &Sigma_t,
                         const arma::mat &Omega_t,
                         int n_rep, int nskp = 5);
-        inline void postprocessing(arma::vec &mu,
-                        arma::mat &B, 
+        inline void postprocessing(arma::mat &B, 
                         arma::mat & Sigma, arma::mat &Omega){
             unitdiag(Omega,Sigma);
         }

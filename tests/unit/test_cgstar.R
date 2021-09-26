@@ -11,6 +11,7 @@ source("./R/error_Omega.R")
 source("./R/simu_data.R")
 sourceCpp("./src/cgfstarSSL_dpe.cpp",rebuild = TRUE)
 sourceCpp("./src/cgfstarSSL_dcpe.cpp",rebuild = TRUE)
+sourceCpp("./src/cgSSL.cpp")
 source("./R/starSSL.R")
 
 

@@ -9,7 +9,7 @@ using namespace quic;
 using namespace workingparam;
 
 // [[Rcpp::export]]
-List mSSL_dpe(arma::mat X,
+List cgSSL_dpe(arma::mat X,
               arma::mat Y,
               List lambdas,
               List xis,
@@ -22,8 +22,8 @@ List mSSL_dpe(arma::mat X,
               int obj_counter_max,
               int verbose)
 {
-  mWorkingParam Worker(X,Y);
-  List results = mSSL::mSSL_dpe<mWorkingParam>(Worker, lambdas, 
+  gcgWorkingParam Worker(X,Y);
+  List results = mSSL::cgSSL_dpe<gcgWorkingParam>(Worker, lambdas, 
                 xis,theta_hyper_params,eta_hyper_params,
                 diag_penalty,max_iter,eps,
                 s_max_condition,obj_counter_max,verbose);
@@ -32,7 +32,7 @@ List mSSL_dpe(arma::mat X,
 
 
 // [[Rcpp::export]]
-List mSSL_dcpe(arma::mat X,
+List cgSSL_dcpe(arma::mat X,
               arma::mat Y,
               List lambdas,
               List xis,
@@ -43,8 +43,8 @@ List mSSL_dcpe(arma::mat X,
               double eps,
               int verbose)
 {
-  mWorkingParam Worker(X,Y);
-  List results = mSSL::mSSL_dcpe<mWorkingParam>(Worker, lambdas, 
+  gcgWorkingParam Worker(X,Y);
+  List results = mSSL::cgSSL_dcpe<gcgWorkingParam>(Worker, lambdas, 
                 xis,theta_hyper_params,eta_hyper_params,
                 diag_penalty,max_iter,eps,
                 verbose);
@@ -54,7 +54,7 @@ List mSSL_dcpe(arma::mat X,
 
 
 // [[Rcpp::export]]
-List fstarSSL_dpe(arma::mat X,
+List cgfstarSSL_dpe(arma::mat X,
               arma::mat lower,
               arma::mat upper,
               List lambdas,
@@ -68,8 +68,8 @@ List fstarSSL_dpe(arma::mat X,
               int obj_counter_max,
               int verbose, int nrep=200, int nskp=1)
 {
-  starWorkingParam Worker(X,lower,upper);
-  List results = mSSL::mSSL_dpe<starWorkingParam>(Worker, lambdas, 
+  cgstarWorkingParam Worker(X,lower,upper);
+  List results = mSSL::cgSSL_dpe<cgstarWorkingParam>(Worker, lambdas, 
                 xis,theta_hyper_params,eta_hyper_params,
                 diag_penalty,max_iter,eps,
                 s_max_condition,obj_counter_max,verbose, nrep, nskp);
@@ -77,7 +77,7 @@ List fstarSSL_dpe(arma::mat X,
 }
 
 // [[Rcpp::export]]
-List fstarSSL_dcpe(arma::mat X,
+List cgfstarSSL_dcpe(arma::mat X,
               arma::mat lower,
               arma::mat upper,
               List lambdas,
@@ -89,8 +89,8 @@ List fstarSSL_dcpe(arma::mat X,
               double eps,
               int verbose, int nrep = 200, int nskp = 1)
 {
-  starWorkingParam Worker(X,lower, upper);
-  List results = mSSL::mSSL_dcpe<starWorkingParam>(Worker, lambdas, 
+  cgstarWorkingParam Worker(X,lower, upper);
+  List results = mSSL::cgSSL_dcpe<cgstarWorkingParam>(Worker, lambdas, 
                 xis,theta_hyper_params,eta_hyper_params,
                 diag_penalty,max_iter,eps,
                 verbose, nrep, nskp);
@@ -98,7 +98,7 @@ List fstarSSL_dcpe(arma::mat X,
 }
 
 // [[Rcpp::export]]
-List mpSSL_dpe(arma::mat X,
+List cgpSSL_dpe(arma::mat X,
               arma::mat Y,
               List lambdas,
               List xis,
@@ -111,8 +111,8 @@ List mpSSL_dpe(arma::mat X,
               int obj_counter_max,
               int verbose, int nrep=200, int nskp=1)
 {
-  probitWorkingParam Worker(X,Y);
-  List results = mSSL::mSSL_dpe<probitWorkingParam>(Worker, lambdas, 
+  cgprobitWorkingParam Worker(X,Y);
+  List results = mSSL::cgSSL_dpe<cgprobitWorkingParam>(Worker, lambdas, 
                 xis,theta_hyper_params,eta_hyper_params,
                 diag_penalty,max_iter,eps,
                 s_max_condition,obj_counter_max,verbose, nrep, nskp);
@@ -121,7 +121,7 @@ List mpSSL_dpe(arma::mat X,
 
 
 // [[Rcpp::export]]
-List mpSSL_dcpe(arma::mat X,
+List cgpSSL_dcpe(arma::mat X,
               arma::mat Y,
               List lambdas,
               List xis,
@@ -132,8 +132,8 @@ List mpSSL_dcpe(arma::mat X,
               double eps,
               int verbose, int nrep = 200, int nskp = 1)
 {
-  probitWorkingParam Worker(X,Y);
-  List results = mSSL::mSSL_dcpe<probitWorkingParam>(Worker, lambdas, 
+  cgprobitWorkingParam Worker(X,Y);
+  List results = mSSL::cgSSL_dcpe<cgprobitWorkingParam>(Worker, lambdas, 
                 xis,theta_hyper_params,eta_hyper_params,
                 diag_penalty,max_iter,eps,
                 verbose, nrep, nskp);

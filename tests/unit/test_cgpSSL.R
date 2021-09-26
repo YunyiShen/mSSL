@@ -36,7 +36,7 @@ cgpSSL_dpe_res <- cgpSSL_dpe(X,Y,lambdas = list(lambda1 = 1, lambda0 = seq(10, n
                     eps = 1e-2,
                     s_max_condition = 10*nrow(X),
                     obj_counter_max = 5,
-                    verbose = 1, n_rep = 200)
+                    verbose = 1, nrep = 200)
 
 
 

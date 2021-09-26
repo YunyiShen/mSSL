@@ -19,7 +19,7 @@ class cgstarWorkingParam: public cgWorkingParam {
         arma::mat lower;
         arma::mat upper;
         cgstarWorkingParam() = default;
-        cgstarWorkingParam(arma::mat X, arma::mat lower, arma::mat upper): cgWorkingParam(X,lower),lower(lower),upper(upper){}
+        cgstarWorkingParam(arma::mat X, arma::mat lower, arma::mat upper): cgWorkingParam(X,upper),lower(lower),upper(upper){}
 
         inline void update(const arma::vec &mu_t,
                         const arma::mat &B_t,
