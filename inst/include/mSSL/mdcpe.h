@@ -279,7 +279,7 @@ List mSSL_dcpe(workpara instance,
   results["theta"] = theta;
   results["eta"] = eta;
   results["time"] = time_end - time_start;
-  Rcout << "done" << endl;
+  if(verbose == 1) Rcout << "done" << endl;
   return results;
 }
 

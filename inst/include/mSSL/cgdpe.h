@@ -884,7 +884,7 @@ List cgSSL_dpe(workpara instance,
   results["xi0"] = xi_spike;
   results["early_term"] = early_term;
   //results["obj_term"] = obj_term;
-  Rcout << "done" << endl;
+  if(verbose == 1) Rcout << "done" << endl;
   return (results);
 }
 

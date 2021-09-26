@@ -12,6 +12,28 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// cgSSL_dpe
+List cgSSL_dpe(arma::mat X, arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose);
+RcppExport SEXP _mSSL_cgSSL_dpe(SEXP XSEXP, SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
+    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< int >::type s_max_condition(s_max_conditionSEXP);
+    Rcpp::traits::input_parameter< int >::type obj_counter_max(obj_counter_maxSEXP);
+    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(cgSSL_dpe(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cgSSL_dcpe
 List cgSSL_dcpe(arma::mat X, arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int verbose);
 RcppExport SEXP _mSSL_cgSSL_dcpe(SEXP XSEXP, SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP) {
@@ -32,9 +54,57 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// cgSSL_dpe
-List cgSSL_dpe(arma::mat X, arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose);
-RcppExport SEXP _mSSL_cgSSL_dpe(SEXP XSEXP, SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP) {
+// cgfstarSSL_dpe
+List cgfstarSSL_dpe(arma::mat X, arma::mat lower, arma::mat upper, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose, int nrep, int nskp);
+RcppExport SEXP _mSSL_cgfstarSSL_dpe(SEXP XSEXP, SEXP lowerSEXP, SEXP upperSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP, SEXP nrepSEXP, SEXP nskpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type lower(lowerSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type upper(upperSEXP);
+    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
+    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< int >::type s_max_condition(s_max_conditionSEXP);
+    Rcpp::traits::input_parameter< int >::type obj_counter_max(obj_counter_maxSEXP);
+    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< int >::type nrep(nrepSEXP);
+    Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
+    rcpp_result_gen = Rcpp::wrap(cgfstarSSL_dpe(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, nrep, nskp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cgfstarSSL_dcpe
+List cgfstarSSL_dcpe(arma::mat X, arma::mat lower, arma::mat upper, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int verbose, int nrep, int nskp);
+RcppExport SEXP _mSSL_cgfstarSSL_dcpe(SEXP XSEXP, SEXP lowerSEXP, SEXP upperSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP, SEXP nrepSEXP, SEXP nskpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type lower(lowerSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type upper(upperSEXP);
+    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
+    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< int >::type nrep(nrepSEXP);
+    Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
+    rcpp_result_gen = Rcpp::wrap(cgfstarSSL_dcpe(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, nrep, nskp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cgpSSL_dpe
+List cgpSSL_dpe(arma::mat X, arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose, int nrep, int nskp);
+RcppExport SEXP _mSSL_cgpSSL_dpe(SEXP XSEXP, SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP, SEXP nrepSEXP, SEXP nskpSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -50,7 +120,31 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type s_max_condition(s_max_conditionSEXP);
     Rcpp::traits::input_parameter< int >::type obj_counter_max(obj_counter_maxSEXP);
     Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(cgSSL_dpe(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose));
+    Rcpp::traits::input_parameter< int >::type nrep(nrepSEXP);
+    Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
+    rcpp_result_gen = Rcpp::wrap(cgpSSL_dpe(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, nrep, nskp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cgpSSL_dcpe
+List cgpSSL_dcpe(arma::mat X, arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int verbose, int nrep, int nskp);
+RcppExport SEXP _mSSL_cgpSSL_dcpe(SEXP XSEXP, SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP, SEXP nrepSEXP, SEXP nskpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
+    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< int >::type nrep(nrepSEXP);
+    Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
+    rcpp_result_gen = Rcpp::wrap(cgpSSL_dcpe(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, nrep, nskp));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -91,148 +185,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type obj_counter_max(obj_counter_maxSEXP);
     Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
     rcpp_result_gen = Rcpp::wrap(cgVARSSL_dpe(Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose));
-    return rcpp_result_gen;
-END_RCPP
-}
-// cgfstarSSL_dcpe
-List cgfstarSSL_dcpe(arma::mat X, arma::mat lower, arma::mat upper, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int verbose, int n_rep, int nskp);
-RcppExport SEXP _mSSL_cgfstarSSL_dcpe(SEXP XSEXP, SEXP lowerSEXP, SEXP upperSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP, SEXP n_repSEXP, SEXP nskpSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type lower(lowerSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type upper(upperSEXP);
-    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
-    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
-    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
-    Rcpp::traits::input_parameter< int >::type n_rep(n_repSEXP);
-    Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
-    rcpp_result_gen = Rcpp::wrap(cgfstarSSL_dcpe(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp));
-    return rcpp_result_gen;
-END_RCPP
-}
-// cgfstarSSL_dpe
-List cgfstarSSL_dpe(arma::mat X, arma::mat lower, arma::mat upper, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose, int n_rep, int nskp);
-RcppExport SEXP _mSSL_cgfstarSSL_dpe(SEXP XSEXP, SEXP lowerSEXP, SEXP upperSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP, SEXP n_repSEXP, SEXP nskpSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type lower(lowerSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type upper(upperSEXP);
-    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
-    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
-    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    Rcpp::traits::input_parameter< int >::type s_max_condition(s_max_conditionSEXP);
-    Rcpp::traits::input_parameter< int >::type obj_counter_max(obj_counter_maxSEXP);
-    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
-    Rcpp::traits::input_parameter< int >::type n_rep(n_repSEXP);
-    Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
-    rcpp_result_gen = Rcpp::wrap(cgfstarSSL_dpe(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp));
-    return rcpp_result_gen;
-END_RCPP
-}
-// cgpSSL_dcpe
-List cgpSSL_dcpe(arma::mat X, arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int verbose, int n_rep, int nskp);
-RcppExport SEXP _mSSL_cgpSSL_dcpe(SEXP XSEXP, SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP, SEXP n_repSEXP, SEXP nskpSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
-    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
-    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
-    Rcpp::traits::input_parameter< int >::type n_rep(n_repSEXP);
-    Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
-    rcpp_result_gen = Rcpp::wrap(cgpSSL_dcpe(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp));
-    return rcpp_result_gen;
-END_RCPP
-}
-// cgpSSL_dpe
-List cgpSSL_dpe(arma::mat X, arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose, int n_rep, int nskp);
-RcppExport SEXP _mSSL_cgpSSL_dpe(SEXP XSEXP, SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP, SEXP n_repSEXP, SEXP nskpSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
-    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
-    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    Rcpp::traits::input_parameter< int >::type s_max_condition(s_max_conditionSEXP);
-    Rcpp::traits::input_parameter< int >::type obj_counter_max(obj_counter_maxSEXP);
-    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
-    Rcpp::traits::input_parameter< int >::type n_rep(n_repSEXP);
-    Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
-    rcpp_result_gen = Rcpp::wrap(cgpSSL_dpe(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp));
-    return rcpp_result_gen;
-END_RCPP
-}
-// fstarSSL_dcpe
-List fstarSSL_dcpe(arma::mat X, arma::mat lower, arma::mat upper, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int verbose, int n_rep, int nskp);
-RcppExport SEXP _mSSL_fstarSSL_dcpe(SEXP XSEXP, SEXP lowerSEXP, SEXP upperSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP, SEXP n_repSEXP, SEXP nskpSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type lower(lowerSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type upper(upperSEXP);
-    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
-    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
-    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
-    Rcpp::traits::input_parameter< int >::type n_rep(n_repSEXP);
-    Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
-    rcpp_result_gen = Rcpp::wrap(fstarSSL_dcpe(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp));
-    return rcpp_result_gen;
-END_RCPP
-}
-// fstarSSL_dpe
-List fstarSSL_dpe(arma::mat X, arma::mat lower, arma::mat upper, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose, int n_rep, int nskp);
-RcppExport SEXP _mSSL_fstarSSL_dpe(SEXP XSEXP, SEXP lowerSEXP, SEXP upperSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP, SEXP n_repSEXP, SEXP nskpSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type lower(lowerSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type upper(upperSEXP);
-    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
-    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
-    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
-    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    Rcpp::traits::input_parameter< int >::type s_max_condition(s_max_conditionSEXP);
-    Rcpp::traits::input_parameter< int >::type obj_counter_max(obj_counter_maxSEXP);
-    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
-    Rcpp::traits::input_parameter< int >::type n_rep(n_repSEXP);
-    Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
-    rcpp_result_gen = Rcpp::wrap(fstarSSL_dpe(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -296,14 +248,40 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// mpSSL_dcpe
-List mpSSL_dcpe(arma::mat X, arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int verbose, int n_rep, int nskp);
-RcppExport SEXP _mSSL_mpSSL_dcpe(SEXP XSEXP, SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP, SEXP n_repSEXP, SEXP nskpSEXP) {
+// fstarSSL_dpe
+List fstarSSL_dpe(arma::mat X, arma::mat lower, arma::mat upper, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose, int nrep, int nskp);
+RcppExport SEXP _mSSL_fstarSSL_dpe(SEXP XSEXP, SEXP lowerSEXP, SEXP upperSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP, SEXP nrepSEXP, SEXP nskpSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type lower(lowerSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type upper(upperSEXP);
+    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
+    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< int >::type s_max_condition(s_max_conditionSEXP);
+    Rcpp::traits::input_parameter< int >::type obj_counter_max(obj_counter_maxSEXP);
+    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< int >::type nrep(nrepSEXP);
+    Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
+    rcpp_result_gen = Rcpp::wrap(fstarSSL_dpe(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, nrep, nskp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fstarSSL_dcpe
+List fstarSSL_dcpe(arma::mat X, arma::mat lower, arma::mat upper, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int verbose, int nrep, int nskp);
+RcppExport SEXP _mSSL_fstarSSL_dcpe(SEXP XSEXP, SEXP lowerSEXP, SEXP upperSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP, SEXP nrepSEXP, SEXP nskpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type lower(lowerSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type upper(upperSEXP);
     Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
     Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
@@ -312,15 +290,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
     Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
     Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
-    Rcpp::traits::input_parameter< int >::type n_rep(n_repSEXP);
+    Rcpp::traits::input_parameter< int >::type nrep(nrepSEXP);
     Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
-    rcpp_result_gen = Rcpp::wrap(mpSSL_dcpe(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, n_rep, nskp));
+    rcpp_result_gen = Rcpp::wrap(fstarSSL_dcpe(X, lower, upper, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, nrep, nskp));
     return rcpp_result_gen;
 END_RCPP
 }
 // mpSSL_dpe
-List mpSSL_dpe(arma::mat X, arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose, int n_rep, int nskp);
-RcppExport SEXP _mSSL_mpSSL_dpe(SEXP XSEXP, SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP, SEXP n_repSEXP, SEXP nskpSEXP) {
+List mpSSL_dpe(arma::mat X, arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose, int nrep, int nskp);
+RcppExport SEXP _mSSL_mpSSL_dpe(SEXP XSEXP, SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP, SEXP nrepSEXP, SEXP nskpSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -336,41 +314,63 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type s_max_condition(s_max_conditionSEXP);
     Rcpp::traits::input_parameter< int >::type obj_counter_max(obj_counter_maxSEXP);
     Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
-    Rcpp::traits::input_parameter< int >::type n_rep(n_repSEXP);
+    Rcpp::traits::input_parameter< int >::type nrep(nrepSEXP);
     Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
-    rcpp_result_gen = Rcpp::wrap(mpSSL_dpe(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, n_rep, nskp));
+    rcpp_result_gen = Rcpp::wrap(mpSSL_dpe(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, nrep, nskp));
     return rcpp_result_gen;
 END_RCPP
 }
-// unitdiag
-void unitdiag(arma::mat& Sigma, arma::mat& Omega);
-RcppExport SEXP _mSSL_unitdiag(SEXP SigmaSEXP, SEXP OmegaSEXP) {
+// mpSSL_dcpe
+List mpSSL_dcpe(arma::mat X, arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int verbose, int nrep, int nskp);
+RcppExport SEXP _mSSL_mpSSL_dcpe(SEXP XSEXP, SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP verboseSEXP, SEXP nrepSEXP, SEXP nskpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
+    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< int >::type nrep(nrepSEXP);
+    Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
+    rcpp_result_gen = Rcpp::wrap(mpSSL_dcpe(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, nrep, nskp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// unitdiag2
+void unitdiag2(arma::mat& Sigma, arma::mat& Omega);
+RcppExport SEXP _mSSL_unitdiag2(SEXP SigmaSEXP, SEXP OmegaSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat& >::type Sigma(SigmaSEXP);
     Rcpp::traits::input_parameter< arma::mat& >::type Omega(OmegaSEXP);
-    unitdiag(Sigma, Omega);
+    unitdiag2(Sigma, Omega);
     return R_NilValue;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mSSL_cgSSL_dcpe", (DL_FUNC) &_mSSL_cgSSL_dcpe, 10},
     {"_mSSL_cgSSL_dpe", (DL_FUNC) &_mSSL_cgSSL_dpe, 12},
+    {"_mSSL_cgSSL_dcpe", (DL_FUNC) &_mSSL_cgSSL_dcpe, 10},
+    {"_mSSL_cgfstarSSL_dpe", (DL_FUNC) &_mSSL_cgfstarSSL_dpe, 15},
+    {"_mSSL_cgfstarSSL_dcpe", (DL_FUNC) &_mSSL_cgfstarSSL_dcpe, 13},
+    {"_mSSL_cgpSSL_dpe", (DL_FUNC) &_mSSL_cgpSSL_dpe, 14},
+    {"_mSSL_cgpSSL_dcpe", (DL_FUNC) &_mSSL_cgpSSL_dcpe, 12},
     {"_mSSL_cgVARSSL_dcpe", (DL_FUNC) &_mSSL_cgVARSSL_dcpe, 9},
     {"_mSSL_cgVARSSL_dpe", (DL_FUNC) &_mSSL_cgVARSSL_dpe, 11},
-    {"_mSSL_cgfstarSSL_dcpe", (DL_FUNC) &_mSSL_cgfstarSSL_dcpe, 13},
-    {"_mSSL_cgfstarSSL_dpe", (DL_FUNC) &_mSSL_cgfstarSSL_dpe, 15},
-    {"_mSSL_cgpSSL_dcpe", (DL_FUNC) &_mSSL_cgpSSL_dcpe, 12},
-    {"_mSSL_cgpSSL_dpe", (DL_FUNC) &_mSSL_cgpSSL_dpe, 14},
-    {"_mSSL_fstarSSL_dcpe", (DL_FUNC) &_mSSL_fstarSSL_dcpe, 13},
-    {"_mSSL_fstarSSL_dpe", (DL_FUNC) &_mSSL_fstarSSL_dpe, 15},
     {"_mSSL_gSSLcpp", (DL_FUNC) &_mSSL_gSSLcpp, 8},
     {"_mSSL_mSSL_dpe", (DL_FUNC) &_mSSL_mSSL_dpe, 12},
     {"_mSSL_mSSL_dcpe", (DL_FUNC) &_mSSL_mSSL_dcpe, 10},
-    {"_mSSL_mpSSL_dcpe", (DL_FUNC) &_mSSL_mpSSL_dcpe, 12},
+    {"_mSSL_fstarSSL_dpe", (DL_FUNC) &_mSSL_fstarSSL_dpe, 15},
+    {"_mSSL_fstarSSL_dcpe", (DL_FUNC) &_mSSL_fstarSSL_dcpe, 13},
     {"_mSSL_mpSSL_dpe", (DL_FUNC) &_mSSL_mpSSL_dpe, 14},
-    {"_mSSL_unitdiag", (DL_FUNC) &_mSSL_unitdiag, 2},
+    {"_mSSL_mpSSL_dcpe", (DL_FUNC) &_mSSL_mpSSL_dcpe, 12},
+    {"_mSSL_unitdiag2", (DL_FUNC) &_mSSL_unitdiag2, 2},
     {NULL, NULL, 0}
 };
 
