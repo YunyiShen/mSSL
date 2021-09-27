@@ -15,25 +15,17 @@ namespace workingparam{
 
 class starWorkingParam : public WorkingParam{
     public:
+        arma::mat lower;
+        arma::mat upper;
         starWorkingParam() = default;
-        starWorkingParam(arma::mat S, 
-            arma::mat R,
-            arma::mat tXR,
-            arma::mat tXX,
-            arma::vec mu,int n): WorkingParam(S, R, tXR, tXX, mu, n){};
-        inline void update(const arma::mat &lower,
-                    const arma::mat &upper,
-                        const arma::mat &X,
-                        const arma::vec &mu_t,
+        starWorkingParam(arma::mat X, arma::mat lower, arma::mat upper): WorkingParam(X, upper), lower(lower), upper(upper){};
+        inline void update(const arma::vec &mu_t,
                         const arma::mat &B_t,
                         const arma::mat &Sigma_t,
                         int n_rep, int nskp = 5);
 };
 
-inline void starWorkingParam::update(const arma::mat &lower,
-                        const arma::mat &upper,
-                        const arma::mat &X,
-                        const arma::vec &mu_t,
+inline void starWorkingParam::update(const arma::vec &mu_t,
                         const arma::mat &B_t,
                         const arma::mat &Sigma_t,
                         int n_rep, int nskp){

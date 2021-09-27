@@ -1,24 +1,22 @@
+#ifndef MSSL_CGDCPE_H
+#define MSSL_CGDCPE_H
+
 #include <RcppArmadillo.h>
-#include <math.h>
-#include <stdio.h>
-#include <ctime>
 #include <linconGaussR.h>
-#include <mSSL.h>
 #include <QUIC.h>
 #include <workingparam.h>
+#include "B_theta_update.h"
 
 using namespace Rcpp;
-using namespace arma;
 using namespace std;
+using namespace arma;
+using namespace workingparam;
 using namespace linconGaussR;
-using namespace mSSL;
-using namespace quic;
 using namespace workingparam;
 
-
-// [[Rcpp::export]]
-List cgpSSL_dcpe(arma::mat X,
-               arma::mat Y,
+namespace mSSL{
+template<class workpara>
+List cgSSL_dcpe(workpara instance,
                List lambdas,
                List xis,
                arma::vec theta_hyper_params,
@@ -31,25 +29,28 @@ List cgpSSL_dcpe(arma::mat X,
               int nskp = 5)
 {
 
-  int n = Y.n_rows;
-  int q = Y.n_cols;
-  int p = X.n_cols;
+  int n = instance.n_Omega;
+  int q = instance.Y.n_cols;
+  int p = instance.X.n_cols;
   
-  // Center columns of X and Y
-  // re-scale the re-centered columns of X to have norm sqrt(n)
+  // Center columns of instance.X and instance.Y
+  // re-scale the re-centered columns of instance.X to have norm sqrt(n)
   
   double tmp_mu_x = 0.0;
   double tmp_weight_x = 0.0;
   arma::vec x_col_weights(p);
   arma::vec mu_x(p);
   for(int j = 0; j < p ; j++){
-    tmp_mu_x = mean(X.col(j));
-    X.col(j) -= tmp_mu_x;
-    tmp_weight_x = norm(X.col(j))/sqrt(n);
-    X.col(j) /= tmp_weight_x;
+    tmp_mu_x = mean(instance.X.col(j));
+    instance.X.col(j) -= tmp_mu_x;
+    tmp_weight_x = norm(instance.X.col(j))/sqrt(instance.n_B);
+    instance.X.col(j) /= tmp_weight_x;
     mu_x(j) = tmp_mu_x;
     x_col_weights(j) = tmp_weight_x;
   }
+
+  instance.tXX = instance.X.t() * instance.X;
+
   arma::vec mu_old(q,fill::zeros);
   int quic_max_iter = 5*max_iter;
 
@@ -92,7 +93,6 @@ List cgpSSL_dcpe(arma::mat X,
   double tmp; //holds value of q_star
   int omega_non_zero = 0; // counter for the number of non-zero off-diagonal elements of Omega's
   
-  cgprobitWorkingParam residualmat(Sigma,Y, (X.t())*Y, (X.t())*X, mu_old, n );
   if(verbose == 1) Rcout << "Initialized R, tXR, S" << endl;
   
   
@@ -100,7 +100,7 @@ List cgpSSL_dcpe(arma::mat X,
   arma::mat B_reset = B;
   arma::mat Omega_reset = Omega;
   arma::mat Sigma_reset = Sigma;
-  cgprobitWorkingParam residualmat_reset = residualmat;
+  workpara instance_reset = instance;
   double theta_reset = theta;
   double eta_reset = eta;
   
@@ -126,15 +126,15 @@ List cgpSSL_dcpe(arma::mat X,
   for(int l = 0; l < L; l++){
     lambda0 = lambda_spike(l);
     if(verbose == 1) Rcout << setprecision(6) << "Starting lambda0 = " << lambda0 << " num B non-zero = " << arma::accu(B != 0) << " theta = " << theta << endl;
-    residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-    mu_old = residualmat.mu;
-    update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Sigma,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps, verbose);
+    instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
+    mu_old = instance.mu;
+    update_B_theta(instance.n_B,p,q,B,instance.R,instance.tXR,instance.S,theta,Sigma,eta,instance.X,instance.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps, verbose);
     tmp_B = B;
     tmp_B.each_col()/x_col_weights;
     B0_path.slice(l) = tmp_B;
     theta0_path(l) = theta;
   }
-  residualmat.update_M(X,B);
+  instance.update_M(B);
   if(verbose == 1) Rcout << "starting step 2 now" << endl;
   for(int l = 0; l < L; l++){
     xi0 = xi_spike(l);
@@ -169,10 +169,10 @@ List cgpSSL_dcpe(arma::mat X,
       eta = (a_eta - 1 + arma::accu(q_star)/2)/(a_eta + b_eta -2 + q*(q-1)/2);
       // M-step update of Omega
       xi_star /= n; // QUIC needs everything to be scaled
-      res_quic = cgquic(q, residualmat.S_Omega, residualmat.M,xi_star, eps, quic_max_iter);
+      res_quic = cgquic(q, instance.S_Omega, instance.M,xi_star, eps, quic_max_iter);
       Omega = res_quic.slice(0);
       Sigma = res_quic.slice(1);
-      unitdiag(Omega,Sigma);
+      instance.postprocessing(B,Sigma,Omega);
 
       // check convergence
       converged = 1;
@@ -204,7 +204,7 @@ List cgpSSL_dcpe(arma::mat X,
   B_reset = B;
   Omega_reset = Omega;
   Sigma_reset = Sigma;
-  residualmat_reset = residualmat;
+  instance_reset = instance;
   theta_reset = theta;
   eta_reset = eta;
   
@@ -217,10 +217,10 @@ List cgpSSL_dcpe(arma::mat X,
     B_old = B;
     Omega_old = Omega;
     
-    residualmat.update(Y,X,mu_old, B,Sigma,Omega,n_rep,nskp);
-    mu_old = residualmat.mu;
-    update_B_theta(n,p,q,B,residualmat.R,residualmat.tXR,residualmat.S,theta,Sigma,eta,X,residualmat.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps, verbose);
-    residualmat.update_M(X,B);
+    instance.update(mu_old, B,Sigma,Omega,n_rep,nskp);
+    mu_old = instance.mu;
+    update_B_theta(instance.n_B,p,q,B,instance.R,instance.tXR,instance.S,theta,Sigma,eta,instance.X,instance.tXX,lambda1,lambda0,xi1,xi0,diag_penalty,theta_hyper_params,eta_hyper_params,max_iter,eps, verbose);
+    instance.update_M(B);
     // now update Omega and eta
     for(int k = 0; k < q; k++){
       for(int kk = k+1; kk < q; kk++){
@@ -237,10 +237,10 @@ List cgpSSL_dcpe(arma::mat X,
     eta = (a_eta - 1 + arma::accu(q_star)/2)/(a_eta + b_eta -2 + q*(q-1)/2);
     // M-step update of Omega
     xi_star /= n;
-    res_quic = cgquic(q, residualmat.S_Omega, residualmat.M,xi_star, eps, quic_max_iter);
+    res_quic = cgquic(q, instance.S_Omega, instance.M,xi_star, eps, quic_max_iter);
     Omega = res_quic.slice(0);
     Sigma = res_quic.slice(1);
-    unitdiag(Omega,Sigma);
+    instance.postprocessing(B,Sigma,Omega);
     
     converged = 1;
     for(int j = 0; j < p; j++){
@@ -270,7 +270,7 @@ List cgpSSL_dcpe(arma::mat X,
   List results;
   tmp_B = B;
   tmp_B.each_col() /= x_col_weights;
-  alpha = residualmat.mu - tmp_B.t() * mu_x;
+  alpha = instance.mu - tmp_B.t() * mu_x;
   results["alpha"] = alpha;
   results["B"] = tmp_B;
   results["Omega"] = Omega;
@@ -281,5 +281,10 @@ List cgpSSL_dcpe(arma::mat X,
   results["theta"] = theta;
   results["eta"] = eta;
   results["time"] = time_end - time_start;
+  if(verbose == 1) Rcout << "done" << endl;
   return results;
 }
+
+}
+
+#endif

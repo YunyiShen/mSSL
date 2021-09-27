@@ -13,7 +13,17 @@
 #include <stdint.h>
 #include <time.h>
 #include <RcppArmadillo.h>
+#include "linconGaussR.h"
+#include "QUIC.h"
+#include "workingparam.h"
 #include "mSSL/B_theta_update.h"
+#include "mSSL/mdpe.h"
+#include "mSSL/mdcpe.h"
+
+
+
+#include "mSSL/cgdpe.h"
+#include "mSSL/cgdcpe.h"
 
 
 

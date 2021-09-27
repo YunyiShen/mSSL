@@ -6,7 +6,7 @@
 //' @param Omega should be the inverse of Sigma
 //' @return no return, scaling will be done in place
 // [[Rcpp::export]]
-void unitdiag(arma::mat & Sigma, arma::mat &Omega){
+void unitdiag2(arma::mat & Sigma, arma::mat &Omega){
     workingparam::unitdiag(Sigma, Omega);
     return;
 }

@@ -1,23 +1,23 @@
+#ifndef MSSL_CGDPE_H
+#define MSSL_CGDPE_H
+
 #include <RcppArmadillo.h>
-#include <math.h>
-#include <stdio.h>
-#include <ctime>
 #include <linconGaussR.h>
-#include <mSSL.h>
 #include <QUIC.h>
 #include <workingparam.h>
+#include "B_theta_update.h"
 
 using namespace Rcpp;
-using namespace arma;
 using namespace std;
+using namespace arma;
+using namespace workingparam;
 using namespace linconGaussR;
-using namespace mSSL;
-using namespace quic;
 using namespace workingparam;
 
-// [[Rcpp::export]]
-List cgpSSL_dpe(arma::mat X,
-               arma::mat Y,
+namespace mSSL{
+
+template<class workpara>
+List cgSSL_dpe(workpara instance,
                List lambdas,
                List xis,
                arma::vec theta_hyper_params,
@@ -31,10 +31,10 @@ List cgpSSL_dpe(arma::mat X,
                int n_rep = 1000,
                int nskp = 5)
 {
-  int n = Y.n_rows;
-  int q = Y.n_cols;
-  int p = X.n_cols;
-
+  int n = instance.n_Omega;
+  int q = instance.Y.n_cols;
+  int p = instance.X.n_cols;
+  
   // Center columns of X and Y
   // re-scale the re-centered columns of X to have norm sqrt(n)
 
@@ -45,14 +45,14 @@ List cgpSSL_dpe(arma::mat X,
   arma::vec mu_x(p);
   for (int j = 0; j < p; j++)
   {
-    tmp_mu_x = mean(X.col(j));
-    X.col(j) -= tmp_mu_x;
-    tmp_weight_x = norm(X.col(j)) / sqrt(n);
-    X.col(j) /= tmp_weight_x;
+    tmp_mu_x = mean(instance.X.col(j));
+    instance.X.col(j) -= tmp_mu_x;
+    tmp_weight_x = norm(instance.X.col(j)) / sqrt(instance.n_B);
+    instance.X.col(j) /= tmp_weight_x;
     mu_x(j) = tmp_mu_x;
     x_col_weights(j) = tmp_weight_x;
   }
-  
+  instance.tXX = instance.X.t() * instance.X;
   int quic_max_iter = 5 * max_iter; // allow QUIC to run for more iterations
 
   /*
@@ -92,15 +92,12 @@ List cgpSSL_dpe(arma::mat X,
   double old_obj = 0.0; // used to check convergence
   arma::vec mu_old(q);
 
-  // Initialize the residual matrices and S
-  cgprobitWorkingParam residualmat(Sigma,Y, (X.t())*Y, (X.t())*X, mu_old, n );
-
   
   // Initialize a copy for the re-starts
   arma::mat B_restart = B;
   arma::mat Omega_restart = Omega;
   arma::mat Sigma_restart = Sigma;
-  cgprobitWorkingParam residualmat_restart(Sigma,Y, (X.t())*Y, (X.t())*X, mu_old, n );
+  workpara instance_restart = instance;
   double theta_restart = theta;
   double eta_restart = eta;
 
@@ -120,7 +117,7 @@ List cgpSSL_dpe(arma::mat X,
   arma::mat B_left = B;
   arma::mat Omega_left = Omega;
   arma::mat Sigma_left = Sigma;
-  cgprobitWorkingParam residualmat_left(Sigma,Y, (X.t())*Y, (X.t())*X, mu_old, n );
+  workpara instance_left = instance;
   double theta_left = theta;
   double eta_left = eta;
   int left_index = 0;
@@ -129,7 +126,7 @@ List cgpSSL_dpe(arma::mat X,
   arma::mat B_down = B;
   arma::mat Omega_down = Omega;
   arma::mat Sigma_down = Sigma;
-  cgprobitWorkingParam residualmat_down(Sigma,Y, (X.t())*Y, (X.t())*X, mu_old, n );
+  workpara instance_down = instance;
   double theta_down = theta;
   double eta_down = eta;
   int down_index = 0;
@@ -138,7 +135,7 @@ List cgpSSL_dpe(arma::mat X,
   arma::mat B_diag = B;
   arma::mat Omega_diag = Omega;
   arma::mat Sigma_diag = Sigma;
-  cgprobitWorkingParam residualmat_diag(Sigma,Y, (X.t())*Y, (X.t())*X, mu_old, n );
+  workpara instance_diag = instance;
   double theta_diag = theta;
   double eta_diag = eta;
   int diag_index = 0;
@@ -159,7 +156,7 @@ List cgpSSL_dpe(arma::mat X,
   arma::cube B_path(p, q, L * L);
   arma::cube Omega_path(q, q, L * L);
   arma::cube Sigma_path(q, q, L * L);
-  arma::cube R_path(n, q, L * L);
+  arma::cube R_path(instance.R.n_rows, q, L * L);
   arma::cube tXR_path(p, q, L * L);
   arma::cube S_Omega_path(q, q, L * L);
   arma::cube S_B_path(q, q, L * L);
@@ -194,7 +191,8 @@ List cgpSSL_dpe(arma::mat X,
       Rcpp::checkUserInterrupt();
     B_old = B;
     Omega_old = Omega;
-    old_obj = cgobjective(n, p, q, residualmat.S_Omega, B, X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+    old_obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+    
 
     // E Step
     for (int k = 0; k < q; k++)
@@ -213,21 +211,21 @@ List cgpSSL_dpe(arma::mat X,
     else if (diag_penalty == 0)
       xi_star.diag().fill(0);
 
-    residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-    mu_old = residualmat.mu;
+    if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+    instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
+    mu_old = instance.mu;
     // M Step Update of B and Theta
-    update_B_theta(n, p, q, B, residualmat.R, residualmat.tXR, residualmat.S, theta, Sigma, eta, X, residualmat.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
-    residualmat.update_M(X,B);
+    update_B_theta(instance.n_B, p, q, B, instance.R, instance.tXR, instance.S, theta, Sigma, eta, instance.X, instance.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
+    instance.update_M(B);
     // M Step Update of eta
     eta = (a_eta - 1 + arma::accu(q_star) / 2) / (a_eta + b_eta - 2 + q * (q - 1) / 2);
     // M Step Update of Omega
     xi_star /= n; // QUIC works with re-scaled objective and we scale our penalty accordingly
-    res_quic = cgquic(q, residualmat.S_Omega, residualmat.M, xi_star, eps, quic_max_iter);
+    res_quic = cgquic(q, instance.S_Omega, instance.M, xi_star, eps, quic_max_iter);
     Omega = res_quic.slice(0);
     Sigma = res_quic.slice(1);
-    unitdiag(Omega, Sigma); // fit Omega to have unit variance
-    //residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-    //mu_old = residualmat.mu;
+    instance.postprocessing(B,Sigma,Omega);
+    
     
 
     // check convergence and whether we need to terminate early
@@ -235,9 +233,9 @@ List cgpSSL_dpe(arma::mat X,
     early_terminate = 0;
     omega_non_zero = 0;
 
-    obj = cgobjective(n, p, q, residualmat.S_Omega, B, X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+    obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
     
-    if (residualmat.s_eval(q - 1) / residualmat.s_eval(0) > s_max_condition)
+    if (instance.s_eval(q - 1) / instance.s_eval(0) > s_max_condition)
       early_terminate = 1; // condition number of S is too large. Terminate early
     if ((obj - old_obj) / old_obj < eps)
       obj_counter++; // objective increased by less than 100*eps%, increment counter
@@ -293,15 +291,15 @@ List cgpSSL_dpe(arma::mat X,
   B_path.slice(current_index) = B;
   Omega_path.slice(current_index) = Omega;
   Sigma_path.slice(current_index) = Sigma;
-  R_path.slice(current_index) = residualmat.R;
-  tXR_path.slice(current_index) = residualmat.tXR;
-  S_B_path.slice(current_index) = residualmat.S;
-  S_Omega_path.slice(current_index) = residualmat.S_Omega;
-  M_path.slice(current_index) = residualmat.M;
+  R_path.slice(current_index) = instance.R;
+  tXR_path.slice(current_index) = instance.tXR;
+  S_B_path.slice(current_index) = instance.S;
+  S_Omega_path.slice(current_index) = instance.S_Omega;
+  M_path.slice(current_index) = instance.M;
   theta_path(current_index) = theta;
   eta_path(current_index) = eta;
 
-  obj_path(current_index) = cgobjective(n, p, q, residualmat.S_Omega, B, X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+  obj_path(current_index) = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
 
   // Now we need to solve for t = 0
   for (s = 1; s < L; s++)
@@ -318,7 +316,7 @@ List cgpSSL_dpe(arma::mat X,
       B = B_restart;
       Omega = Omega_restart;
       Sigma = Omega_restart;
-      residualmat = residualmat_restart;
+      instance = instance_restart;
       theta = theta_restart;
       eta = eta_restart;
     }
@@ -327,11 +325,11 @@ List cgpSSL_dpe(arma::mat X,
       B = B_path.slice(left_index);
       Omega = Omega_path.slice(left_index);
       Sigma = Sigma_path.slice(left_index);
-      residualmat.R = R_path.slice(left_index);
-      residualmat.tXR = tXR_path.slice(left_index);
-      residualmat.S = S_B_path.slice(left_index);
-      residualmat.S_Omega = S_Omega_path.slice(left_index);
-      residualmat.M = M_path.slice(left_index);
+      instance.R = R_path.slice(left_index);
+      instance.tXR = tXR_path.slice(left_index);
+      instance.S = S_B_path.slice(left_index);
+      instance.S_Omega = S_Omega_path.slice(left_index);
+      instance.M = M_path.slice(left_index);
       theta = theta_path(left_index);
       eta = eta_path(left_index);
     }
@@ -347,7 +345,7 @@ List cgpSSL_dpe(arma::mat X,
       B_old = B;
       Omega_old = Omega;
 
-      old_obj = cgobjective(n, p, q, residualmat.S_Omega, B, X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+      old_obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
       // E Step
       for (int k = 0; k < q; k++)
       {
@@ -365,34 +363,33 @@ List cgpSSL_dpe(arma::mat X,
       else if (diag_penalty == 0)
         xi_star.diag().fill(0);
 
-      residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-      mu_old = residualmat.mu;
+      if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+      instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
+      mu_old = instance.mu;
       // M Step Update of B and Theta
-      update_B_theta(n, p, q, B, residualmat.R, residualmat.tXR, residualmat.S, theta, Sigma, eta, X, residualmat.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
+      update_B_theta(instance.n_B, p, q, B, instance.R, instance.tXR, instance.S, theta, Sigma, eta, instance.X, instance.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
       // update things related with B
-      residualmat.update_M(X,B);
+      instance.update_M(B);
 
       // M Step Update of eta
       eta = (a_eta - 1 + arma::accu(q_star) / 2) / (a_eta + b_eta - 2 + q * (q - 1) / 2);
       // M Step Update of Omega
 
       xi_star /= n; // QUIC works with re-scaled objective and we scale our penalty accordingly
-      res_quic = cgquic(q, residualmat.S_Omega, residualmat.M, xi_star, eps, quic_max_iter);
+      res_quic = cgquic(q, instance.S_Omega, instance.M, xi_star, eps, quic_max_iter);
       Omega = res_quic.slice(0);
       Sigma = res_quic.slice(1);
-      unitdiag(Omega,Sigma);
-      // updating things related with Omega
-      //residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-      //mu_old = residualmat.mu;
+      instance.postprocessing(B,Sigma,Omega);
+      
 
       // check convergence and whether we need to terminate early
       converged = 1;
       early_terminate = 0;
       omega_non_zero = 0;
 
-      obj = cgobjective(n, p, q, residualmat.S_Omega, B, X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+      obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
       
-      if (residualmat.s_eval(q - 1) / residualmat.s_eval(0) > s_max_condition)
+      if (instance.s_eval(q - 1) / instance.s_eval(0) > s_max_condition)
         early_terminate = 1; // condition number of S is too large. Terminate early
       if ((obj - old_obj) / old_obj < eps)
         obj_counter++; // objective increased by less than 100*eps%, increment counter
@@ -447,14 +444,14 @@ List cgpSSL_dpe(arma::mat X,
     B_path.slice(current_index) = B;
     Omega_path.slice(current_index) = Omega;
     Sigma_path.slice(current_index) = Sigma;
-    R_path.slice(current_index) = residualmat.R;
-    tXR_path.slice(current_index) = residualmat.tXR;
-    S_B_path.slice(current_index) = residualmat.S;
-    S_Omega_path.slice(current_index) = residualmat.S_Omega;
-    M_path.slice(current_index) = residualmat.M;
+    R_path.slice(current_index) = instance.R;
+    tXR_path.slice(current_index) = instance.tXR;
+    S_B_path.slice(current_index) = instance.S;
+    S_Omega_path.slice(current_index) = instance.S_Omega;
+    M_path.slice(current_index) = instance.M;
     theta_path(current_index) = theta;
     eta_path(current_index) = eta;
-    obj_path(current_index) = cgobjective(n, p, q, residualmat.S_Omega, B, X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+    obj_path(current_index) = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
   }
 
   // Now we need to solve for s = 0
@@ -473,7 +470,7 @@ List cgpSSL_dpe(arma::mat X,
       B = B_restart;
       Omega = Omega_restart;
       Sigma = Sigma_restart;
-      residualmat = residualmat_restart;
+      instance = instance_restart;
       theta = theta_restart;
       eta = eta_restart;
     }
@@ -482,11 +479,11 @@ List cgpSSL_dpe(arma::mat X,
       B = B_path.slice(down_index);
       Omega = Omega_path.slice(down_index);
       Sigma = Sigma_path.slice(down_index);
-      residualmat.R = R_path.slice(down_index);
-      residualmat.tXR = tXR_path.slice(down_index);
-      residualmat.S = S_B_path.slice(down_index);
-      residualmat.S_Omega = S_Omega_path.slice(down_index);
-      residualmat.M = M_path.slice(down_index);
+      instance.R = R_path.slice(down_index);
+      instance.tXR = tXR_path.slice(down_index);
+      instance.S = S_B_path.slice(down_index);
+      instance.S_Omega = S_Omega_path.slice(down_index);
+      instance.M = M_path.slice(down_index);
       theta = theta_path(down_index);
       eta = eta_path(down_index);
     }
@@ -501,7 +498,7 @@ List cgpSSL_dpe(arma::mat X,
         Rcpp::checkUserInterrupt();
       B_old = B;
       Omega_old = Omega;
-      old_obj = cgobjective(n, p, q, residualmat.S_Omega, B, X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+      old_obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
 
       // E Step
       for (int k = 0; k < q; k++)
@@ -519,34 +516,33 @@ List cgpSSL_dpe(arma::mat X,
         xi_star.diag().fill(xi1);
       else if (diag_penalty == 0)
         xi_star.diag().fill(0);
-      // I AM HERE
+      
       // M Step Update of B and Theta
-      residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-      mu_old = residualmat.mu;
-      update_B_theta(n, p, q, B, residualmat.R, residualmat.tXR, residualmat.S, theta, Sigma, eta, X, residualmat.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
+      if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+      instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
+      mu_old = instance.mu;
+      update_B_theta(instance.n_B, p, q, B, instance.R, instance.tXR, instance.S, theta, Sigma, eta, instance.X, instance.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
       // update things related with B
-      residualmat.update_M(X,B);
+      instance.update_M(B);
       // M Step Update of eta
       eta = (a_eta - 1 + arma::accu(q_star) / 2) / (a_eta + b_eta - 2 + q * (q - 1) / 2);
       // M Step Update of Omega
       xi_star /= n; // QUIC works with re-scaled objective and we scale our penalty accordingly
 
-      res_quic = cgquic(q, residualmat.S_Omega, residualmat.M, xi_star, eps, quic_max_iter);
+      res_quic = cgquic(q, instance.S_Omega, instance.M, xi_star, eps, quic_max_iter);
       Omega = res_quic.slice(0);
       Sigma = res_quic.slice(1);
-      unitdiag(Omega,Sigma);
-      // updating things related with Omega
-      //residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-      //mu_old = residualmat.mu;
+      instance.postprocessing(B,Sigma,Omega);
+      
 
       // check convergence and whether we need to terminate early
       converged = 1;
       early_terminate = 0;
       omega_non_zero = 0;
 
-      obj = cgobjective(n, p, q, residualmat.S_Omega, B, X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+      obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
       
-      if (residualmat.s_eval(q - 1) / residualmat.s_eval(0) > s_max_condition)
+      if (instance.s_eval(q - 1) / instance.s_eval(0) > s_max_condition)
         early_terminate = 1; // condition number of S is too large. Terminate early
       if ((obj - old_obj) / old_obj < eps)
         obj_counter++; // objective increased by less than 100*eps%, increment counter
@@ -601,14 +597,14 @@ List cgpSSL_dpe(arma::mat X,
     B_path.slice(current_index) = B;
     Omega_path.slice(current_index) = Omega;
     Sigma_path.slice(current_index) = Sigma;
-    R_path.slice(current_index) = residualmat.R;
-    tXR_path.slice(current_index) = residualmat.tXR;
-    S_B_path.slice(current_index) = residualmat.S;
-    S_Omega_path.slice(current_index) = residualmat.S_Omega;
-    M_path.slice(current_index) = residualmat.M;
+    R_path.slice(current_index) = instance.R;
+    tXR_path.slice(current_index) = instance.tXR;
+    S_B_path.slice(current_index) = instance.S;
+    S_Omega_path.slice(current_index) = instance.S_Omega;
+    M_path.slice(current_index) = instance.M;
     theta_path(current_index) = theta;
     eta_path(current_index) = eta;
-    obj_path(current_index) = cgobjective(n, p, q, residualmat.S_Omega, B, X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+    obj_path(current_index) = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
   }
   // Now we're ready to solve with s > 0 and t > 0
 
@@ -631,7 +627,7 @@ List cgpSSL_dpe(arma::mat X,
         B_left = B_restart;
         Omega_left = Omega_restart;
         Sigma_left = Sigma_restart;
-        residualmat_left = residualmat_restart;
+        instance_left = instance_restart;
         theta_left = theta_restart;
         eta_left = eta_restart;
       }
@@ -640,21 +636,21 @@ List cgpSSL_dpe(arma::mat X,
         B_left = B_path.slice(left_index);
         Omega_left = Omega_path.slice(left_index);
         Sigma_left = Sigma_path.slice(left_index);
-        residualmat_left.R = R_path.slice(left_index);
-        residualmat_left.tXR = tXR_path.slice(left_index);
-        residualmat_left.S = S_B_path.slice(left_index);
-        residualmat_left.S_Omega = S_Omega_path.slice(left_index);
-        residualmat_left.M = M_path.slice(left_index);
+        instance_left.R = R_path.slice(left_index);
+        instance_left.tXR = tXR_path.slice(left_index);
+        instance_left.S = S_B_path.slice(left_index);
+        instance_left.S_Omega = S_Omega_path.slice(left_index);
+        instance_left.M = M_path.slice(left_index);
         theta_left = theta_path(left_index);
         eta_left = eta_path(left_index);
       }
-      obj_left = cgobjective(n, p, q, residualmat_left.S_Omega, B_left, X, Omega_left, Sigma_left, lambda1, lambda0, xi1, xi0, theta_left, eta_left, diag_penalty, theta_hyper_params, eta_hyper_params);
+      obj_left = cgobjective(n, p, q, instance_left.S_Omega, B_left, instance.X, Omega_left, Sigma_left, lambda1, lambda0, xi1, xi0, theta_left, eta_left, diag_penalty, theta_hyper_params, eta_hyper_params);
       if (early_term(down_index) == 1)
       {
         B_down = B_restart;
         Omega_down = Omega_restart;
         Sigma_down = Sigma_restart;
-        residualmat_down = residualmat_restart;
+        instance_down = instance_restart;
         theta_down = theta_restart;
         eta_down = eta_restart;
       }
@@ -663,21 +659,21 @@ List cgpSSL_dpe(arma::mat X,
         B_down = B_path.slice(down_index);
         Omega_down = Omega_path.slice(down_index);
         Sigma_down = Sigma_path.slice(down_index);
-        residualmat_down.R = R_path.slice(down_index);
-        residualmat_down.tXR = tXR_path.slice(down_index);
-        residualmat_down.S = S_B_path.slice(down_index);
-        residualmat_down.S_Omega = S_Omega_path.slice(down_index);
-        residualmat_down.M = M_path.slice(down_index);
+        instance_down.R = R_path.slice(down_index);
+        instance_down.tXR = tXR_path.slice(down_index);
+        instance_down.S = S_B_path.slice(down_index);
+        instance_down.S_Omega = S_Omega_path.slice(down_index);
+        instance_down.M = M_path.slice(down_index);
         theta_down = theta_path(down_index);
         eta_down = eta_path(down_index);
       }
-      obj_down = cgobjective(n, p, q, residualmat_down.S_Omega, B_down, X, Omega_down, Sigma_down, lambda1, lambda0, xi1, xi0, theta_down, eta_down, diag_penalty, theta_hyper_params, eta_hyper_params);
+      obj_down = cgobjective(n, p, q, instance_down.S_Omega, B_down, instance.X, Omega_down, Sigma_down, lambda1, lambda0, xi1, xi0, theta_down, eta_down, diag_penalty, theta_hyper_params, eta_hyper_params);
       if (early_term(diag_index) == 1)
       {
         B_diag = B_restart;
         Omega_diag = Omega_restart;
         Sigma_diag = Sigma_restart;
-        residualmat_diag = residualmat_restart;
+        instance_diag = instance_restart;
         theta_diag = theta_restart;
         eta_diag = eta_restart;
       }
@@ -686,22 +682,22 @@ List cgpSSL_dpe(arma::mat X,
         B_diag = B_path.slice(diag_index);
         Omega_diag = Omega_path.slice(diag_index);
         Sigma_diag = Sigma_path.slice(diag_index);
-        residualmat_diag.R = R_path.slice(diag_index);
-        residualmat_diag.tXR = tXR_path.slice(diag_index);
-        residualmat_diag.S = S_B_path.slice(diag_index);
-        residualmat_diag.S_Omega = S_Omega_path.slice(diag_index);
-        residualmat_diag.M = M_path.slice(diag_index);
+        instance_diag.R = R_path.slice(diag_index);
+        instance_diag.tXR = tXR_path.slice(diag_index);
+        instance_diag.S = S_B_path.slice(diag_index);
+        instance_diag.S_Omega = S_Omega_path.slice(diag_index);
+        instance_diag.M = M_path.slice(diag_index);
         theta_diag = theta_path(diag_index);
         eta_diag = eta_path(diag_index);
       }
-      obj_diag = cgobjective(n, p, q, residualmat_diag.S_Omega, B_diag, X, Omega_diag, Sigma_diag, lambda1, lambda0, xi1, xi0, theta_diag, eta_diag, diag_penalty, theta_hyper_params, eta_hyper_params);
+      obj_diag = cgobjective(n, p, q, instance_diag.S_Omega, B_diag, instance.X, Omega_diag, Sigma_diag, lambda1, lambda0, xi1, xi0, theta_diag, eta_diag, diag_penalty, theta_hyper_params, eta_hyper_params);
 
       if ((obj_left >= obj_down) & (obj_left >= obj_diag))
       {
         B = B_left;
         Omega = Omega_left;
         Sigma = Sigma_left;
-        residualmat = residualmat_left;
+        instance = instance_left;
         theta = theta_left;
         eta = eta_left;
         prop_dir(current_index) = 1;
@@ -712,7 +708,7 @@ List cgpSSL_dpe(arma::mat X,
         B = B_down;
         Omega = Omega_down;
         Sigma = Sigma_down;
-        residualmat = residualmat_down;
+        instance = instance_down;
         theta = theta_down;
         eta = eta_down;
         prop_dir(current_index) = 2;
@@ -723,7 +719,7 @@ List cgpSSL_dpe(arma::mat X,
         B = B_diag;
         Omega = Omega_diag;
         Sigma = Sigma_diag;
-        residualmat = residualmat_diag;
+        instance = instance_diag;
         theta = theta_diag;
         eta = eta_diag;
         prop_dir(current_index) = 3;
@@ -739,7 +735,7 @@ List cgpSSL_dpe(arma::mat X,
           Rcpp::checkUserInterrupt();
         B_old = B;
         Omega_old = Omega;
-        old_obj = cgobjective(n, p, q, residualmat.S_Omega, B, X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+        old_obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
 
         // E Step
         for (int k = 0; k < q; k++)
@@ -758,24 +754,22 @@ List cgpSSL_dpe(arma::mat X,
         else if (diag_penalty == 0)
           xi_star.diag().fill(0);
 
-        
-        residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-        mu_old = residualmat.mu;
+        if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+        instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
+        mu_old = instance.mu;
         // M Step Update of B and Theta
-        update_B_theta(n, p, q, B, residualmat.R, residualmat.tXR, residualmat.S, theta, Sigma, eta, X, residualmat.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
+        update_B_theta(instance.n_B, p, q, B, instance.R, instance.tXR, instance.S, theta, Sigma, eta, instance.X, instance.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
         // update stuff related to B
-        residualmat.update_M(X,B);
+        instance.update_M(B);
         // M Step Update of eta
         eta = (a_eta - 1 + arma::accu(q_star) / 2) / (a_eta + b_eta - 2 + q * (q - 1) / 2);
         // M Step Update of Omega
         xi_star /= n; // QUIC works with re-scaled objective and we scale our penalty accordingly
-        res_quic = cgquic(q, residualmat.S_Omega, residualmat.M, xi_star, eps, quic_max_iter);
+        res_quic = cgquic(q, instance.S_Omega, instance.M, xi_star, eps, quic_max_iter);
         Omega = res_quic.slice(0);
         Sigma = res_quic.slice(1);
-        unitdiag(Omega,Sigma);
-        // updating things related with Omega
-        //residualmat.update(Y,X,mu_old,B,Sigma,Omega,n_rep,nskp);
-        //mu_old = residualmat.mu;
+        instance.postprocessing(B,Sigma,Omega);
+        
 
 
         // check convergence and whether we need to terminate early
@@ -783,9 +777,9 @@ List cgpSSL_dpe(arma::mat X,
         early_terminate = 0;
         omega_non_zero = 0;
 
-        obj = cgobjective(n, p, q, residualmat.S_Omega, B, X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+        obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
         
-        if (residualmat.s_eval(q - 1) / residualmat.s_eval(0) > s_max_condition)
+        if (instance.s_eval(q - 1) / instance.s_eval(0) > s_max_condition)
           early_terminate = 1; // condition number of S is too large. Terminate early
         if ((obj - old_obj) / old_obj < eps)
           obj_counter++; // objective increased by less than 100*eps%, increment counter
@@ -840,15 +834,15 @@ List cgpSSL_dpe(arma::mat X,
       B_path.slice(current_index) = B;
       Omega_path.slice(current_index) = Omega;
       Sigma_path.slice(current_index) = Sigma;
-      R_path.slice(current_index) = residualmat.R;
-      tXR_path.slice(current_index) = residualmat.tXR;
-      S_B_path.slice(current_index) = residualmat.S;
-      S_Omega_path.slice(current_index) = residualmat.S_Omega;
-      M_path.slice(current_index) = residualmat.M;
+      R_path.slice(current_index) = instance.R;
+      tXR_path.slice(current_index) = instance.tXR;
+      S_B_path.slice(current_index) = instance.S;
+      S_Omega_path.slice(current_index) = instance.S_Omega;
+      M_path.slice(current_index) = instance.M;
       theta_path(current_index) = theta;
       eta_path(current_index) = eta;
       //obj_path(current_index) = cgobjective(n, p, q, S_Omega, B, Omega, Sigma,lambda1, lambda_spike(L-1), xi1, xi_spike(L-1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
-      obj_path(current_index) = cgobjective(n, p, q, residualmat.S_Omega, B, X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params); // compute at the maximal value
+      obj_path(current_index) = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params); // compute at the maximal value
     }                                                                                                                                                                                                // closes the loop over t
   }                                                                                                                                                                                                  // closes the loop over s
 
@@ -862,10 +856,10 @@ List cgpSSL_dpe(arma::mat X,
       tmp_B = B_path.slice(current_index);
       tmp_B.each_col() /= x_col_weights;
       B_path.slice(current_index) = tmp_B;
-      alpha_path.col(current_index) = residualmat.mu - tmp_B.t() * mu_x; // compute the intercept
+      alpha_path.col(current_index) = instance.mu - tmp_B.t() * mu_x; // compute the intercept
     }
   }
-  alpha = residualmat.mu - tmp_B.t() * mu_x;
+  alpha = instance.mu - tmp_B.t() * mu_x;
   results["alpha"] = alpha;
   results["B"] = B_path.slice(L * L - 1);
   results["Omega"] = Omega_path.slice(L * L - 1);
@@ -890,7 +884,11 @@ List cgpSSL_dpe(arma::mat X,
   results["xi0"] = xi_spike;
   results["early_term"] = early_term;
   //results["obj_term"] = obj_term;
+  if(verbose == 1) Rcout << "done" << endl;
   return (results);
 }
 
+}
 
+
+#endif

@@ -7,7 +7,7 @@
 #' @param Omega precision matrix
 #' @return a matrix of binary variables sampled from the multivariate probit with mean-covariance parameterization 
 mprobit <- function(X,B,mu,Sigma, Omega=solve(Sigma)){
-    unitdiag(Sigma,Omega)
+    unitdiag2(Sigma,Omega)
     XB <- X %*% B
     E <- mvrnorm(nrow(X),mu,Sigma)
     1.*(XB+E>=0)
@@ -23,7 +23,7 @@ mprobit <- function(X,B,mu,Sigma, Omega=solve(Sigma)){
 #' @param Omega precision matrix
 #' @return a matrix of binary variables sampled from the multivariate probit with chain graph parameterization 
 cgprobit <- function(X,B,mu,Sigma, Omega=solve(Sigma)){
-  unitdiag(Omega,Sigma)
+  unitdiag2(Omega,Sigma)
   XB <- X %*% B
   E <- mvrnorm(nrow(X),mu,Omega)
   res <- XB+E

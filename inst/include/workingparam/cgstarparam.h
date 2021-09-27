@@ -16,26 +16,19 @@ namespace workingparam{
 class cgstarWorkingParam: public cgWorkingParam {
     
     public: 
+        arma::mat lower;
+        arma::mat upper;
         cgstarWorkingParam() = default;
-        cgstarWorkingParam(arma::mat SS, 
-            arma::mat RR,
-            arma::mat tXRR,
-            arma::mat tXXx,
-            arma::vec muu,int n): cgWorkingParam(SS, RR, tXRR, tXXx, muu, n){}
+        cgstarWorkingParam(arma::mat X, arma::mat lower, arma::mat upper): cgWorkingParam(X,upper),lower(lower),upper(upper){}
 
-        inline void update(const arma::mat &lower,
-                        const arma::mat &upper,
-                        const arma::mat &X,
-                        const arma::vec &mu_t,
+        inline void update(const arma::vec &mu_t,
                         const arma::mat &B_t,
                         const arma::mat &Sigma_t,
                         const arma::mat &Omega_t,
                         int n_rep, int nskp = 5);
 };
 
-inline void cgstarWorkingParam::update(const arma::mat &lower,
-                        const arma::mat &upper,
-                        const arma::mat &X,
+inline void cgstarWorkingParam::update(
                         const arma::vec &mu_t,
                         const arma::mat &B_t,
                         const arma::mat &Sigma_t,

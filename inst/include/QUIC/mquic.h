@@ -462,7 +462,7 @@ int &max_iter_quic)
 			
 			//ptrdiff_t info = 0;
 			//ptrdiff_t p0 = q;
-			int p0 = q;
+			//int p0 = q;
 			chol(Sigma,Sigma);
 			if (Sigma.n_rows==0)
 			{
