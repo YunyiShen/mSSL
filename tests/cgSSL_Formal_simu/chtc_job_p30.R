@@ -91,7 +91,7 @@ retry <- 5
 
 n_res_loss <- length(qs) * length(ss) * 
   length(ps) * length(sigma_models) * 
-  nrep * 4 # 4 methods, dpe, dcpe, car, cara
+  nrep * 6 # 6 methods, dpe, dcpe, car, cara, with mSSL-dpe and mSSL-dcpe
 
 res_loss <- data.frame(matrix(NA,nrow = n_res_loss,ncol = 9))
 colnames(res_loss) <- c("q","p","n","s","mod",
@@ -158,6 +158,8 @@ for(q in qs) {
           res_graph_B[i_res_graph_B,8:18] <- error_B(res_dpe$B, B)
           i_res_graph_Omega <- i_res_graph_Omega + 1
           i_res_graph_B <- i_res_graph_B + 1
+          write.csv(res_graph_B,res_graph_B_file)
+          write.csv(res_graph_Omega,res_graph_Omega_file)
           
           
           cat("cgSSL-dcpe\n")
@@ -181,6 +183,62 @@ for(q in qs) {
           res_graph_B[i_res_graph_B,7] <- "cgSSL-dcpe"
           res_graph_Omega[i_res_graph_Omega,8:18] <- error_Omega(res_dcpe$Omega, Omega)
           res_graph_B[i_res_graph_B,8:18] <- error_B(res_dcpe$B, B)
+          i_res_graph_Omega <- i_res_graph_Omega + 1
+          i_res_graph_B <- i_res_graph_B + 1
+          write.csv(res_graph_B,res_graph_B_file)
+          write.csv(res_graph_Omega,res_graph_Omega_file)
+          
+          # use of mSSL
+          
+          cat("mSSL-dpe\n")
+          for(jj in 1:retry){
+            res_mdpe <- tryCatch( 
+              mSSL(X=X,Y=Y,cg = FALSE,verbose = FALSE ),
+              error = function(e){return(list())} )
+            if(length(res_mdpe)>0) break
+            else cat("retry ",jj,"\n")
+          }
+          res_loss[i_res_loss,1:6] <- c(q,p,n,s,mod,i)
+          res_loss$algo[i_res_loss] <- "mSSL-dpe"
+          res_loss$logL2B[i_res_loss] <- mSSL:::log_l2(B,res_mdpe$B %*% res_mdpe$Omega)
+          res_loss$steinOmega[i_res_loss] <- CARlasso:::stein_loss_cpp(res_mdpe$Omega, Omega)
+          write.csv(res_loss,res_loss_file)
+          i_res_loss <- i_res_loss + 1
+          
+          res_graph_Omega[i_res_graph_Omega,1:6] <- c(q,p,n,s,mod,i)
+          res_graph_B[i_res_graph_B,1:6] <- c(q,p,n,s,mod,i)
+          res_graph_B[i_res_graph_B,7] <- "mSSL-dpe"
+          res_graph_Omega[i_res_graph_Omega,7] <- "mSSL-dpe"
+          
+          res_graph_Omega[i_res_graph_Omega,8:18] <- error_Omega(res_mdpe$Omega, Omega)
+          res_graph_B[i_res_graph_B,8:18] <- error_B(res_mdpe$B%*%res_mdpe$Omega, B)
+          i_res_graph_Omega <- i_res_graph_Omega + 1
+          i_res_graph_B <- i_res_graph_B + 1
+          write.csv(res_graph_B,res_graph_B_file)
+          write.csv(res_graph_Omega,res_graph_Omega_file)
+          
+          
+          cat("mSSL-dcpe\n")
+          for(jj in 1:retry){
+            res_mdcpe <- tryCatch( 
+              mSSL(X=X,Y=Y,cg = FALSE,condexp = TRUE, verbose = FALSE),
+              error = function(e){return(list())} )
+            if(length(res_mdcpe)>0) break
+            else cat("retry ",jj,"\n")
+          }
+          res_loss[i_res_loss,1:6] <- c(q,p,n,s,mod,i)
+          res_loss$algo[i_res_loss] <- "mSSL-dcpe"
+          res_loss$logL2B[i_res_loss] <- mSSL:::log_l2(B,res_mdcpe$B%*%res_mdcpe$Omega)
+          res_loss$steinOmega[i_res_loss] <- CARlasso:::stein_loss_cpp(res_mdcpe$Omega, Omega)
+          write.csv(res_loss,res_loss_file)
+          i_res_loss <- i_res_loss + 1
+          
+          res_graph_Omega[i_res_graph_Omega,1:6] <- c(q,p,n,s,mod,i)
+          res_graph_B[i_res_graph_B,1:6] <- c(q,p,n,s,mod,i)
+          res_graph_Omega[i_res_graph_Omega,7] <- "mSSL-dcpe"
+          res_graph_B[i_res_graph_B,7] <- "mSSL-dcpe"
+          res_graph_Omega[i_res_graph_Omega,8:18] <- error_Omega(res_mdcpe$Omega, Omega)
+          res_graph_B[i_res_graph_B,8:18] <- error_B(res_mdcpe$B%*%res_mdcpe$Omega, B)
           i_res_graph_Omega <- i_res_graph_Omega + 1
           i_res_graph_B <- i_res_graph_B + 1
           write.csv(res_graph_B,res_graph_B_file)
