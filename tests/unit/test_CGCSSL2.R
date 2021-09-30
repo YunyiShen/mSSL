@@ -11,8 +11,8 @@ source("./R/plot_support.R")
 sourceCpp("./src/cgSSL.cpp",rebuild = TRUE)
 
 set.seed(42)
-p <- 2
-q <- 5
+p <- 20
+q <- 30
 n <- 100
 B <- as.matrix( rsparsematrix(p, q, 0.2, rand.x = function(n){runif(n,-2,2)}))
 
@@ -36,8 +36,8 @@ GCSSL_dpe_res <- cgSSL_dpe(X,Y,lambdas = list(lambda1 = 1, lambda0 = seq(10, nro
                     theta_hyper_params = c(1, ncol(X) * ncol(Y)),
                     eta_hyper_params = c(1, ncol(Y)),
                     diag_penalty = 0,
-                    max_iter = 10000,
-                    eps = 1e-6,
+                    max_iter = 500,
+                    eps = 1e-3,
                     s_max_condition = 10*nrow(X),
                     obj_counter_max = 5,
                     verbose = 1)

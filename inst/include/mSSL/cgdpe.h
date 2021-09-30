@@ -211,9 +211,6 @@ List cgSSL_dpe(workpara instance,
     else if (diag_penalty == 0)
       xi_star.diag().fill(0);
 
-    if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
-    instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
-    mu_old = instance.mu;
     // M Step Update of B and Theta
     update_B_theta(instance.n_B, p, q, B, instance.R, instance.tXR, instance.S, theta, Sigma, eta, instance.X, instance.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
     instance.update_M(B);
@@ -226,7 +223,9 @@ List cgSSL_dpe(workpara instance,
     Sigma = res_quic.slice(1);
     instance.postprocessing(B,Sigma,Omega);
     
-    
+    if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+    instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
+    mu_old = instance.mu;
 
     // check convergence and whether we need to terminate early
     converged = 1;
@@ -363,9 +362,7 @@ List cgSSL_dpe(workpara instance,
       else if (diag_penalty == 0)
         xi_star.diag().fill(0);
 
-      if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
-      instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
-      mu_old = instance.mu;
+      
       // M Step Update of B and Theta
       update_B_theta(instance.n_B, p, q, B, instance.R, instance.tXR, instance.S, theta, Sigma, eta, instance.X, instance.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
       // update things related with B
@@ -381,6 +378,9 @@ List cgSSL_dpe(workpara instance,
       Sigma = res_quic.slice(1);
       instance.postprocessing(B,Sigma,Omega);
       
+      if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+      instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
+      mu_old = instance.mu;
 
       // check convergence and whether we need to terminate early
       converged = 1;
@@ -518,9 +518,7 @@ List cgSSL_dpe(workpara instance,
         xi_star.diag().fill(0);
       
       // M Step Update of B and Theta
-      if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
-      instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
-      mu_old = instance.mu;
+      
       update_B_theta(instance.n_B, p, q, B, instance.R, instance.tXR, instance.S, theta, Sigma, eta, instance.X, instance.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
       // update things related with B
       instance.update_M(B);
@@ -534,6 +532,9 @@ List cgSSL_dpe(workpara instance,
       Sigma = res_quic.slice(1);
       instance.postprocessing(B,Sigma,Omega);
       
+      if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+      instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
+      mu_old = instance.mu;
 
       // check convergence and whether we need to terminate early
       converged = 1;
@@ -754,9 +755,7 @@ List cgSSL_dpe(workpara instance,
         else if (diag_penalty == 0)
           xi_star.diag().fill(0);
 
-        if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
-        instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
-        mu_old = instance.mu;
+        
         // M Step Update of B and Theta
         update_B_theta(instance.n_B, p, q, B, instance.R, instance.tXR, instance.S, theta, Sigma, eta, instance.X, instance.tXX, lambda1, lambda0, xi1, xi0, diag_penalty, theta_hyper_params, eta_hyper_params, max_iter, eps, verbose);
         // update stuff related to B
@@ -770,7 +769,9 @@ List cgSSL_dpe(workpara instance,
         Sigma = res_quic.slice(1);
         instance.postprocessing(B,Sigma,Omega);
         
-
+        if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+        instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
+        mu_old = instance.mu;
 
         // check convergence and whether we need to terminate early
         converged = 1;
