@@ -176,6 +176,9 @@ List mSSL_dpe(workpara instance,
   iter = 0;
   converged = 0;
   early_terminate = 0;
+  if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+  instance.update(mu_old,B,Sigma,n_rep,nskp);
+  mu_old = instance.mu;
   while(iter < max_iter){
     
     
@@ -292,6 +295,9 @@ List mSSL_dpe(workpara instance,
     iter = 0;
     converged = 0;
     early_terminate = 0;
+    if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+    instance.update(mu_old,B,Sigma,n_rep,nskp);
+    mu_old = instance.mu;
     while(iter < max_iter){
       
       
@@ -408,6 +414,9 @@ List mSSL_dpe(workpara instance,
     iter = 0;
     converged = 0;
     early_terminate = 0;
+    if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+    instance.update(mu_old,B,Sigma,n_rep,nskp);
+    mu_old = instance.mu;
     while(iter < max_iter){
       
       
@@ -586,6 +595,9 @@ List mSSL_dpe(workpara instance,
       iter = 0;
       converged = 0;
       early_terminate = 0;
+      if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+      instance.update(mu_old,B,Sigma,n_rep,nskp);
+      mu_old = instance.mu;
       while(iter < max_iter){
         
         

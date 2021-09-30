@@ -184,6 +184,9 @@ List cgSSL_dpe(workpara instance,
   iter = 0;
   converged = 0;
   early_terminate = 0;
+  if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+  instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
+  mu_old = instance.mu;
   while (iter < max_iter)
   {
     iter++;
@@ -336,6 +339,9 @@ List cgSSL_dpe(workpara instance,
     iter = 0;
     converged = 0;
     early_terminate = 0;
+    if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+    instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
+    mu_old = instance.mu;
     while (iter < max_iter)
     {
       if (iter % 50 == 0)
@@ -491,6 +497,9 @@ List cgSSL_dpe(workpara instance,
     iter = 0;
     converged = 0;
     early_terminate = 0;
+    if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+    instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
+    mu_old = instance.mu;
     while (iter < max_iter)
     {
       iter++;
@@ -729,6 +738,9 @@ List cgSSL_dpe(workpara instance,
       iter = 0;
       converged = 0;
       early_terminate = 0;
+      if(verbose == 1) Rcout << "    updating residual matrices "<< endl;
+      instance.update(mu_old,B,Sigma,Omega,n_rep,nskp);
+      mu_old = instance.mu;
       while (iter < max_iter)
       {
         iter++;
