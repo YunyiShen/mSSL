@@ -74,8 +74,8 @@ class cgWorkingParam{
             tXR = X.t() * R;
             tXX = X.t() * X;
             mu = trans(mean(Y));
-            S_Omega = S;
-            M = S;
+            S_Omega = tRR/n_Omega;
+            M = 0*S;
             s_eval = eig_sym(S);
         }
         inline void update(const arma::vec &mu_t,

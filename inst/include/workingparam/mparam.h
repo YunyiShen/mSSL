@@ -32,6 +32,7 @@ inline void mWorkingParam::update(const arma::vec &mu_t,
     tRR = R.t() * R;
     S = tRR/n_B;
     tXR = X.t() * R;
+    s_eval = eig_sym(S);
 
 }
 

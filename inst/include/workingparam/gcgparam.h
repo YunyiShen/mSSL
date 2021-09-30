@@ -29,13 +29,16 @@ inline void gcgWorkingParam::update(const arma::vec &mu_t,
                         int n_rep, int nskp){
 
     arma::mat YOmega = Y * Omega_t;
+    mu = trans(mean(YOmega));
     arma::mat XB = X * B_t;
-    XB.each_row() += mu_t.t();
+    XB.each_row() += mu.t();
     R = YOmega-XB;
     tRR = R.t() * R;
     S = tRR/n_B;
     tXR = X.t() * R;
-    mu = trans(mean(YOmega));
+    s_eval = eig_sym(S);
+    //Rcout << S(0) << endl;
+    
 
 }
 
