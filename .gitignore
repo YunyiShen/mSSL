@@ -5,7 +5,7 @@
 *.so
 src/sandbox.cpp
 R/sandbox.R
-real_data/*
+real_data/snapshot_Serengeti
 .vscode
 *.DS_Store
 #docs
