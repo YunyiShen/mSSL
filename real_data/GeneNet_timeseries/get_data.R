@@ -41,3 +41,17 @@ library("maptools")  # point labels without overlaps
 pointLabel(ump$layout, labels = rownames(ump$layout), method="SANN", cex=0.6)
 
 write.csv(ex,"./raw_data/GeneNet_timeseries/expression.csv")
+
+# LHY=LCL1
+gene_list <- c("LHY", "CCA1", "PRR9", "PRR5", "TOC1", "ELF4", "ELF3", "GI", "PRR3")
+anno <- read.csv("./GPL198-17390_csv.csv")
+ID <- sapply(gene_list, function(w){anno$ID[w==anno$CA]})
+ID2 <- sapply(gene_list[c(1,3,4,9)], function(w){anno$ID[grep(w, anno$CA)]})
+anno_list <- c("261569_at","266719_at","266720_s_at","249741_at","247525_at","267364_at","266839_at","264211_at","247668_at")
+names(gene_list) <- anno_list
+anno_in_ex <- unique( rownames(ex))
+
+target_ex <- as.data.frame( t( ex[rownames(ex) %in% anno_list,] ))
+colnames(target_ex) <- gene_list[colnames(target_ex)]
+
+write.csv(target_ex, "nine_gene.csv")
