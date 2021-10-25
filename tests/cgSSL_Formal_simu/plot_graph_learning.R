@@ -1,11 +1,11 @@
 library(ggplot2)
 modname <- c("AR1","AR2","Block","Star","Full")
-all_Omega_p10 <- read.csv("./p20q30n100/p20q30n100_graph_Omega_full.csv")
+all_Omega_p10 <- read.csv("./p100q30n400/p100q30n400_graph_Omega_full.csv")
 all_Omega_p10$mod[all_Omega_p10$mod==6] <- 5
 
 all_Omega_p10$beta.sparsity <- factor( 1-all_Omega_p10$s,levels = c(0.8))
 all_Omega_p10$p <- paste0(all_Omega_p10$p, " predictors")
-all_Omega_p10 <- within(all_Omega_p10, p<-factor(p, levels=c( "20 predictors")))
+all_Omega_p10 <- within(all_Omega_p10, p<-factor(p, levels=c( "100 predictors")))
 all_Omega_p10$mod <- modname[all_Omega_p10$mod]
 all_Omega_p10$mod <- factor(all_Omega_p10$mod, levels = modname)
 
@@ -15,14 +15,14 @@ Omega_learning_p10[is.na(Omega_learning_p10)] <- 0
 
 ## New plot
 Omega_learning_p10 <- within(Omega_learning_p10, algo<-factor(algo, levels=rev(c("cgSSL-dpe", "cgSSL-dcpe", "mSSL-dpe","mSSL-dcpe", "CAR-A", "CAR" ))))
-Graph_MCC <-  ggplot(data = Omega_learning_p10[Omega_learning_p10$mod!="Full",],aes(x=algo,y = MCC)) + 
+Graph_MCC <-  ggplot(data = Omega_learning_p10[Omega_learning_p10$mod!="Full",],aes(x=algo,y = F1)) + 
   geom_point( alpha=0.1, size=1)+
   geom_boxplot(linetype = "dashed", outlier.shape = 1) + 
   stat_boxplot(aes(ymin = ..lower.., ymax = ..upper..), outlier.shape = 1) +
   stat_boxplot(geom = "errorbar", aes(ymin = ..ymax..), width = 0.5)+
   stat_boxplot(geom = "errorbar", aes(ymax = ..ymin..), width = 0.5)+
   facet_grid(~mod) + 
-  ylab("MCC on Omega") + 
+  ylab("F1 on Omega") + 
   xlab("") + theme_bw() +
   theme(legend.position="top") + 
   theme(text = element_text(size=14), 
@@ -35,7 +35,7 @@ Graph_MCC <-  ggplot(data = Omega_learning_p10[Omega_learning_p10$mod!="Full",],
         panel.grid.major = element_blank()) + coord_flip()
 
 Graph_MCC
-ggsave("./p20q30n100/Omega_MCC.pdf",Graph_MCC,width = 9,height = 5,unit = "in")
+ggsave("./p100q30n400/Omega_F1.pdf",Graph_MCC,width = 9,height = 5,unit = "in")
 
 
 Graph_Sensitivity <- ggplot(data = Omega_learning_p10[Omega_learning_p10$mod!="Full",],aes(x=algo,y = SEN)) + 

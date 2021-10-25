@@ -2,12 +2,12 @@ library(ggplot2)
 
 modname <- c("AR1","AR2","Block","Star","Full")
 
-all_B_q10 <- read.csv("./p20q30n100/p20q30n100_graph_B_full.csv")
+all_B_q10 <- read.csv("./p100q30n400/p100q30n400_graph_B_full.csv")
 all_B_q10$mod[all_B_q10$mod==6] <- 5
 
 all_B_q10$beta.sparsity <- factor( 1-all_B_q10$s,levels = c(0.8))
 all_B_q10$p <- paste0(all_B_q10$p, " predictors")
-all_B_q10 <- within(all_B_q10, p<-factor(p, levels=c( "20 predictors")))
+all_B_q10 <- within(all_B_q10, p<-factor(p, levels=c( "100 predictors")))
 all_B_q10$mod <- modname[all_B_q10$mod]
 all_B_q10$mod <- factor(all_B_q10$mod, levels = modname)
 
@@ -17,14 +17,14 @@ B_learning_q10[is.na(B_learning_q10)] <- 0
 
 ## New plot
 B_learning_q10 <- within(B_learning_q10, algo<-factor(algo, levels= rev( c("cgSSL-dpe", "cgSSL-dcpe", "mSSL-dpe","mSSL-dcpe", "CAR-A", "CAR" ))))
-B_MCC <- ggplot(data = B_learning_q10,aes(x=algo,y = MCC)) + 
+B_MCC <- ggplot(data = B_learning_q10,aes(x=algo,y = F1)) + 
   geom_point( alpha=0.1, size=1)+
   geom_boxplot(linetype = "dashed", outlier.shape = 1) + 
   stat_boxplot(aes(ymin = ..lower.., ymax = ..upper..), outlier.shape = 1) +
   stat_boxplot(geom = "errorbar", aes(ymin = ..ymax..), width = 0.5)+
   stat_boxplot(geom = "errorbar", aes(ymax = ..ymin..), width = 0.5)+
   facet_grid(~mod) + 
-  ylab("MCC on B") + 
+  ylab("F1 on B") + 
   xlab("") + theme_bw() +
   theme(legend.position="top") + 
   theme(text = element_text(size=14), 
@@ -37,7 +37,7 @@ B_MCC <- ggplot(data = B_learning_q10,aes(x=algo,y = MCC)) +
         panel.grid.major = element_blank()) + coord_flip()
 
 B_MCC 
-ggsave("./p20q30n100/B_MCC.pdf",B_MCC,width = 10,height = 5,unit = "in")
+ggsave("./p100q30n400/B_F1.pdf",B_MCC,width = 10,height = 5,unit = "in")
 
 
 B_Sensitivity <-  ggplot(data = B_learning_q10,aes(x=algo,y = SEN)) + 

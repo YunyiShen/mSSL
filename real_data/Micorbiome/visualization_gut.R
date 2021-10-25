@@ -83,11 +83,7 @@ V(full_graph)$name[21] <- "Diet2"
 V(full_graph)$name[22] <- "Diet3"
 V(full_graph)$name[23] <- "Diet4"
 V(full_graph)$name[24] <- "DietPEG"
-## FOR soil
-V(full_graph)$name[4] <- "C.Koribacter"
-V(full_graph)$name[5] <- "C.Nitrososphaera"
-V(full_graph)$name[6] <- "C.Solibacter"
-# END IF
+
 
 library(ggplot2)
 library(ggraph)
@@ -96,7 +92,7 @@ p <- ggraph(full_graph,layout = "circle")+
   geom_edge_link(aes(color = direction.,width = abs_weight,alpha = abs_weight)) + 
   scale_edge_color_manual(values = (  cbPalette_edge))+
   #geom_node_point(mapping = aes(shape = type,size = alpha_centrality,stroke = 6),col = "#696969",alpha = 1) +
-  geom_node_point(mapping = aes(shape = type,size = alpha_centrality,stroke = 1.5),col = "#000000",fill= "white", alpha = 1) +
+  geom_node_point(mapping = aes(shape = type,stroke = 1.5),col = "#000000",fill= "white", alpha = 1) +
   scale_shape_manual(values = c(21,24))+
   #scale_color_manual(values = cbPalette)+
   coord_fixed(clip = 'off')+
