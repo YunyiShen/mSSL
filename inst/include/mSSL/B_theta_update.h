@@ -72,11 +72,11 @@ inline double cgobjective(int n, int p, int q,
 
   double value;
   double sign;
-  log_det(value, sign, Omega);
-
-  arma::mat SOmega = S * Omega;
-  arma::mat MSigma = B.t() * X.t() * X * B * Sigma / n;
-  double log_like = value * sign - trace(SOmega) - trace(MSigma);
+  log_det(value, sign, Sigma);
+  // this uses the data transforming trick. 
+  arma::mat SOmega = S * Sigma;
+  //arma::mat MSigma = B.t() * X.t() * X * B * Sigma / n;
+  double log_like = value * sign - trace(SOmega);// - trace(MSigma);
   log_like *= n / 2;
   double log_pi_B = 0.0;
   double log_pi_Omega = 0.0;
