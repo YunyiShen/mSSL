@@ -151,7 +151,7 @@ List cgSSL_dpe(workpara instance,
   int early_terminate = 0;
 
   // Initialize paths
-  //  YS: not quite sure if this is needed, they have huge memory footprints
+  
   arma::mat alpha_path(q, L * L); // matrix to hold the intercepts
   arma::cube B_path(p, q, L * L);
   arma::cube Omega_path(q, q, L * L);
@@ -194,7 +194,7 @@ List cgSSL_dpe(workpara instance,
       Rcpp::checkUserInterrupt();
     B_old = B;
     Omega_old = Omega;
-    old_obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+    old_obj = cgobjective(n, p, q, instance.S, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
     
 
     // E Step
@@ -301,7 +301,7 @@ List cgSSL_dpe(workpara instance,
   theta_path(current_index) = theta;
   eta_path(current_index) = eta;
 
-  obj_path(current_index) = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+  obj_path(current_index) = cgobjective(n, p, q, instance.S, B, instance.X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
 
   // Now we need to solve for t = 0
   for (s = 1; s < L; s++)
@@ -350,7 +350,7 @@ List cgSSL_dpe(workpara instance,
       B_old = B;
       Omega_old = Omega;
 
-      old_obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+      old_obj = cgobjective(n, p, q, instance.S, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
       // E Step
       for (int k = 0; k < q; k++)
       {
@@ -393,7 +393,7 @@ List cgSSL_dpe(workpara instance,
       early_terminate = 0;
       omega_non_zero = 0;
 
-      obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+      obj = cgobjective(n, p, q, instance.S, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
       
       if (instance.s_eval(q - 1) / instance.s_eval(0) > s_max_condition)
         early_terminate = 1; // condition number of S is too large. Terminate early
@@ -457,7 +457,7 @@ List cgSSL_dpe(workpara instance,
     M_path.slice(current_index) = instance.M;
     theta_path(current_index) = theta;
     eta_path(current_index) = eta;
-    obj_path(current_index) = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+    obj_path(current_index) = cgobjective(n, p, q, instance.S, B, instance.X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
   }
 
   // Now we need to solve for s = 0
@@ -507,7 +507,7 @@ List cgSSL_dpe(workpara instance,
         Rcpp::checkUserInterrupt();
       B_old = B;
       Omega_old = Omega;
-      old_obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+      old_obj = cgobjective(n, p, q, instance.S, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
 
       // E Step
       for (int k = 0; k < q; k++)
@@ -550,7 +550,7 @@ List cgSSL_dpe(workpara instance,
       early_terminate = 0;
       omega_non_zero = 0;
 
-      obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+      obj = cgobjective(n, p, q, instance.S, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
       
       if (instance.s_eval(q - 1) / instance.s_eval(0) > s_max_condition)
         early_terminate = 1; // condition number of S is too large. Terminate early
@@ -614,7 +614,7 @@ List cgSSL_dpe(workpara instance,
     M_path.slice(current_index) = instance.M;
     theta_path(current_index) = theta;
     eta_path(current_index) = eta;
-    obj_path(current_index) = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+    obj_path(current_index) = cgobjective(n, p, q, instance.S, B, instance.X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
   }
   // Now we're ready to solve with s > 0 and t > 0
 
@@ -654,7 +654,7 @@ List cgSSL_dpe(workpara instance,
         theta_left = theta_path(left_index);
         eta_left = eta_path(left_index);
       }
-      obj_left = cgobjective(n, p, q, instance_left.S_Omega, B_left, instance.X, Omega_left, Sigma_left, lambda1, lambda0, xi1, xi0, theta_left, eta_left, diag_penalty, theta_hyper_params, eta_hyper_params);
+      obj_left = cgobjective(n, p, q, instance_left.S, B_left, instance.X, Omega_left, Sigma_left, lambda1, lambda0, xi1, xi0, theta_left, eta_left, diag_penalty, theta_hyper_params, eta_hyper_params);
       if (early_term(down_index) == 1)
       {
         B_down = B_restart;
@@ -677,7 +677,7 @@ List cgSSL_dpe(workpara instance,
         theta_down = theta_path(down_index);
         eta_down = eta_path(down_index);
       }
-      obj_down = cgobjective(n, p, q, instance_down.S_Omega, B_down, instance.X, Omega_down, Sigma_down, lambda1, lambda0, xi1, xi0, theta_down, eta_down, diag_penalty, theta_hyper_params, eta_hyper_params);
+      obj_down = cgobjective(n, p, q, instance_down.S, B_down, instance.X, Omega_down, Sigma_down, lambda1, lambda0, xi1, xi0, theta_down, eta_down, diag_penalty, theta_hyper_params, eta_hyper_params);
       if (early_term(diag_index) == 1)
       {
         B_diag = B_restart;
@@ -700,7 +700,7 @@ List cgSSL_dpe(workpara instance,
         theta_diag = theta_path(diag_index);
         eta_diag = eta_path(diag_index);
       }
-      obj_diag = cgobjective(n, p, q, instance_diag.S_Omega, B_diag, instance.X, Omega_diag, Sigma_diag, lambda1, lambda0, xi1, xi0, theta_diag, eta_diag, diag_penalty, theta_hyper_params, eta_hyper_params);
+      obj_diag = cgobjective(n, p, q, instance_diag.S, B_diag, instance.X, Omega_diag, Sigma_diag, lambda1, lambda0, xi1, xi0, theta_diag, eta_diag, diag_penalty, theta_hyper_params, eta_hyper_params);
 
       if ((obj_left >= obj_down) & (obj_left >= obj_diag))
       {
@@ -748,7 +748,7 @@ List cgSSL_dpe(workpara instance,
           Rcpp::checkUserInterrupt();
         B_old = B;
         Omega_old = Omega;
-        old_obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+        old_obj = cgobjective(n, p, q, instance.S, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
 
         // E Step
         for (int k = 0; k < q; k++)
@@ -790,7 +790,7 @@ List cgSSL_dpe(workpara instance,
         early_terminate = 0;
         omega_non_zero = 0;
 
-        obj = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
+        obj = cgobjective(n, p, q, instance.S, B, instance.X, Omega, Sigma, lambda1, lambda0, xi1, xi0, theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
         
         if (instance.s_eval(q - 1) / instance.s_eval(0) > s_max_condition)
           early_terminate = 1; // condition number of S is too large. Terminate early
@@ -855,7 +855,7 @@ List cgSSL_dpe(workpara instance,
       theta_path(current_index) = theta;
       eta_path(current_index) = eta;
       //obj_path(current_index) = cgobjective(n, p, q, S_Omega, B, Omega, Sigma,lambda1, lambda_spike(L-1), xi1, xi_spike(L-1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params);
-      obj_path(current_index) = cgobjective(n, p, q, instance.S_Omega, B, instance.X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params); // compute at the maximal value
+      obj_path(current_index) = cgobjective(n, p, q, instance.S, B, instance.X, Omega, Sigma, lambda1, lambda_spike(L - 1), xi1, xi_spike(L - 1), theta, eta, diag_penalty, theta_hyper_params, eta_hyper_params); // compute at the maximal value
     }                                                                                                                                                                                                // closes the loop over t
   }                                                                                                                                                                                                  // closes the loop over s
 
