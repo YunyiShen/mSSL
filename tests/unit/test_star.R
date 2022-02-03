@@ -31,8 +31,8 @@ mu <- 0 * mu
 Y <- rSTARlogfloor(X,B,mu,Sigma)
 Y <- rSTARidfloor0(X,B,mu,Sigma)
 
-lower <- logfloorlink(Y,FALSE)
-upper <- logfloorlink(Y,TRUE)
+bounds <- logfloorlink(Y)
+
 
 star_res_dpe <- fstarmSSL(Y,X,link = logfloorlink,verbose = TRUE)
 star_res_dcpe <- fstarmSSL(Y,X,link = logfloorlink, condexp = TRUE,verbose = TRUE, eps = 1e-1)
