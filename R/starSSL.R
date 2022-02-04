@@ -24,6 +24,20 @@ idfloor0link <- function(Y){
         )
 }
 
+#' square root floor link truncated at 0
+#' calculate the lower and upper bound when using a square root floor link
+#' @param Y the data
+#' @return a list with lower and upper bound and inverse transformation function 
+sqrtfloor0link <- function(Y){
+    lower <- sqrt(Y)
+    lower[Y==0] <- -Inf
+    upper <- sqrt(Y+1)
+
+    return(list(lower = lower, 
+                upper = upper, 
+                invtransforming = function(w){floor(w^2)}))
+}
+
 #' identity floor link
 #' calculate the latent normal's bound under identity floor link ransformation, i.e. y=floor(z*), y=y*(y>=0), z*~N
 #' @param Y the observed data
@@ -31,8 +45,10 @@ idfloor0link <- function(Y){
 idfloorlink <- function(Y){
     return(list(lower = Y, 
                 upper = Y+1, 
-                invtransforming = floor))
+                invtransforming = function(w){w}))
 }
+
+
 
 
 #' Empirical link b Kowal & Wu 2021 and a floor rounding
@@ -46,20 +62,23 @@ idfloorlink <- function(Y){
 #' }
 #' @param grid the grid to calculate the inverse transformation
 #' @return A list of lower and upper bounds, as well as the empirical paramters used in that transformation, to be used for prediction.
-KowalWufloorlink <- function(Y, distribution = "np", grid){
+KowalWufloorlink <- function(Y, distribution = "np", grid = NULL){
     p <- ncol(Y)
     trans_funs <- lapply(1:p, function(i, Y, distribution){
         g_cdf(Y[,i], distribution)
     }, Y, distribution)
 
     lower <- lapply(1:p, function(i,Y,trans_funs){
-        trans_funs[i](Y[,i])
-    })
+        trans_funs[[i]](Y[,i])
+    },Y,trans_funs)
     lower <- Reduce(cbind, lower)
     upper <- lapply(1:p, function(i,Y,trans_funs){
-        trans_funs[i](Y[,i] + 1)
-    })
-    lower <- Reduce(cbind, lower)
+        trans_funs[[i]](Y[,i] + 1)
+    },Y,trans_funs)
+    upper <- Reduce(cbind, upper)
+    if(is.null(grid)){
+        grid <- seq(min(5*min(lower),-1),max(5*max(upper),1),by = .1)
+    }
     invtransforming <- lapply(trans_funs, g_inv_approx, grid)
 
     return(list(lower = lower, upper = upper, invtransforming = invtransforming))
