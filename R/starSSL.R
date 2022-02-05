@@ -60,10 +60,15 @@ idfloorlink <- function(Y){
 #' \item "pois" (moment-matched marginal Poisson CDF)
 #' \item "neg-bin" (moment-matched marginal Negative Binomial CDF)
 #' }
+#' @param overall whether to find the transformation using a collected CDF or find it for each coordinate
 #' @param grid the grid to calculate the inverse transformation
 #' @return A list of lower and upper bounds, as well as the empirical paramters used in that transformation, to be used for prediction.
-KowalWufloorlink <- function(Y, distribution = "np", grid = NULL){
+KowalWufloorlink <- function(Y, distribution = "np", overall = TRUE, grid = NULL){
     p <- ncol(Y)
+    if(overall){
+        res <- KowalWufloorlink2(Y, distribution, grid)
+        return(res)
+    }
     trans_funs <- lapply(1:p, function(i, Y, distribution){
         g_cdf(Y[,i], distribution)
     }, Y, distribution)
@@ -84,6 +89,29 @@ KowalWufloorlink <- function(Y, distribution = "np", grid = NULL){
     return(list(lower = lower, upper = upper, invtransforming = invtransforming))
 
 }
+
+# the overall version 
+KowalWufloorlink2 <- function(Y, distribution = "np", grid = NULL){
+    p <- ncol(Y)
+    trans_funs <- g_cdf(Y, distribution)
+
+    lower <- lapply(1:p, function(i,Y,trans_funs){
+        trans_funs(Y[,i])
+    },Y,trans_funs)
+    lower <- Reduce(cbind, lower)
+    upper <- lapply(1:p, function(i,Y,trans_funs){
+        trans_funs(Y[,i] + 1)
+    },Y,trans_funs)
+    upper <- Reduce(cbind, upper)
+    if(is.null(grid)){
+        grid <- seq(min(5*min(lower),-1),max(5*max(upper),1),by = .1)
+    }
+    invtransforming <-  g_inv_approx(trans_funs, grid)
+
+    return(list(lower = lower, upper = upper, invtransforming = invtransforming))
+
+}
+
 
 ## empirical transformation by Kowal & Wu, from rSTAR
 g_cdf <- function(y, distribution = "np") {
