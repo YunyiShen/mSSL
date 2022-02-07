@@ -81,7 +81,7 @@ for(i in 1:5){
 }
 
 
-star_res_dpe <- fstarmSSL(Y,X,link = KowalWufloorlink,verbose = TRUE, eps=1e-1)
+star_res_dpe <- fstarmSSL(Y,X,link = KowalWufloorlink,verbose = TRUE, eps=1e-1, overall = F)
 star_res_dpe1 <- fstarmSSL(Y,X,link = sqrtfloor0link,verbose = TRUE, eps=1e-1, s_max_condition = 1e4)
 
 pred_mean <- X %*% star_res_dpe$B  + rep(1,nrow(X))%*% t(star_res_dpe$alpha)
