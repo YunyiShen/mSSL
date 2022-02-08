@@ -72,8 +72,8 @@ all_methods <- c("id0","log","sqrt","cdf-all","cdf-ind","mSSL")
 
 links_first_4 <- list(idfloor0link, logfloorlink, sqrtfloor0link, KowalWufloorlink)
 
-internal_procss_id <- floor( as.numeric( args[3] )/18) # this determined which repeat
-internal_experiment_id <- as.numeric( args[3] ) %% 18
+internal_procss_id <- floor( as.numeric( args[2] )/18) # this determined which repeat
+internal_experiment_id <- as.numeric( args[2] ) %% 18
 
 transformation_truth <- (internal_experiment_id %% 3) + 1 # which data generating process to do 
 method_used <- floor( internal_experiment_id/3 ) + 1
@@ -116,11 +116,11 @@ Sigma <- graph_tmp$Sigma
 Y <- sampling_functions[[transformation_truth]](X = X, B=B, Sigma = Sigma, mu = mu)
 ##
 
-X_test <- X[-c(1:n)]
-X <- X[1:n]
+X_test <- X[-c(1:n),]
+X <- X[1:n,]
 
-Y_test <- Y[-c(1:n)]
-Y <- Y[1:n]
+Y_test <- Y[-c(1:n),]
+Y <- Y[1:n,]
           
 
 
@@ -172,8 +172,8 @@ res_loss$mod[1] <- all_transformations[res_loss$mod[1]]
 write.csv(res_loss,res_loss_file)
 
           
-res_graph_Omega[1,1:6] <- c(q,p,n,s,transformation_truth,i)
-res_graph_B[1,1:6] <- c(q,p,n,s,transformation_truth,i)
+res_graph_Omega[1,1:6] <- c(q,p,n,s,transformation_truth,internal_experiment_id)
+res_graph_B[1,1:6] <- c(q,p,n,s,transformation_truth,internal_experiment_id)
 res_graph_Omega[1,7] <- all_methods[method_used]
 res_graph_B[1,7] <- all_methods[method_used]
 res_graph_Omega[1,8:18] <- error_Omega(res$Omega, Omega)
