@@ -56,13 +56,12 @@ res_loss_file <- paste0(res_loss_file,file_num,".csv")
 res_graph_Omega_file <- paste0(res_graph_Omega_file,file_num,".csv")
 res_graph_B_file <- paste0(res_graph_B_file,file_num,".csv")
 
-ps <- c(10)
-qs <- c(5)
-ss <- c(.3)
 
 p <- 10
 q <- 5
 s <- .3
+n <- 100
+n_test <- 25
 
 
 all_transformations <- c("id0","log","sqrt")
@@ -100,8 +99,6 @@ colnames(res_graph_B) <- c("q","p","n","s","mod",
                            "PREC", "ACC",  "F1", 
                            "MCC", "FROB")
 
-n <- 100
-n_test <- 25
 
 set.seed(42)
 B <- as.matrix( rsparsematrix(p, q, s, 
@@ -133,20 +130,44 @@ if(method_used %in% c(1,2,3,4) ){
       res <- tryCatch( 
           fstarmSSL(X=X, Y=Y, link = links_first_4[[method_used]], verbose = FALSE),
             error = function(e){return(list())} )
-          if(length(res_dpe)>0) break
+          if(length(res)>0) break
           else cat("retry ",jj,"\n")
   }
 
   pred_mean <- X_test %*% res$B  + rep(1,nrow(X_test))%*% t(res$alpha)
-  pred_mean_trans <- matrix( res$link_res$invtransforming(pred_mean), nrow = nrow(Y_test) )
-  logl2predictedloss <- log(sum((pred_mean_trans-Y_test)^2)/n_test)          
+  pred_mean_trans <- matrix( res$link_res$invtransforming(pred_mean), nrow = nrow(Y_test) )        
 }
 
+if(method_used==5){
+  for(jj in 1:retry){
+      res <- tryCatch( 
+          fstarmSSL(X=X, Y=Y, link = KowalWufloorlink, verbose = FALSE, overall = FALSE),
+            error = function(e){return(list())} )
+          if(length(res)>0) break
+          else cat("retry ",jj,"\n")
+  }
 
+  pred_mean <- X_test %*% res$B  + rep(1,nrow(X_test))%*% t(res$alpha)
+  pred_mean_trans <- lapply(1:q, function(i, pred_mean, transforms){
+    transforms[[i]](pred_mean[,i])
+  }, pred_mean, res$link_res$invtransforming)
+  pred_mean_trans <- Reduce(cbind, pred_mean_trans)
+}
+
+if(method_used==6){
+    for(jj in 1:retry){
+      res <- tryCatch( 
+          mSSL(X=X, Y=Y, verbose = FALSE, cg = FALSE),
+            error = function(e){return(list())} )
+          if(length(res)>0) break
+          else cat("retry ",jj,"\n")
+  }
+  pred_mean_trans <- X_test %*% res$B  + rep(1,nrow(X_test))%*% t(res$alpha)
+}
 
 res_loss[1,1:6] <- c(q,p,n,s,transformation_truth,method_used)
 res_loss$algo[1] <- all_methods[method_used]
-res_loss$logMSE[1] <- logl2predictedloss
+res_loss$logMSE[1] <- log(sum((pred_mean_trans-Y_test)^2)/n_test)  
 res_loss$mod[1] <- all_transformations[res_loss$mod[1]]
 write.csv(res_loss,res_loss_file)
 
