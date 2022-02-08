@@ -5,15 +5,13 @@
 \title{identity floor 0 truncation link
 calculate the latent normal's bound under identity floor 0 truncation link ransformation, i.e. y=floor(z*), y=y*(y>=0), z*~N}
 \usage{
-idfloor0link(Y, upper = TRUE)
+idfloor0link(Y)
 }
 \arguments{
 \item{Y}{the observed data}
-
-\item{upper}{whether to calculate upper bound}
 }
 \value{
-a matrix of lower or upper bound of the latent normal
+a list of lower and upper bound of the latent normal
 }
 \description{
 identity floor 0 truncation link

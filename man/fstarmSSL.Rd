@@ -21,7 +21,8 @@ fstarmSSL(
   obj_counter_max = 5,
   verbose = FALSE,
   nrep = 200,
-  nskp = 1
+  nskp = 1,
+  ...
 )
 }
 \arguments{
@@ -29,7 +30,7 @@ fstarmSSL(
 
 \item{X}{design matrix}
 
-\item{link}{the function calculate the bounds of the latent normal h^-1(g(y*)), default is floor rounding with log link, should be a function with two arguments, the data and a boolean argument, if true we calculate the upper bound and lower bound otherwise.}
+\item{link}{the function calculate the bounds of the latent normal h^-1(g(y*)), default is floor rounding with log link, should be a function takes data and return a list with at least components lower and upper, with additional components for prediction.}
 
 \item{cg}{bool whether to use chain graph parameterization, default FALSE}
 
@@ -58,6 +59,8 @@ fstarmSSL(
 \item{nrep}{number of sample to take during E step of the latent normal}
 
 \item{nskp}{one point taken per nskp samples during E step of the latent normal}
+
+\item{...}{other parameters for link function}
 }
 \value{
 A list with dynamic exploration result, point estimates are in `$Omega` and `$B`.

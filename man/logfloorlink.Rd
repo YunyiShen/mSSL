@@ -5,15 +5,13 @@
 \title{the logfloor transformation to integer values
 calculate the latent normal's bound under log-floor ransformation, i.e. y=floor(exp(z*)), z*~N}
 \usage{
-logfloorlink(Y, upper = TRUE)
+logfloorlink(Y)
 }
 \arguments{
 \item{Y}{the observed data}
-
-\item{upper}{whether to calculate upper bound}
 }
 \value{
-a matrix of lower or upper bound of the latent normal
+a list with both lower or upper bound of the latent normal
 }
 \description{
 the logfloor transformation to integer values
