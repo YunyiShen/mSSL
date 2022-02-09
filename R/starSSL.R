@@ -19,7 +19,7 @@ idfloor0link <- function(Y){
     return(
         list(lower = lower, 
             upper = upper, 
-            invtransforming = function(t){max(floor(t),0)}
+            invtransforming = function(t){apply(floor(t),c(1,2),max,0)}
             )
         )
 }
