@@ -135,7 +135,8 @@ if(method_used %in% c(1,2,3,4) ){
   }
 
   pred_mean <- X_test %*% res$B  + rep(1,nrow(X_test))%*% t(res$alpha)
-  pred_mean_trans <- matrix( res$link_res$invtransforming(pred_mean), nrow = nrow(Y_test) )        
+  pred_mean_trans <- matrix( res$link_res$invtransforming(pred_mean), nrow = nrow(Y_test) )    
+  if(method_used==1){pred_mean_trans <- floor(pred_mean) * (pred_mean>=0)} 
 }
 
 if(method_used==5){
