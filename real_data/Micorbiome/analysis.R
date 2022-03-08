@@ -30,6 +30,7 @@ tenfold_gut <- lapply(folds_gut, function(idx, X,Y){
   res[1,1] <- mean((y_test - x_test %*% gut_mdperes$B - rep(1,nrow(x_test)) %*% t(gut_mdperes$alpha) )^2)
   Sigma <- solve(gut_cgdperes$Omega )
   res[1,2] <- mean((y_test - x_test %*% gut_cgdperes$B %*% Sigma  - rep(1,nrow(x_test)) %*% t(gut_cgdperes$alpha) %*% Sigma )^2)
+  return(res)
 },gut_X, gut_Y_transform )
 
 
@@ -63,7 +64,10 @@ tenfold_soil <- lapply(folds_soil, function(idx, X,Y){
   res[1,1] <- mean((y_test - x_test %*% soil_mdperes$B - rep(1,nrow(x_test)) %*% t(soil_mdperes$alpha) )^2)
   Sigma <- solve(soil_cgdperes$Omega )
   res[1,2] <- mean((y_test - x_test %*% soil_cgdperes$B %*% Sigma  - rep(1,nrow(x_test)) %*% t(soil_cgdperes$alpha) %*% Sigma )^2)
+  return(res)
 },soil_X, soil_Y_transform )
 
+tenfold_gut_flat <- Reduce(rbind, tenfold_gut)
+tenfold_soil_flat <- Reduce(rbind, tenfold_soil)
 
 save.image("./real_data/Micorbiome/res_cv.RData")
