@@ -3,6 +3,7 @@
 .Rproj.user
 *.o
 *.so
+*.dll
 src/sandbox.cpp
 R/sandbox.R
 real_data/snapshot_Serengeti
