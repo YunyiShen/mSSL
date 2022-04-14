@@ -53,9 +53,10 @@ rCARm <- function(n,B,X,Sigma){
     }
     res <- matrix(NA, nrow = nrow(X), ncol = ncol(Sigma))
     XB <- X %*% B
-    for(i in 1:n){
-        res[i,] <- MASS::mvrnorm(1,Sigma %*% (XB[i,]), Sigma)
-    }
+    
+    res <- XB + MASS::mvrnorm(n,rep(0,nrow(Sigma)), solve(Sigma))
+    res <- res %*% Sigma
+    
     return(res)
 }
 
