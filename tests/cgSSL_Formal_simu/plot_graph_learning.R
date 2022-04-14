@@ -102,3 +102,5 @@ Graph_FROB <- ggplot(data = Omega_learning_p10[Omega_learning_p10$mod!="Full",],
         panel.grid.major = element_blank()) + coord_flip()
 
 Graph_FROB
+ggsave("./p100q30n400/Omega_FROB.pdf",Graph_FROB,width = 9,height = 5,unit = "in")
+

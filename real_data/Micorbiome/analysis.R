@@ -71,3 +71,26 @@ tenfold_gut_flat <- Reduce(rbind, tenfold_gut)
 tenfold_soil_flat <- Reduce(rbind, tenfold_soil)
 
 save.image("./real_data/Micorbiome/res_cv.RData")
+
+library(reshape)
+library(ggplot2)
+plot_data_gut <- melt(tenfold_gut_flat)
+plot_data_gut$value <- plot_data_gut$value/var(c(gut_Y_transform))
+plot_data_soil <- melt(tenfold_soil_flat)
+plot_data_soil$value <- plot_data_soil$value/var(c(soil_Y_transform))
+
+gut_box <- ggplot(data = plot_data_gut, aes(y=value, x = variable)) + 
+  geom_boxplot() + 
+  geom_point() + 
+  theme_classic() + 
+  xlab("") + ylab("relative MSE of 10 fold cv")
+
+soil_box <- ggplot(data = plot_data_soil, aes(y=value, x = variable)) + 
+  geom_boxplot() + 
+  geom_point() + 
+  theme_classic() + 
+  xlab("") + ylab("relative MSE of 10 fold cv")
+
+ggpubr::ggarrange(gut_box,soil_box, nrow = 2, labels = "AUTO")
+
+ggsave("./10fold_cv.pdf", width = 10, height = 9, scale = .6)

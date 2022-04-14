@@ -104,3 +104,5 @@ B_FROB <-  ggplot(data = B_learning_q10,aes(x=algo,y = log(FROB))) +
         panel.grid.major = element_blank()) + coord_flip()
 
 B_FROB
+ggsave("./p100q30n400/B_FROB.pdf",B_FROB,width = 10,height = 5,unit = "in")
+
