@@ -30,7 +30,7 @@ mSSL(
 
 \item{condexp}{bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)}
 
-\item{lambdas}{hyperparameters to be explored by the algorithm, penalty on B}
+\item{lambdas}{hyperparameters to be explored by the algorithm, penalty on B, a list with lambda1 be a scalar, lambda0 be a vector, make sure length of lambda0 are the same as length of xi0}
 
 \item{xis}{hyperparameters to be explored by the algorithm, penalty on Omega}
 

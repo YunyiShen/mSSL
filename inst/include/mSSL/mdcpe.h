@@ -12,7 +12,7 @@ using namespace arma;
 using namespace std;
 using namespace workingparam;
 using namespace linconGaussR;
-using namespace workingparam;
+using namespace quic;
 
 
 namespace mSSL{
