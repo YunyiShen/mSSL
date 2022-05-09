@@ -4,7 +4,7 @@
 #' @param X design matrix
 #' @param cg bool, whether use the chain graphical parameterization, default true
 #' @param condexp bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)
-#' @param lambdas hyperparameters to be explored by the algorithm, penalty on B
+#' @param lambdas hyperparameters to be explored by the algorithm, penalty on B, a list with lambda1 be a scalar, lambda0 be a vector, make sure length of lambda0 are the same as length of xi0
 #' @param xis hyperparameters to be explored by the algorithm, penalty on Omega
 #' @param theta_hyper_params hyperparameter to be set, prior on spike weight of B
 #' @param eta_hyper_params hyperparameter to be set, prior on spike weight of Omega
