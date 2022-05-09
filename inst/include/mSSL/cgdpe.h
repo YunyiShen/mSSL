@@ -884,7 +884,7 @@ List cgSSL_dpe(workpara instance,
   results["alpha_path"] = alpha_path;
   results["B_path"] = B_path;
   results["Omega_path"] = Omega_path;
-  results["Sigma"] = Sigma_path;
+  results["Sigma_path"] = Sigma_path;
   //results["R_path"] = R_path;
   //results["S_path"] = S_path;
   results["theta_path"] = theta_path;
