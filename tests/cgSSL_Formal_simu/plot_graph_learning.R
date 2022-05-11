@@ -1,11 +1,12 @@
 library(ggplot2)
 modname <- c("AR1","AR2","Block","Star","Full")
-all_Omega_p10 <- read.csv("./p100q30n400/p100q30n400_graph_Omega_full.csv")
+all_Omega_p10 <- rbind(read.csv("./p10q10n100/p10q10n100_graph_Omega_full.csv", row.names = 1), 
+                       read.csv("./p10q10n100/p10q10n100_graph_Omega_lassores_full.csv"))
 all_Omega_p10$mod[all_Omega_p10$mod==6] <- 5
 
 all_Omega_p10$beta.sparsity <- factor( 1-all_Omega_p10$s,levels = c(0.8))
 all_Omega_p10$p <- paste0(all_Omega_p10$p, " predictors")
-all_Omega_p10 <- within(all_Omega_p10, p<-factor(p, levels=c( "100 predictors")))
+all_Omega_p10 <- within(all_Omega_p10, p<-factor(p, levels=c( "10 predictors")))
 all_Omega_p10$mod <- modname[all_Omega_p10$mod]
 all_Omega_p10$mod <- factor(all_Omega_p10$mod, levels = modname)
 
@@ -14,7 +15,7 @@ Omega_learning_p10[is.na(Omega_learning_p10)] <- 0
 #Omega_learning_p10$beta.sparsity <- Omega_learning_p10$s
 
 ## New plot
-Omega_learning_p10 <- within(Omega_learning_p10, algo<-factor(algo, levels=rev(c("cgSSL-dpe", "cgSSL-dcpe", "mSSL-dpe","mSSL-dcpe", "CAR-A", "CAR" ))))
+Omega_learning_p10 <- within(Omega_learning_p10, algo<-factor(algo, levels=rev(c("cgSSL-dpe", "cgSSL-dcpe", "mSSL-dpe","mSSL-dcpe", "CAR-A", "CAR" , "LASSO"))))
 Graph_MCC <-  ggplot(data = Omega_learning_p10[Omega_learning_p10$mod!="Full",],aes(x=algo,y = F1)) + 
   geom_point( alpha=0.1, size=1)+
   geom_boxplot(linetype = "dashed", outlier.shape = 1) + 
@@ -35,7 +36,7 @@ Graph_MCC <-  ggplot(data = Omega_learning_p10[Omega_learning_p10$mod!="Full",],
         panel.grid.major = element_blank()) + coord_flip()
 
 Graph_MCC
-ggsave("./p100q30n400/Omega_F1.pdf",Graph_MCC,width = 9,height = 5,unit = "in")
+ggsave("./p10q10n100/Omega_F1.pdf",Graph_MCC,width = 9,height = 5,unit = "in")
 
 
 Graph_Sensitivity <- ggplot(data = Omega_learning_p10[Omega_learning_p10$mod!="Full",],aes(x=algo,y = SEN)) + 
