@@ -2,7 +2,7 @@ library(ggplot2)
 
 modname <- c("AR1","AR2","Block","Star","Full")
 
-all_B_q10 <- rbind(read.csv("./p10q10n100/p10q10n100_graph_B_full.csv", row.names = 1), 
+all_B_q10 <- rbind(read.csv("./p10q10n100/p10q10n100_graph_B_full.csv"), 
                    read.csv("./p10q10n100/p10q10n100_graph_B_lassores_full.csv"))
 all_B_q10$mod[all_B_q10$mod==6] <- 5
 
