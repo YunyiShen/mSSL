@@ -29,7 +29,7 @@ for(out in outcomes){
                     "cgSSL-dcpe" = rep(NA, times = 501),
                     "cgSSL-dpe" = rep(NA, times = 501))
   for(i in 1:5){
-    index <- which(Psi_results[,"algo"] == algo[i])
+    index <- which(Psi_results[,"algo"] == algo[i] & Psi_results[,"mod"]==1)
     #if(algo[i] != "LASSO") tmp[,i] <- Psi_results[index,out]
     #else tmp[1:500,i] <- Psi_results[index, out]
     tmp[1:length(index),i] <- Psi_results[index, out]
@@ -42,7 +42,7 @@ for(out in outcomes){
                     "cgSSL-dcpe" = rep(NA, times = 501),
                     "cgSSL-dpe" = rep(NA, times = 501))
   for(i in 1:5){
-    index <- which(Omega_results[,"algo"] == algo[i])
+    index <- which(Omega_results[,"algo"] == algo[i] & Omega_results[,"mod"] == 1)
     #if(algo[i] != "LASSO") tmp[,i] <- Omega_results[index,out]
     #else tmp[1:500,i] <- Omega_results[index, out]
     tmp[1:length(index),i] <- Omega_results[index,out]
@@ -56,7 +56,7 @@ par(mar = c(3,1,2,1), mgp = c(1.8, 0.5, 0), mfrow = c(1,2))
 boxplot(SEN_psi_results, horizontal = TRUE, main = expression(Psi~"sensitivity"),
         medlwd = 0.5, pch = 16, cex = 0.75, names = NA,
         ylim = c(0,1), yaxt = "n")
-text(x = 0.2, y = 1, labels = "LASSO")
+text(x = 0.2, y = 1, labels = "cgLASSO")
 text(x = 0.2, y = 2, labels = "CAR")
 text(x = 0.2, y = 3, labels = "CAR-A")
 text(x = 0.2, y = 4, labels = "cgSSL-DCPE")
@@ -81,7 +81,7 @@ par(mar = c(3,1,2,1), mgp = c(1.8, 0.5, 0), mfrow = c(1,4),
 boxplot(SEN_psi_results, horizontal = TRUE, main = expression(Psi~"sensitivity"),
         medlwd = 0.5, pch = 16, cex = 0.75, names = NA,
         ylim = c(0,1), yaxt = "n")
-text(x = 0.2, y = 1, labels = "LASSO", cex = 1.2)
+text(x = 0.2, y = 1, labels = "cgLASSO", cex = 1.2)
 text(x = 0.2, y = 2, labels = "CAR", cex = 1.2)
 text(x = 0.2, y = 3, labels = "CAR-A", cex = 1.2)
 text(x = 0.22, y = 4, labels = "cgSSL-DCPE", cex = 1.2)
