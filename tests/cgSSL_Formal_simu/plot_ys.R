@@ -38,9 +38,9 @@ plot_result_list <- function(result_list, modelname, title=TRUE){
           medlwd = 0.5, pch = 16, cex = 0.75, names = NA,
           ylim = c(0,1), yaxt = "n", ylab = modelname)
   text(x = 0.2, y = 1, labels = "cgLASSO", cex = 1.2)
-  text(x = 0.2, y = 2, labels = "CAR", cex = 1.2)
+  text(x = 0.195, y = 2, labels = "CAR", cex = 1.2)
   text(x = 0.2, y = 3, labels = "CAR-A", cex = 1.2)
-  text(x = 0.22, y = 4, labels = "cgSSL-DCPE", cex = 1.2)
+  text(x = 0.231, y = 4, labels = "cgSSL-DCPE", cex = 1.2)
   text(x = 0.2, y = 5, labels = "cgSSL-DPE", cex = 1.2)
   boxplot(result_list$PREC_psi_results, horizontal = TRUE, main = ifelse(title, expression(Psi~"precision"),""),
           medlwd = 0.5, pch = 16, cex = 0.75, names = NA,
@@ -74,8 +74,8 @@ get_result_table <- function(res_list){
   cat(knitr::kable(mean_sd[,c(1,3,5,2,4,6)], "latex",booktabs = TRUE),"\n", escape = F)
 }
 
-p <- 20
-q <- 30
+p <- 10
+q <- 10
 n <- 100
 
 prefix <- paste0("p", p, "q", q, "n", n)
@@ -114,3 +114,4 @@ plot_result_list(tmp, model_names[i], i==1)
 }
 
 dev.off()
+
