@@ -1,6 +1,6 @@
 # Collection of multivariate Spike-and-Slab LASSO
 
-A collection of multivariate Spike-and-Slab model for different type of responses centered on Gaussian, with effective posterior explorations, by Shen, Solis-Lemus and Deshpande 2022.  
+A collection of multivariate Spike-and-Slab model for different type of responses centered on Gaussian, with effective posterior explorations, by [Shen, Solis-Lemus and Deshpande 2022](https://arxiv.org/abs/2207.07020).  
 
 - For continuous data
     - multivariate SSL by [Deshpande et al. 2018](https://arxiv.org/abs/1708.08911), this uses a mean covariance parameterization of Gaussian model

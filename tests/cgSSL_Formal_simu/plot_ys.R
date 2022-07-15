@@ -74,9 +74,9 @@ get_result_table <- function(res_list){
   cat(knitr::kable(mean_sd[,c(1,3,5,2,4,6)], "latex",booktabs = TRUE),"\n", escape = F)
 }
 
-p <- 10
-q <- 10
-n <- 100
+p <- 100
+q <- 30
+n <- 400
 
 prefix <- paste0("p", p, "q", q, "n", n)
 Psi_file <- file.path(prefix, paste0(prefix, "_graph_B_full.csv"))
@@ -95,7 +95,9 @@ Omega_results <- rbind(read.csv(Omega_file), read.csv(Omega_lasso_file))
 dims <- paste0("p",p,"q",q,"n",n,".png")
 
 png(paste0("Psi_Omega_sen_prec_frob_", dims), width = 11, height = 6, units = "in", res = 400)
-par(mar = c(1,1,1.5,1), mgp = c(0, 0.3, 0), mfrow = c(5,6),
+#par(mar = c(1,1,1.5,1), mgp = c(0, 0.3, 0), mfrow = c(5,6),
+#    cex.main = 1.5)
+par(mar = c(1.15,1,1.5,1), mgp = c(0, 0.3, 0), mfrow = c(5,6),
     cex.main = 1.5)
 
 model_names <- c("AR(1)","AR(2)","Block","Star","Dense")
