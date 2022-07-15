@@ -1,6 +1,6 @@
 # Collection of multivariate Spike-and-Slab LASSO
 
-A header only R package collects multivariate Spike-and-Slab model with effective posterior explorations by Shen, Solis-Lemus and Deshpande 2022. 
+A header only R package collects multivariate Spike-and-Slab model with effective posterior explorations by [Shen, Solis-Lemus and Deshpande 2022](https://arxiv.org/abs/2207.07020). 
 
 Method implemented:
 
