@@ -6,3 +6,5 @@ export(unitdiag2)
 export("mSSL", "gSSL", "cgVARSSL","rCARm","rCVARm","error_B", "error_Omega", "plot_support", "g_modelAR1")
 import(MASS)
 importFrom("graphics", "par", "points")
+importFrom("stats", "ecdf", "pnbinom", "ppois", "qnorm", "sd",
+               "splinefun")
