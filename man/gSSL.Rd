@@ -6,7 +6,8 @@
 \usage{
 gSSL(
   Y,
-  xis = list(xi1 = 0.01 * nrow(Y), xi0 = seq(0.1 * nrow(Y), nrow(Y), length = 10)),
+  xi1 = 0.01 * nrow(Y),
+  xi0 = seq(0.1 * nrow(Y), nrow(Y), length = 10),
   eta_hyper_params = c(1, ncol(Y)),
   diag_penalty = FALSE,
   max_iter = 500,
@@ -18,7 +19,9 @@ gSSL(
 \arguments{
 \item{Y}{response matrix, no design in this case}
 
-\item{xis}{hyperparameters to be explored by the algorithm, penalty on Omega}
+\item{xi1}{hyperparameters to be explored by the algorithm, penalty on Omega}
+
+\item{xi0}{a scalar for the slab penalty on Omega}
 
 \item{eta_hyper_params}{hyperparameter to be set, prior on spike weight of Omega}
 
