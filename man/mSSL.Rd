@@ -2,15 +2,16 @@
 % Please edit documentation in R/mSSL.R
 \name{mSSL}
 \alias{mSSL}
-\title{Multivariate and Chain Graphical Spike-and-Slab LASSO for continuous data}
+\title{Multivariate Spike-and-Slab LASSO for continuous data}
 \usage{
 mSSL(
   Y,
   X,
-  cg = TRUE,
+  lambda1 = 1,
+  lambda0 = seq(10, nrow(X), length = 10),
+  xi1 = 0.01 * nrow(X),
+  xi0 = seq(0.1 * nrow(X), nrow(X), length = 10),
   condexp = FALSE,
-  lambdas = list(lambda1 = 1, lambda0 = seq(10, nrow(X), length = 10)),
-  xis = list(xi1 = 0.01 * nrow(X), xi0 = seq(0.1 * nrow(X), nrow(X), length = 10)),
   theta_hyper_params = c(1, ncol(X) * ncol(Y)),
   eta_hyper_params = c(1, ncol(Y)),
   diag_penalty = FALSE,
@@ -26,13 +27,15 @@ mSSL(
 
 \item{X}{design matrix}
 
-\item{cg}{bool, whether use the chain graphical parameterization, default true}
+\item{lambda1}{hyperparameters to be explored by the algorithm, spike penalty on B}
+
+\item{lambda0}{a scalar for the slab penalty on B}
+
+\item{xi1}{hyperparameters to be explored by the algorithm, penalty on Omega}
+
+\item{xi0}{a scalar for the slab penalty on Omega}
 
 \item{condexp}{bool, whether to do the fast conditional posterior exploration (dcpe), default is FALSE for doing the dynamic posterior exploration (dpe)}
-
-\item{lambdas}{hyperparameters to be explored by the algorithm, penalty on B}
-
-\item{xis}{hyperparameters to be explored by the algorithm, penalty on Omega}
 
 \item{theta_hyper_params}{hyperparameter to be set, prior on spike weight of B}
 

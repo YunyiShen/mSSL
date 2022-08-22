@@ -1,9 +1,11 @@
 useDynLib(mSSL, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
-export(mpSSL)
-export("fstarmSSL","logfloorlink","idfloor0link","idfloorlink", "sqrtfloor0link", "KowalWufloorlink")
-export(unitdiag2)
-export("mSSL", "gSSL", "cgVARSSL","rCARm","rCVARm","error_B", "error_Omega", "plot_support", "g_modelAR1")
+#export(mpSSL)
+#export("fstarmSSL","logfloorlink","idfloor0link","idfloorlink", "sqrtfloor0link", "KowalWufloorlink")
+#export(unitdiag2)
+#export("mSSL", "cgSSL", "gSSL", "cgVARSSL","rCARm","rCVARm","error_B", "error_Omega", "plot_support", "g_modelAR1")
+export("mSSL","cgSSL", "gSSL", "rCARm","error_B", "error_Omega", "plot_support", "g_modelAR1")
+
 import(MASS)
 importFrom("graphics", "par", "points")
 importFrom("stats", "ecdf", "pnbinom", "ppois", "qnorm", "sd",

@@ -12,6 +12,26 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// cgLASSO_path
+List cgLASSO_path(arma::mat X, arma::mat Y, arma::vec lambdas, arma::vec xis, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose);
+RcppExport SEXP _mSSL_cgLASSO_path(SEXP XSEXP, SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type lambdas(lambdasSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type xis(xisSEXP);
+    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< int >::type s_max_condition(s_max_conditionSEXP);
+    Rcpp::traits::input_parameter< int >::type obj_counter_max(obj_counter_maxSEXP);
+    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(cgLASSO_path(X, Y, lambdas, xis, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cgSSL_dpe
 List cgSSL_dpe(arma::mat X, arma::mat Y, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose);
 RcppExport SEXP _mSSL_cgSSL_dpe(SEXP XSEXP, SEXP YSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP) {
@@ -355,6 +375,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_mSSL_cgLASSO_path", (DL_FUNC) &_mSSL_cgLASSO_path, 10},
     {"_mSSL_cgSSL_dpe", (DL_FUNC) &_mSSL_cgSSL_dpe, 12},
     {"_mSSL_cgSSL_dcpe", (DL_FUNC) &_mSSL_cgSSL_dcpe, 10},
     {"_mSSL_cgfstarSSL_dpe", (DL_FUNC) &_mSSL_cgfstarSSL_dpe, 15},
