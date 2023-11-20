@@ -9,8 +9,16 @@ gut_Y_transform <- log(gut_Y)
 gut_X <- as.matrix( model.matrix(~., gut[,17:21]))[,-1]
 gut_X <- apply(gut_X,2,function(w){(w-mean(w))/sd(w)})
 
-gut_cgdperes <- mSSL(gut_Y_transform, gut_X, verbose = T, eps = 1e-4, diag_penalty = FALSE, max_iter = 10000)
+gut_cgdperes <- cgSSL(gut_Y_transform, gut_X, verbose = T, eps = 1e-4, diag_penalty = FALSE, max_iter = 10000)
 gut_mdperes <- mSSL(gut_Y_transform, gut_X, cg = FALSE, verbose = T)
+
+gut_cg_BB <- BBmSSL::cgSSLuq(gut_Y_transform, gut_X, 
+                             gut_cgdperes$B, gut_cgdperes$Omega, 
+                             method = "bb", n_iter = 300, 
+                             thin_by=1, n_burn_in = 1, 
+                             verbose = T)
+
+save.image("res_bb.RData")
 
 library(caret)
 set.seed(42)

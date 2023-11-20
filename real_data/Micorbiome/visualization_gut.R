@@ -5,6 +5,22 @@ source("./real_data/misc.R")
 
 # for human
 load("./real_data/Micorbiome/res.RData")
+load("./real_data/Micorbiome/res_bb.RData")
+
+signif_psi <- matrix(FALSE, 11,14)
+signif_omega <- matrix(FALSE, 14,14)
+for(j in 1:14){
+  for(i in 1:11){
+    tmp <- gut_cg_BB$samples$Psi[i,j,]
+    signif_psi[i,j] <- (quantile(tmp, .025, na.rm = T) * 
+                          quantile(tmp, .975, na.rm = T)) > 0
+  }
+  for(i in 1:14){
+    tmp <- gut_cg_BB$samples$Omega[i,j,]
+    signif_omega[i,j] <- (quantile(tmp, .025, na.rm = T) * 
+                          quantile(tmp, .975, na.rm = T)) > 0
+  }
+}
 
 
 CAR <- get_CAR_MB(gut_cgdperes$B, gut_cgdperes$Omega)
@@ -30,12 +46,21 @@ ind_mat_micro <- expand.grid(from = 1:(ncol(gut_Y)),to = 1:(ncol(gut_Y)))
 ind_mat_micro <- ind_mat_micro[ind_mat_micro$from!=ind_mat_micro$to,]
 ind_mat_micro$weight <- sapply(1:nrow(ind_mat_micro),function(i,indmat,mat){
   mat[indmat$from[i],indmat$to[i]]
-},ind_mat_micro,CAR$C)
+},ind_mat_micro,CAR$C) # get the weight
+
+ind_mat_micro$signif <- sapply(1:nrow(ind_mat_micro),function(i,indmat,mat){
+  mat[indmat$from[i],indmat$to[i]]
+},ind_mat_micro,signif_omega) # get signif
 
 ind_mat_env <- expand.grid(from = 1:ncol(gut_X),to = 1:(ncol(gut_Y)))
 ind_mat_env$weight <- sapply(1:nrow(ind_mat_env),function(i,indmat,mat){
   mat[indmat$from[i],indmat$to[i]]
 },ind_mat_env,CAR$B)
+
+ind_mat_env$signif <- sapply(1:nrow(ind_mat_env),function(i,indmat,mat){
+  mat[indmat$from[i],indmat$to[i]]
+},ind_mat_env,signif_psi) # get signif
+
 
 ind_mat_env$from <- paste0("E",ind_mat_env$from)
 ind_mat_env$to <- paste0("M",ind_mat_env$to)
@@ -43,7 +68,9 @@ ind_mat_micro$from <- paste0("M",ind_mat_micro$from)
 ind_mat_micro$to <- paste0("M",ind_mat_micro$to)
 
 edge_df <- rbind(ind_mat_micro,ind_mat_env)
-edge_df <- edge_df[edge_df$weight!=0,]
+
+
+edge_df <- edge_df[edge_df$weight!=0 | edge_df$signif,]
 
 edge_abs_df <- edge_df
 edge_abs_df$weight <- abs(edge_abs_df$weight)
@@ -60,6 +87,7 @@ direction <- c("negative","positive")
 E(full_graph)$edge.color <- col_pn[(sign(E(full_graph)$weight)+1)/2+1]
 E(full_graph)$direction. <- direction[(sign(E(full_graph)$weight)+1)/2+1]
 E(full_graph)$abs_weight <- abs( E(full_graph)$weight)
+E(full_graph)$linetypes <- c("g","a")[E(full_graph)$signif + 1]
 
 
 V(full_graph)$name <- c(colnames(gut_Y),colnames(gut_X))
@@ -89,7 +117,11 @@ library(ggplot2)
 library(ggraph)
 set_graph_style(plot_margin = margin(10,10,10,10))
 p <- ggraph(full_graph,layout = "circle")+
-  geom_edge_link(aes(color = direction.,width = abs_weight,alpha = abs_weight)) + 
+  geom_edge_link(aes(color = direction.,
+                     width = abs_weight,
+                     alpha = abs_weight
+                     )) + 
+  
   scale_edge_color_manual(values = (  cbPalette_edge))+
   #geom_node_point(mapping = aes(shape = type,size = alpha_centrality,stroke = 6),col = "#696969",alpha = 1) +
   geom_node_point(mapping = aes(shape = type,stroke = 1.5),col = "#000000",fill= "white", alpha = 1) +
@@ -101,12 +133,40 @@ p <- ggraph(full_graph,layout = "circle")+
          size = guide_legend(order=2),
          shape = FALSE, #guide_legend(order=1),
          edge_color = FALSE #guide_legend(order = 3)
+         #alpha = FALSE, linetype = FALSE
   )
+
+p
+
+siggraph <- full_graph
+siggraph <- delete_edges(siggraph, E(siggraph)[!E(siggraph)$signif] )
+
+psig <- ggraph(siggraph,layout = "circle")+
+  geom_edge_link(aes(color = direction.,
+                     width = abs_weight,
+                     alpha = abs_weight
+  )) + 
+  
+  scale_edge_color_manual(values = (  cbPalette_edge))+
+  #geom_node_point(mapping = aes(shape = type,size = alpha_centrality,stroke = 6),col = "#696969",alpha = 1) +
+  geom_node_point(mapping = aes(shape = type,stroke = 1.5),col = "#000000",fill= "white", alpha = 1) +
+  scale_shape_manual(values = c(21,24))+
+  #scale_color_manual(values = cbPalette)+
+  coord_fixed(clip = 'off')+
+  guides(width = guide_legend(order = 1),
+         #color = guide_legend(order=3),
+         size = guide_legend(order=2),
+         shape = FALSE, #guide_legend(order=1),
+         edge_color = FALSE #guide_legend(order = 3)
+         #alpha = FALSE, linetype = FALSE
+  )
+
+psig
 
 ## FOR HUMAN: 
 dd = c(rep(0,6),0.1,rep(0,12),-0.1,rep(0,5))
 ## FOR soil:
-dd = c(rep(0,5),0.1,rep(0,16))
+#dd = c(rep(0,5),0.1,rep(0,16))
 
 ## to put labels names outside the circle
 p2 <- p  + geom_node_text(aes(label = name),nudge_x = p$data$x * .38, nudge_y = p$data$y * .2+dd, family = "")+  #repel = T,check_overlap = T)+
@@ -114,10 +174,19 @@ p2 <- p  + geom_node_text(aes(label = name),nudge_x = p$data$x * .38, nudge_y = 
   theme(legend.text=element_text(size=9),
         legend.position = "bottom")
 
+psig2 <- psig  + geom_node_text(aes(label = name),nudge_x = p$data$x * .38, nudge_y = p$data$y * .2+dd, family = "")+  #repel = T,check_overlap = T)+
+  theme_graph(base_family = 'Helvetica')+
+  theme(legend.text=element_text(size=9),
+        legend.position = "bottom")
+
 
 p2
 #ggsave("./real_data/humangut.pdf",width = 8,height = 6)
-ggsave("./real_data/Micorbiome/humangut2.pdf",p2,width = 8,height = 7)
+ggsave("./real_data/Micorbiome/humangut2.pdf",p2,width = 8,height = 7, scale = .75)
+
+psig2
+#ggsave("./real_data/humangut.pdf",width = 8,height = 6)
+ggsave("./real_data/Micorbiome/humangut_signig2.pdf",psig2,width = 8,height = 7, scale = .75)
 
 ggsave("./real_data/gut2.pdf",p2,width = 8,height = 7)
 
