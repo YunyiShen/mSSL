@@ -7,7 +7,7 @@ source("./real_data/misc.R")
 load("./real_data/GeneNet_timeseries/cgVARres.RData")
 
 
-among_spp <- graph_from_adjacency_matrix(dpe_res$Omega,mode = "undirected",weighted = T,diag = F)
+among_spp <- graph_from_adjacency_matrix(dpe_res$Omega,mode = "directed",weighted = T,diag = F)
 linear_reg_graph <- graph_from_adjacency_matrix(t(dpe_res$B),weighted = T, mode = "directed")
 
 col_pn <- c("lightblue","pink")
