@@ -141,4 +141,30 @@ List mpSSL_dcpe(arma::mat X,
 }
 
 
+// [[Rcpp::export]]
+List mpcSSL_dpe(arma::mat X,
+               arma::mat Y,
+               int binidxend,
+               List lambdas,
+               List xis,
+               arma::vec theta_hyper_params,
+               arma::vec eta_hyper_params,
+               int diag_penalty,
+               int max_iter,
+               double eps,
+               int s_max_condition,
+               int obj_counter_max,
+               int verbose, int nrep=200, int nskp=1)
+{
+  // mixed type
+  probitcontWorkingParam Worker(X,Y,binidxend);
+  List results = mSSL::mSSL_dpe<probitcontWorkingParam>(Worker, lambdas, 
+                                                    xis,theta_hyper_params,eta_hyper_params,
+                                                    diag_penalty,max_iter,eps,
+                                                    s_max_condition,obj_counter_max,verbose, nrep, nskp);
+  return results;
+}
+
+
+
 
