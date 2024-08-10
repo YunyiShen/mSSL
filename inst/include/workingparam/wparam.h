@@ -110,6 +110,19 @@ inline void unitdiag(arma::mat & Sigma, arma::mat &Omega){
     return;
 }
 
+inline void subunitdiag(arma::mat & Sigma, arma::mat &Omega, int & binidxend){
+  // binidxend: the end idx for binary responses, assume binary appears first
+  arma::vec scaling = Sigma.diag();
+  scaling = scaling(arma::span(0, binidxend));
+  scaling = arma::sqrt(scaling);
+  Omega.cols(0, binidxend).each_col() %= scaling;
+  Omega.rows(0, binidxend).each_row() %= scaling.t();
+  scaling = 1/scaling;
+  Sigma.rows(0, binidxend).each_row() %= scaling.t();
+  Sigma.cols(0, binidxend).each_col() %= scaling;
+  return;
+}
+
 
 }
 
