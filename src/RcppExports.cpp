@@ -362,6 +362,31 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// mpcSSL_dpe
+List mpcSSL_dpe(arma::mat X, arma::mat Y, int binidxend, List lambdas, List xis, arma::vec theta_hyper_params, arma::vec eta_hyper_params, int diag_penalty, int max_iter, double eps, int s_max_condition, int obj_counter_max, int verbose, int nrep, int nskp);
+RcppExport SEXP _mSSL_mpcSSL_dpe(SEXP XSEXP, SEXP YSEXP, SEXP binidxendSEXP, SEXP lambdasSEXP, SEXP xisSEXP, SEXP theta_hyper_paramsSEXP, SEXP eta_hyper_paramsSEXP, SEXP diag_penaltySEXP, SEXP max_iterSEXP, SEXP epsSEXP, SEXP s_max_conditionSEXP, SEXP obj_counter_maxSEXP, SEXP verboseSEXP, SEXP nrepSEXP, SEXP nskpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< int >::type binidxend(binidxendSEXP);
+    Rcpp::traits::input_parameter< List >::type lambdas(lambdasSEXP);
+    Rcpp::traits::input_parameter< List >::type xis(xisSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type theta_hyper_params(theta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type eta_hyper_params(eta_hyper_paramsSEXP);
+    Rcpp::traits::input_parameter< int >::type diag_penalty(diag_penaltySEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< int >::type s_max_condition(s_max_conditionSEXP);
+    Rcpp::traits::input_parameter< int >::type obj_counter_max(obj_counter_maxSEXP);
+    Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< int >::type nrep(nrepSEXP);
+    Rcpp::traits::input_parameter< int >::type nskp(nskpSEXP);
+    rcpp_result_gen = Rcpp::wrap(mpcSSL_dpe(X, Y, binidxend, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, nrep, nskp));
+    return rcpp_result_gen;
+END_RCPP
+}
 // unitdiag2
 void unitdiag2(arma::mat& Sigma, arma::mat& Omega);
 RcppExport SEXP _mSSL_unitdiag2(SEXP SigmaSEXP, SEXP OmegaSEXP) {
@@ -391,6 +416,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mSSL_fstarSSL_dcpe", (DL_FUNC) &_mSSL_fstarSSL_dcpe, 13},
     {"_mSSL_mpSSL_dpe", (DL_FUNC) &_mSSL_mpSSL_dpe, 14},
     {"_mSSL_mpSSL_dcpe", (DL_FUNC) &_mSSL_mpSSL_dcpe, 12},
+    {"_mSSL_mpcSSL_dpe", (DL_FUNC) &_mSSL_mpcSSL_dpe, 15},
     {"_mSSL_unitdiag2", (DL_FUNC) &_mSSL_unitdiag2, 2},
     {NULL, NULL, 0}
 };

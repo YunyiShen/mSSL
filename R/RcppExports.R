@@ -65,6 +65,10 @@ mpSSL_dcpe <- function(X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params,
     .Call(`_mSSL_mpSSL_dcpe`, X, Y, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, verbose, nrep, nskp)
 }
 
+mpcSSL_dpe <- function(X, Y, binidxend, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, nrep = 200L, nskp = 1L) {
+    .Call(`_mSSL_mpcSSL_dpe`, X, Y, binidxend, lambdas, xis, theta_hyper_params, eta_hyper_params, diag_penalty, max_iter, eps, s_max_condition, obj_counter_max, verbose, nrep, nskp)
+}
+
 #' scale covariance and precision in place
 #' This routine will scale the covariance matrix to have unit diagonal in place and also properly scale the precision.
 #' @param Sigma a matrix that is the covariance matrix, will be scaled to have unit diagonal

@@ -57,12 +57,13 @@ inline void probitWorkingParam::update(
         b = arma::trans(XB.row(i)) % Adiag;
         A = C.t();
         A.each_col() %= Adiag;
-        Adiag = arma::solve(C.t(), Adiag-arma::trans(XB.row(i)));// this serves as the initial point
+        b %= Adiag;
+        Adiag = arma::solve(A, 0.001-b) ;// this serves as the initial point
         LinearConstraints lincon(A,b,true);
-        //Rcout << "      " << i <<"th sample sampling start" << endl;
+        Rcout << "      " << i <<"th sample sampling start" << endl;
         EllipticalSliceSampler sampler(n_rep + 1,lincon,nskp,Adiag);
         sampler.run();
-        //Rcout << "      end" << endl;
+        Rcout << "      end" << endl;
         arma::mat resi = sampler.loop_state.samples;
         resi.shed_row(0);// we will remove the initial points
         resi = resi * C;
@@ -98,7 +99,13 @@ class probitcontWorkingParam : public WorkingParam{
         arma::mat &B, 
         arma::mat & Sigma, 
         arma::mat &Omega){
-        subunitdiag(Sigma, Omega, binidxend);
+        //Rcout << Omega << endl;
+        //Rcout << Sigma << endl;
+        //Rcout << "I'm doing post processing" << endl;
+        subunitdiagsigma(Sigma, Omega, binidxend);
+        //Rcout << B << endl;
+        //Rcout << Omega << endl;
+        //Rcout << Sigma << endl;
     }
 };
 
@@ -118,6 +125,7 @@ inline void probitcontWorkingParam::update(
     
     // usual continuous updates
     R.tail_cols(q_tot - q) = Y.tail_cols(q_tot - q)-XB.tail_cols(q_tot - q);
+    //tRR = R.t() * R;
   
     
     
@@ -126,13 +134,14 @@ inline void probitcontWorkingParam::update(
     
     // to construct the linear constraints by transforming constraints with Chol
     arma::mat C = arma::chol(Sigma_t.submat(0,0,binidxend,binidxend)); // take only submatrix of Sigma
+    //Rcout << Sigma_t << endl;
     arma::vec Adiag(q);
     arma::vec b(q);
     arma::mat A(q,q);
     // some temp matrices
     arma::mat Stmp, Rtmp, tXRtmp;
     arma::vec mutmp;
-    Stmp.zeros(q,q);
+    //Stmp.zeros(q,q);
     mutmp.zeros(q);
     Rtmp.zeros(n,q);
     s_eval.zeros(q_tot);
@@ -140,11 +149,13 @@ inline void probitcontWorkingParam::update(
   
     for(int i = 0 ; i < n ; i++){
       Rcpp::checkUserInterrupt();
-      Adiag = 2*arma::trans( Y.row(i) )-1; // this makes \pm 1
+      Adiag = 2*arma::trans( Y.row(i).cols(0, binidxend) )-1; // this makes \pm 1
       b = arma::trans(XB.row(i)); 
       A = C.t();
       A.each_col() %= Adiag;
-      Adiag = arma::solve(C.t(), Adiag-arma::trans(XB.row(i)));// this serves as the initial point
+      b %= Adiag;
+      //Adiag = arma::solve(C.t(), 0.1 * Adiag-arma::trans(XB.row(i)));// this serves as the initial point
+      Adiag = arma::solve(A, 0.001-b);
       LinearConstraints lincon(A,b,true);
       //Rcout << "      " << i <<"th sample sampling start" << endl;
       EllipticalSliceSampler sampler(n_rep + 1,lincon,nskp,Adiag);
@@ -153,25 +164,31 @@ inline void probitcontWorkingParam::update(
       arma::mat resi = sampler.loop_state.samples;
       resi.shed_row(0);// we will remove the initial points
       resi = resi * C;
+      //Rcout << mean(resi) << endl;
       Rtmp.row(i) = mean(resi);
-      Stmp += resi.t() * resi;
+      //Stmp += resi.t() * resi;
       resi.each_row() += mu_t(arma::span(0, binidxend)).t();
       mutmp += arma::trans(arma::mean(resi)); 
     }
   
-    Stmp /= (n*n_rep);
+    //Stmp /= (n*n_rep);
     mutmp /= n;
     
-    S.submat(0,0,binidxend,binidxend) = Stmp;
-    R.submat(0,0,binidxend,binidxend) = Rtmp;
+    //S.submat(0,0,binidxend,binidxend) = Stmp;
+    //R.submat(0,0,binidxend,binidxend) = Rtmp;
+    R.cols(0, binidxend) = Rtmp;
     mu(arma::span(0, binidxend)) = mutmp;
     
     // this is a bit wasteful since only part of mu is updated 
     R.each_row() += mu_t.t();
     R.each_row() -= mu.t();
     tXR = X.t() * R;
-    tRR = S*n;
-  
+    tRR = R.t() * R;
+    S = tRR/n;
+    //tRR = S*n;
+    //Rcout << mu << endl;
+    //Rcout << tXR << endl;
+    //Rcout << S << endl;
     s_eval = eig_sym(S);
   
 }

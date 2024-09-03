@@ -112,14 +112,34 @@ inline void unitdiag(arma::mat & Sigma, arma::mat &Omega){
 
 inline void subunitdiag(arma::mat & Sigma, arma::mat &Omega, int & binidxend){
   // binidxend: the end idx for binary responses, assume binary appears first
+  arma::vec scaling = 1/Omega.diag();
+  scaling = scaling(arma::span(0, binidxend));
+  scaling = arma::sqrt(scaling);
+  //Omega.submat(0,0, binidxend, binidxend).each_col() %= scaling;
+  Omega.rows(0,binidxend).each_col() %= scaling;
+  Omega.cols(0,binidxend).each_row() %= scaling.t();
+  //Omega.submat(0,0, binidxend, binidxend).each_row() %= scaling.t();
+  scaling = 1/scaling;
+  //Sigma.submat(0,0, binidxend, binidxend).each_row() %= scaling.t();
+  //Sigma.submat(0,0, binidxend, binidxend).each_col() %= scaling;
+  Sigma.rows(0,binidxend).each_col() %= scaling;
+  Sigma.cols(0,binidxend).each_row() %= scaling.t();
+  return;
+}
+
+inline void subunitdiagsigma(arma::mat & Sigma, arma::mat &Omega, int & binidxend){
+  // binidxend: the end idx for binary responses, assume binary appears first
   arma::vec scaling = Sigma.diag();
   scaling = scaling(arma::span(0, binidxend));
   scaling = arma::sqrt(scaling);
-  Omega.cols(0, binidxend).each_col() %= scaling;
-  Omega.rows(0, binidxend).each_row() %= scaling.t();
+  Omega.rows(0,binidxend).each_col() %= scaling;
+  Omega.cols(0,binidxend).each_row() %= scaling.t();
+  //Omega.submat(0,0, binidxend, binidxend).each_row() %= scaling.t();
   scaling = 1/scaling;
-  Sigma.rows(0, binidxend).each_row() %= scaling.t();
-  Sigma.cols(0, binidxend).each_col() %= scaling;
+  //Sigma.submat(0,0, binidxend, binidxend).each_row() %= scaling.t();
+  //Sigma.submat(0,0, binidxend, binidxend).each_col() %= scaling;
+  Sigma.rows(0,binidxend).each_col() %= scaling;
+  Sigma.cols(0,binidxend).each_row() %= scaling.t();
   return;
 }
 
